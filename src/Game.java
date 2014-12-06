@@ -5,8 +5,11 @@ public class Game {
 		
 		//Testing
 		Position p = new Position(1, 1);
-		System.out.println(p.getOtherPositionsOnDiagonalRtoL());
+		Board b = new Board();
+		b.setToDefaultBoard();
 		
+		//System.out.println(p.getOtherPositionsOnDiagonalRtoL());
+		System.out.println(b.moveUnitUntilInterrupted(p, 1, 0));
 		System.out.println("...");
 		System.out.println("...");
 	}

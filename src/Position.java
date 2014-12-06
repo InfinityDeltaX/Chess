@@ -52,7 +52,7 @@ public class Position {
 		return output;
 	}
 
-	ArrayList<Position> getOtherPositionsOnDiagonalRtoL(){ //starts at bottom left and goes to right top
+	ArrayList<Position> getOtherPositionsOnDiagonalRtoL(){ //starts at bottom left and goes to right top. Method: Go down/left until we hit an edge, then go back right/up the whole way.
 		ArrayList<Position> output = new ArrayList<Position>();
 		int startX = this.getRow();
 		int startY = this.getFile();
@@ -77,7 +77,7 @@ public class Position {
 	}
 	
 	boolean doesExistOnBoard(){
-		if((this.getFile() < 8 && this.getFile() >= 0) && this.getRow() < 8 && this.getRow() >= 0){
+		if((this.getFile() < 8 && this.getFile() >= 0) && (this.getRow() < 8 && this.getRow() >= 0)){
 			return true;
 		} else return false;
 	}

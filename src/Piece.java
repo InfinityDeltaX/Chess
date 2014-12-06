@@ -5,7 +5,7 @@ public class Piece {
 	int file;
 	int row;
 	int side;
-	int type;
+	int type; //int 1 through 10
 	int singleInt;
 	Position myPosition;
 	
@@ -16,23 +16,19 @@ public class Piece {
 		this.myPosition = p;
 	}
 	
+	static Piece getCorrespondingPiece(Position p, int input){
+		return new Piece(p, input/100, input%100);
+	}
+	
+	boolean isEmpty(){
+		return (side==0 && type == 0);
+	}
+	
 	static int getCorrespondingInt(Piece p){
 		return p.type;
 	}
 	int getCorrespondingInt(){
 		return this.type;
-	}
-	
-	ArrayList<Position> getSquaresAttacked(){
-		ArrayList<Position> output = new ArrayList<Position>();
-		
-		if(this.type%100 == Values.PAWN){
-			output.add()
-		}
-	}
-	
-	ArrayList<Position> getSquaresCanMoveTo(){
-		
 	}
 	
 }
