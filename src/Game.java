@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 
 public class Game {
 	public static void main(String[] args){
@@ -9,7 +11,14 @@ public class Game {
 		b.setToDefaultBoard();
 		
 		//System.out.println(p.getOtherPositionsOnDiagonalRtoL());
-		System.out.println(b.moveUnitUntilInterrupted(p, 1, 0));
+		ArrayList<Position> test = new ArrayList<Position>();
+		test.add(p);
+		ArrayList<Position> test2 = new ArrayList<Position>(test);
+		test2.remove(p);
+		System.out.println(test);
+		System.out.println(test2);
+		
+		System.out.println(b.getMovesAlongDirectionalAxisUntilInterrupted(p, 1, 0));
 		System.out.println("...");
 		System.out.println("...");
 	}

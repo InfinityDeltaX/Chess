@@ -31,4 +31,28 @@ public class Piece {
 		return this.type;
 	}
 	
+	//setters and getters
+	public int getFile() {
+		return file;
+	}
+
+	public void setFile(int file) {
+		this.file = file;
+	}
+
+	public int getRow() {
+		return row;
+	}
+
+	public void setRow(int row) {
+		this.row = row;
+	}
+
+	public int getSide() {
+		return side;
+	}
+
+	public int getType() {
+		return type;
+	}
 }

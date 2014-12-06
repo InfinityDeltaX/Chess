@@ -70,7 +70,8 @@ public class Position {
 			Position _current = new Position(current);
 			current.changePositionRelative(1,  1);
 			
-			if()output.add(_current); //check so that we don't add the original position!
+			if()output.add(_current); 
+			// TODO ^ check so that we don't add the original position!
 		}
 		
 		return output;
@@ -82,9 +83,6 @@ public class Position {
 		} else return false;
 	}
 
-	ArrayList<Position> getOtherPositionsOnVertical(Position p){
-		
-	}
 	int getRow(){
 		return this.row;
 	}
