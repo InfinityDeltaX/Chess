@@ -6,33 +6,33 @@ public class Position {
 	private int row;
 	private int file;
 
-	public Position(int row, int file){
+	public Position(int file, int row){
 		this.row = row;
 		this.file = file;
 	}
 	
 	public Position(Position p){
-		this(p.getRow(), p.getFile());
+		this(p.getFile(), p.getRow());
 	}
 	
 	@Override public String toString(){
-		return "[" + this.row + ", " + this.file + "]";
+		return "[" + this.file + ", " + this.row + "]";
 		
 	}
 
 	Position getPositionRelative(int x, int y){
-		return new Position(row+x, file+y);
+		return new Position(file+x, row+y);
 	}
 	
 	void changePositionRelative(int x, int y){
-		this.row+=x;
-		this.file+=y;
+		this.file+=x;
+		this.row+=y;
 	}
 
 	ArrayList<Position> getOtherPositionsOnDiagonalLtoR(){ //starts at bottom left and goes to right top
 		ArrayList<Position> output = new ArrayList<Position>();
-		int startX = this.getRow();
-		int startY = this.getFile();
+		int startX = this.getFile();
+		int startY = this.getRow();
 		
 		Position current = new Position(startX, startY);
 		
@@ -54,8 +54,8 @@ public class Position {
 
 	ArrayList<Position> getOtherPositionsOnDiagonalRtoL(){ //starts at bottom left and goes to right top. Method: Go down/left until we hit an edge, then go back right/up the whole way.
 		ArrayList<Position> output = new ArrayList<Position>();
-		int startX = this.getRow();
-		int startY = this.getFile();
+		int startX = this.getFile();
+		int startY = this.getRow();
 		
 		Position current = new Position(startX, startY);
 		

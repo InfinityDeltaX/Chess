@@ -6,7 +6,7 @@ public class Game {
 		
 		
 		//Testing
-		Position p = new Position(1, 1);
+		Position p = new Position(3, 1);
 		Board b = new Board();
 		b.setToDefaultBoard();
 		
@@ -18,7 +18,9 @@ public class Game {
 		System.out.println(test);
 		System.out.println(test2);
 		
-		System.out.println(b.getMovesAlongDirectionalAxisUntilInterrupted(p, 1, 0));
+		b.setPieceAtPosition(p, Values.KING_WHITE);
+		
+		System.out.println(b.getPossibleKingMoves(p));
 		System.out.println("...");
 		System.out.println("...");
 	}

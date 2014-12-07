@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 
 
 public class Board {
@@ -12,16 +13,21 @@ public class Board {
 		boardPosition = new int[8][8];
 	}
 	
+	void setPieceAtPosition(Position positionToSet, int pieceToPlace){ //mostly a debugging function
+		//should NOT be passed a general 5, for instance. Has to have side as well; 205 is acceptable.
+		boardPosition[positionToSet.getFile()][positionToSet.getRow()] = pieceToPlace;
+	}
+	
 	void setToDefaultBoard(){
 		boardPosition = new int[][]{
-				{Values.ROOK_WHITE, Values.KNIGHT_WHITE, Values.BISHOP_WHITE, Values.QUEEN_WHITE, Values.KING_WHITE, Values.BISHOP_WHITE, Values.KNIGHT_WHITE, Values.ROOK_WHITE},
-				{Values.PAWN_WHITE, Values.PAWN_WHITE, Values.PAWN_WHITE, Values.PAWN_WHITE, Values.PAWN_WHITE, Values.PAWN_WHITE, Values.PAWN_WHITE, Values.PAWN_WHITE}, 
-				{Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE}, 
-				{Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE}, 
-				{Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE}, 
-				{Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE}, 
-				{Values.PAWN_BLACK, Values.PAWN_BLACK, Values.PAWN_BLACK, Values.PAWN_BLACK, Values.PAWN_BLACK, Values.PAWN_BLACK, Values.PAWN_BLACK, Values.PAWN_BLACK}, 
-				{Values.ROOK_BLACK, Values.KNIGHT_BLACK, Values.BISHOP_BLACK, Values.QUEEN_BLACK, Values.KING_BLACK, Values.BISHOP_BLACK, Values.KNIGHT_BLACK, Values.ROOK_BLACK}};
+				{Values.ROOK_WHITE, Values.PAWN_WHITE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.PAWN_BLACK, Values.ROOK_BLACK},
+				{Values.KNIGHT_WHITE, Values.PAWN_WHITE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.PAWN_BLACK, Values.KNIGHT_BLACK},
+				{Values.BISHOP_WHITE, Values.PAWN_WHITE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.PAWN_BLACK, Values.BISHOP_BLACK},
+				{Values.QUEEN_WHITE, Values.PAWN_WHITE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.PAWN_BLACK, Values.QUEEN_BLACK},
+				{Values.KING_WHITE, Values.PAWN_WHITE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.PAWN_BLACK, Values.KING_BLACK},
+				{Values.BISHOP_WHITE, Values.PAWN_WHITE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.PAWN_BLACK, Values.BISHOP_BLACK},
+				{Values.KNIGHT_WHITE, Values.PAWN_WHITE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.PAWN_BLACK, Values.KNIGHT_BLACK},
+				{Values.ROOK_WHITE, Values.PAWN_WHITE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.PAWN_BLACK, Values.ROOK_BLACK}};
 	}
 	
 	Piece getPieceAtPosition(Position p){
@@ -74,12 +80,114 @@ public class Board {
 	}
 	
 	ArrayList<Position> getPossibleQueenMoves(Position p){
-		//move up first, then rotate counter-clockwise among the eight ways to attack [4 diagonals, 4 straights]
+		
+		assert(getPieceAtPosition(p).type == Values.QUEEN); //make sure that it's a queen!
+		assert(p.doesExistOnBoard());
+		if(!p.doesExistOnBoard()){
+			return null;
+		}
+		//the eight ways to attack [4 diagonals, 4 straights]. start at top and go clock-wise.
+		ArrayList<Position> output = new ArrayList<Position>();
+		
+		output.addAll(getMovesAlongDirectionalAxisUntilInterrupted(new Position(p), 0, 1));
+		output.addAll(getMovesAlongDirectionalAxisUntilInterrupted(new Position(p), 1, 1));
+		output.addAll(getMovesAlongDirectionalAxisUntilInterrupted(new Position(p), 1, 0));
+		output.addAll(getMovesAlongDirectionalAxisUntilInterrupted(new Position(p), 1, -1));
+		output.addAll(getMovesAlongDirectionalAxisUntilInterrupted(new Position(p), 0, -1));
+		output.addAll(getMovesAlongDirectionalAxisUntilInterrupted(new Position(p), -1, -1));
+		output.addAll(getMovesAlongDirectionalAxisUntilInterrupted(new Position(p), -1, 0));
+		output.addAll(getMovesAlongDirectionalAxisUntilInterrupted(new Position(p), -1, 1));
+		
+		return output;
+	}
+	
+	ArrayList<Position> getPossibleBishopMoves(Position p){
+		
+		assert(getPieceAtPosition(p).type == Values.BISHOP); //make sure that it's a queen!
+		assert(p.doesExistOnBoard());
+		if(!p.doesExistOnBoard()){
+			return null;
+		}
+		//the four ways to attack [4 diagonals]. start at top and go clock-wise.
+		ArrayList<Position> output = new ArrayList<Position>();
+		
+		output.addAll(getMovesAlongDirectionalAxisUntilInterrupted(new Position(p), 1, 1));
+		output.addAll(getMovesAlongDirectionalAxisUntilInterrupted(new Position(p), 1, -1));
+		output.addAll(getMovesAlongDirectionalAxisUntilInterrupted(new Position(p), -1, -1));
+		output.addAll(getMovesAlongDirectionalAxisUntilInterrupted(new Position(p), -1, 1));
+		
+		return output;
+	}
+	
+	ArrayList<Position> getPossibleRookMoves(Position p){
+		
+		assert(getPieceAtPosition(p).type == Values.ROOK); //make sure that it's a queen!
+		assert(p.doesExistOnBoard());
+		if(!p.doesExistOnBoard()){ //an alternative for assert. Assert is better because if we ever call this on the wrong piece, something bad happened.
+			return null;
+		}
+		//the four ways to attack [4 straights]. start at top and go clock-wise.
+		ArrayList<Position> output = new ArrayList<Position>();
+		
+		output.addAll(getMovesAlongDirectionalAxisUntilInterrupted(new Position(p), 0, 1));
+		output.addAll(getMovesAlongDirectionalAxisUntilInterrupted(new Position(p), 1, 0));
+		output.addAll(getMovesAlongDirectionalAxisUntilInterrupted(new Position(p), 0, -1));
+		output.addAll(getMovesAlongDirectionalAxisUntilInterrupted(new Position(p), -1, 0));
+		
+		return output;
+	}
+	
+	ArrayList<Position> getPossibleKnightMoves(Position p){
+		
+		assert(getPieceAtPosition(p).type == Values.KNIGHT); //make sure that it's a queen!
+		assert(p.doesExistOnBoard());
+		if(!p.doesExistOnBoard()){
+			return null;
+		}
+		//the eight ways to attack [circle thingy]. start at top and go clock-wise.
+		ArrayList<Position> output = new ArrayList<Position>();
+		int side = getPieceAtPosition(p).side;
+		
+		if(isValidPlaceToMove(p.getPositionRelative(1, 2), side)){output.add(p.getPositionRelative(1, 2));} //the coordinates are the destination position. TLDR: If it's a valid place to move, add it to the list of places to move.
+		if(isValidPlaceToMove(p.getPositionRelative(2, 1), side)){output.add(p.getPositionRelative(2, 1));}
+		if(isValidPlaceToMove(p.getPositionRelative(2, -1), side)){output.add(p.getPositionRelative(2, -1));}
+		if(isValidPlaceToMove(p.getPositionRelative(1, -2), side)){output.add(p.getPositionRelative(1, -2));}
+		if(isValidPlaceToMove(p.getPositionRelative(-1, -2), side)){output.add(p.getPositionRelative(-1, -2));}
+		if(isValidPlaceToMove(p.getPositionRelative(-2, -1), side)){output.add(p.getPositionRelative(-2, -1));}
+		if(isValidPlaceToMove(p.getPositionRelative(-2, 1), side)){output.add(p.getPositionRelative(-2, 1));}
+		if(isValidPlaceToMove(p.getPositionRelative(-1, 2), side)){output.add(p.getPositionRelative(-1, 2));}
+		return output;
+	}
+	
+	ArrayList<Position> getPossibleKingMoves(Position p){
+		
+		assert(getPieceAtPosition(p).type == Values.KING); //make sure that it's a queen!
+		assert(p.doesExistOnBoard());
+		if(!p.doesExistOnBoard()){
+			return null;
+		}
+		//the eight ways to attack [circle]. start at top and go clock-wise.
+		ArrayList<Position> output = new ArrayList<Position>();
+		int side = getPieceAtPosition(p).side;
+		
+		if(isValidPlaceToMove(p.getPositionRelative(0, 1), side)){output.add(p.getPositionRelative(0, 1));} //the coordinates are the destination position. TLDR: If it's a valid place to move, add it to the list of places to move.
+		if(isValidPlaceToMove(p.getPositionRelative(1, 1), side)){output.add(p.getPositionRelative(1, 1));}
+		if(isValidPlaceToMove(p.getPositionRelative(1, 0), side)){output.add(p.getPositionRelative(1, 0));}
+		if(isValidPlaceToMove(p.getPositionRelative(1, -1), side)){output.add(p.getPositionRelative(1, -1));}
+		if(isValidPlaceToMove(p.getPositionRelative(0, -1), side)){output.add(p.getPositionRelative(0, -1));}
+		if(isValidPlaceToMove(p.getPositionRelative(-1, -1), side)){output.add(p.getPositionRelative(-1, -1));}
+		if(isValidPlaceToMove(p.getPositionRelative(-1, 0), side)){output.add(p.getPositionRelative(-1, 0));}
+		if(isValidPlaceToMove(p.getPositionRelative(-1, 1), side)){output.add(p.getPositionRelative(-1, 1));}
+		return output;
+	}
+
+	boolean isCheckMate(){
 		
 	}
 	
-	boolean isCheckMate(){
-		
+	boolean isValidPlaceToMove(Position p, int side){ //designed for knights and kings, this tests if one of the spots where they "can" move is A: unoccupied or B: has an opposing piece, but does NOT have a friendly piece. //side should the be the side of the moving piece. p is the destination position.
+		return (p.doesExistOnBoard() && getPieceAtPosition(p).getSide() != side); //using getPositionRelative because it doesn't actually modify the object.
+		//This tests: is the new position on the board? and is the new position either enemy or unoccupied (not my own)?
 	}
 	
 	ArrayList<Position> getMovesAlongDirectionalAxisUntilInterrupted(Position current, int x, int y){ //x = 0, y = 1 will move the unit up until it hits an opposing piece, it's own piece, or the edge of the board. All of these positions will be returned.
@@ -112,7 +220,7 @@ public class Board {
 		} else { //we're on top of an opposing piece, and that is O.K.
 			
 		}
-		
+		System.out.println(output);
 		return output;
 	}
 }

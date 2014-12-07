@@ -17,12 +17,12 @@ public class Values {
 	public static final int ROOK_BLACK = 205;
 	public static final int KNIGHT_BLACK = 206;
 	
-	public static final int PAWN = 201;
-	public static final int BISHOP = 202;
-	public static final int KING = 203;
-	public static final int QUEEN = 204;
-	public static final int ROOK = 205;
-	public static final int KNIGHT = 206;
+	public static final int PAWN = 1;
+	public static final int BISHOP = 2;
+	public static final int KING = 3;
+	public static final int QUEEN = 4;
+	public static final int ROOK = 5;
+	public static final int KNIGHT = 6;
 	
 	public static final int POINT_VALUE_PAWN = 1;
 	public static final int POINT_VALUE_BISHOP = 3;
