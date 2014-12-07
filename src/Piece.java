@@ -1,5 +1,7 @@
 import java.util.ArrayList;
 
+import javax.swing.plaf.basic.BasicLookAndFeel;
+
 
 public class Piece {
 	int file;
@@ -31,6 +33,12 @@ public class Piece {
 		return this.type;
 	}
 	
+	static int getOpposingSide(int side){
+		if(side == Values.SIDE_BLACK) return Values.SIDE_WHITE;
+		else if(side == Values.SIDE_WHITE) return Values.SIDE_BLACK;
+		else if(side == 0)return 0;
+	}
+	
 	//setters and getters
 	public int getFile() {
 		return file;
@@ -55,4 +63,13 @@ public class Piece {
 	public int getType() {
 		return type;
 	}
+
+	public Position getPosition() {
+		return myPosition;
+	}
+
+	public void setPosition(Position myPosition) {
+		this.myPosition = myPosition;
+	}
+
 }

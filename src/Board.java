@@ -49,12 +49,36 @@ public class Board {
 		}
 		return output;
 	}
+	
+	ArrayList<Piece> getArrayListofMyRealPieces(int side){ //does not return empty spaces. Returns an ArrayList of pieces from the player specified in 'side'.
+		ArrayList<Piece> output = new ArrayList<Piece>();
+		for(int i = 0; i < boardPosition.length; i++){
+			for(int j = 0; j < boardPosition[0].length; j++){ //these two loops iterate over the whole int array
+				//convert int to piece
+				Piece current = Piece.getCorrespondingPiece(new Position(i, j), boardPosition[i][j]);
+				if(current.getSide() == side) output.add(current); //we only want to add current if it's our piece; not enemy's or blank.
+			}
+		}
+		return output;
+	}
+	
 	int[][] getBoardArrayInt(){
 		return boardPosition;
 	}
-	ArrayList<Move> getAllLegalMoves(){
-		
+	
+	ArrayList<Move> getAllLegalMoves(int side){
+		ArrayList<Move> output = new ArrayList<Move>();
+		ArrayList<Piece> myPieces = getArrayListofMyRealPieces(side);
+		for(Piece current : myPieces){ //iterate through each of our pieces.
+			ArrayList<Position> possibleAfterLocations = getPossibleMoves(current);
+			// TODO finish this
+		}
 	}
+	
+	ArrayList<Board> getAllPossibleNextBoards(){
+		//iterate through getAllLegalMoves and make the move.
+	}
+	
 	int evaluate(){
 		
 	}
@@ -75,8 +99,31 @@ public class Board {
 		//is the king in check on this board?
 	}
 	
-	ArrayList<Board> getPossibleNextMoveStates(int side){
-		for()
+	ArrayList<Position> getPossibleMoves(Piece p) { //wrapper function for getPossible___Moves. Given a piece, will return it's possible moves.
+		
+		if(p.getType() == Values.PAWN){
+			return getPossiblePawnMoves(p.getPosition());
+		} 
+		else if(p.getType() == Values.BISHOP){
+			return getPossibleBishopMoves(p.getPosition());
+		}
+		else if(p.getType() == Values.ROOK){
+			return getPossibleRookMoves(p.getPosition());
+		}
+		else if(p.getType() == Values.KING){
+			return getPossibleKingMoves(p.getPosition());
+		}
+		else if(p.getType() == Values.QUEEN){
+			return getPossibleQueenMoves(p.getPosition());
+		}
+		else if(p.getType() == Values.KNIGHT){
+			return getPossibleKnightMoves(p.getPosition());
+		} else {
+			assert(false); //we should never get here....
+			ArrayList<Position> output = new ArrayList<Position>();
+			return output;
+			
+		}
 	}
 	
 	ArrayList<Position> getPossibleQueenMoves(Position p){
@@ -181,6 +228,29 @@ public class Board {
 		return output;
 	}
 
+	ArrayList<Position> getPossiblePawnMoves(Position p){
+		
+		assert(getPieceAtPosition(p).type == Values.PAWN); //make sure that it's a queen!
+		assert(p.doesExistOnBoard());
+		if(!p.doesExistOnBoard()){
+			return null;
+		}
+		//the eight ways to attack [circle]. start at top and go clock-wise.
+		ArrayList<Position> output = new ArrayList<Position>();
+		int side = getPieceAtPosition(p).side;
+		
+		boolean isFirstMove = false; //figure out if it is our first move; if it is, we can move forwards 2.
+		if((side == Values.SIDE_BLACK && p.getRow() == Values.PAWN_ROW_BLACK) || (side == Values.SIDE_WHITE && p.getRow() == Values.PAWN_ROW_WHITE))isFirstMove = true; //we're on the original pawn file for our color. [Where all the pawns start]
+		
+		if((getPieceAtPosition(p.getPositionRelative(0, 1)).isEmpty() && getPieceAtPosition(p.getPositionRelative(0, 2)).isEmpty()) && isFirstMove){output.add(p.getPositionRelative(0, 2));} //there are two empty squares in front of us, and we're on the original file. We can move 2 forwards!
+		if(getPieceAtPosition(p.getPositionRelative(0, 1)).isEmpty()){output.add(p.getPositionRelative(0, 1));} //See if we can move forwards; there cannot be a piece there for this to work!
+		if(getPieceAtPosition(p.getPositionRelative(1, 1)).getSide() == Piece.getOpposingSide(side)){output.add(p.getPositionRelative(1, 1));} //see if we can move diagonally for a capture. They must have a piece there for this to work!
+		
+		// TODO we still have to deal with en passant....
+		
+		return output;
+	}
+	
 	boolean isCheckMate(){
 		
 	}
