@@ -76,7 +76,7 @@ public class Board {
 			System.out.println("Testing: " + currentPiece);
 			ArrayList<Position> possibleLocationsAfterMove = getPossibleMoves(currentPiece); //get all the places it can go
 			for(Position currentEndingPosition : possibleLocationsAfterMove){ //iterate through each place it can go
-				Move m = new Move(currentPiece, currentPiece.getPosition(), currentEndingPosition);
+				Move m = new Move(currentPiece, currentEndingPosition);
 				System.out.println(m);
 				if(isLegalMove(m)){ //this is not totally done yet...
 					output.add(m);

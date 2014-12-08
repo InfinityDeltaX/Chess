@@ -17,7 +17,12 @@ public class Position {
 	
 	@Override public String toString(){
 		return "[" + this.file + ", " + this.row + "]";
-		
+	}
+	
+	public String convertCoordsToNotation(){
+		char file;
+		file = (char) ((getFile() +(int) 'a'));
+		return("["+file+(row)+"]");
 	}
 
 	Position getPositionRelative(int x, int y){

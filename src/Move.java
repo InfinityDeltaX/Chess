@@ -5,13 +5,15 @@ public class Move {
 	Position toMoveTo;
 	Position originalPosition;
 	
-	public Move(Piece p, Position originalPosition, Position toMoveTo){
+	public Move(Piece p, Position toMoveTo){
 		piece = p;
 		this.toMoveTo = toMoveTo;
-		this.originalPosition = originalPosition;
+		this.originalPosition = p.getPosition();
 	}
 	
-	
+	String getNotation(){
+		return (getToMoveTo().convertCoordsToNotation() + getOriginalPosition().convertCoordsToNotation());
+	}
 
 	@Override
 	public String toString() {
@@ -34,6 +36,14 @@ public class Move {
 
 	public void setToMoveTo(Position toMoveTo) {
 		this.toMoveTo = toMoveTo;
+	}
+
+	public Position getOriginalPosition() {
+		return originalPosition;
+	}
+
+	public void setOriginalPosition(Position originalPosition) {
+		this.originalPosition = originalPosition;
 	}
 	
 	

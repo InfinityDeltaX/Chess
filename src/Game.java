@@ -8,22 +8,23 @@ public class Game {
 		
 		//Testing
 		Position p = new Position(3, 1);
+		Position moveTo = new Position(5, 3);
+		Piece piece = new Piece(p, Values.SIDE_BLACK, Values.BISHOP);
+		Move m = new Move(piece, moveTo);
 		Board b = new Board();
 		b.setToDefaultBoard();
 		
-		//System.out.println(p.getOtherPositionsOnDiagonalRtoL());
-		ArrayList<Position> test = new ArrayList<Position>();
-		test.add(p);
-		ArrayList<Position> test2 = new ArrayList<Position>(test);
-		test2.remove(p);
-		System.out.println(test);
-		System.out.println(test2);
+		
+		
+		System.out.println(p.convertCoordsToNotation());
 		
 		b.setPieceAtPosition(p, Values.KING_WHITE);
 		
-		System.out.println("Real Pieces: " + b.getArrayListofMyRealPieces(2));
+		//System.out.println("Real Pieces: " + b.getArrayListofMyRealPieces(2));
 		
-		System.out.println(b.getAllPossibleMoves(Values.SIDE_BLACK));
+		//System.out.println(b.getAllPossibleMoves(Values.SIDE_BLACK));
+		
+		System.out.println(m.getNotation());
 		
 		System.out.println(b.getPossibleKingMoves(p));
 		System.out.println("...");
