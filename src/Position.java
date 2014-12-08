@@ -22,7 +22,7 @@ public class Position {
 	public String convertCoordsToNotation(){
 		char file;
 		file = (char) ((getFile() +(int) 'a'));
-		return("["+file+(row)+"]");
+		return(""+file+(row));
 	}
 
 	Position getPositionRelative(int x, int y){
