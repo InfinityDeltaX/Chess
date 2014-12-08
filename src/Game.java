@@ -1,3 +1,4 @@
+import java.io.ObjectInputStream.GetField;
 import java.util.ArrayList;
 
 
@@ -19,6 +20,10 @@ public class Game {
 		System.out.println(test2);
 		
 		b.setPieceAtPosition(p, Values.KING_WHITE);
+		
+		System.out.println("Real Pieces: " + b.getArrayListofMyRealPieces(2));
+		
+		System.out.println(b.getAllPossibleMoves(Values.SIDE_BLACK));
 		
 		System.out.println(b.getPossibleKingMoves(p));
 		System.out.println("...");

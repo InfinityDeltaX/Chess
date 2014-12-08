@@ -18,6 +18,11 @@ public class Piece {
 		this.myPosition = p;
 	}
 	
+	@Override
+	public String toString(){
+		return (getTypeName(this.getType()) + " on position " + this.getPosition() + " [Side: " +this.getSide() + "]");
+	}
+	
 	static Piece getCorrespondingPiece(Position p, int input){
 		return new Piece(p, input/100, input%100);
 	}
@@ -36,7 +41,26 @@ public class Piece {
 	static int getOpposingSide(int side){
 		if(side == Values.SIDE_BLACK) return Values.SIDE_WHITE;
 		else if(side == Values.SIDE_WHITE) return Values.SIDE_BLACK;
-		else if(side == 0)return 0;
+		else{
+			assert(false);
+			return -100;
+		}
+	}
+	
+	static String getTypeName(int type){
+		if(type == 1){
+			return "Pawn";
+		} else if(type == 2){
+			return "Bishop";
+		} else if(type == 3){
+			return "King";
+		} else if(type == 4){
+			return "Queen";
+		} else if(type == 5){
+			return "Rook";
+		} else if(type == 6){
+			return "Knight";
+		} else return "Invalid";
 	}
 	
 	//setters and getters
