@@ -22,41 +22,17 @@ public class Game {
 		
 		//System.out.println("Real Pieces: " + b.getArrayListofMyRealPieces(2));
 		
-		//System.out.println(b.getAllPossibleMoves(Values.SIDE_BLACK));
+		System.out.println(b.getAllPossibleMoves(Values.SIDE_BLACK));
 		
 		//System.out.println(m.getNotation());
 		
-		System.out.println(isFairPieceSquareTable(Values.PIECE_SQUARE_KING_END));
+		System.out.println(Values.isFairPieceSquareTable(Values.PIECE_SQUARE_KING_END));
+		System.out.println(Values.pieceSquareTableTotal(Values.PIECE_SQUARE_PAWN_START));
 		
 		System.out.println(b.getPossibleMoves(piece));
 		System.out.println(b.evaluateMaterial());
 		System.out.println("...");
 		System.out.println("...");
-	}
-	
-	int[][] getPieceSquareTables(int side, int type){ //given a side and a type, return the corresponding piece-square table. Flip if black, etc.
-		
-	}
-	
-	static boolean isFairPieceSquareTable(int[][] input){
-		int count = 0;
-		for(int i = 0; i < input.length; i++){
-			for (int j = 0; j < input[0].length; j++) {
-				count += input[i][j];
-			}
-		}
-		return (count == 0);
-	}
-	
-	static boolean allPieceSquareTablesFair(){
-		if(isFairPieceSquareTable(Values.PIECE_SQUARE_KING_END) && //test all piece-square tables for fairness. 
-			isFairPieceSquareTable(Values.PIECE_SQUARE_KING_END) &&
-			isFairPieceSquareTable(Values.PIECE_SQUARE_KING_END) &&
-			isFairPieceSquareTable(Values.PIECE_SQUARE_KING_END) &&
-			isFairPieceSquareTable(Values.PIECE_SQUARE_KING_END) &&
-			isFairPieceSquareTable(Values.PIECE_SQUARE_KING_END)) return true;
-		else return false;
-			
 	}
 	
 }

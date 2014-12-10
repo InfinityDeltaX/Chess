@@ -24,12 +24,12 @@ public class Values {
 	public static final int ROOK = 5;
 	public static final int KNIGHT = 6;
 	
-	public static final int POINT_VALUE_PAWN = 1;
-	public static final int POINT_VALUE_BISHOP = 3;
-	public static final int POINT_VALUE_KING = 10000;
-	public static final int POINT_VALUE_QUEEN = 9;
-	public static final int POINT_VALUE_ROOK = 5;
-	public static final int POINT_VALUE_KNIGHT = 3;
+	public static final int POINT_VALUE_PAWN = 100;
+	public static final int POINT_VALUE_BISHOP = 300;
+	public static final int POINT_VALUE_KING = 1000000;
+	public static final int POINT_VALUE_QUEEN = 900;
+	public static final int POINT_VALUE_ROOK = 500;
+	public static final int POINT_VALUE_KNIGHT = 300;
 	
 	public static final int SIDE_WHITE = 1;
 	public static final int SIDE_BLACK = 2;
@@ -49,6 +49,84 @@ public class Values {
 		{0, 0, 0, 0, 0, 0, 0, 0}, 
 		{0, 0, 0, 0, 0, 0, 0, 0}
 		};
+	
+	public static final int[][] PIECE_SQUARE_BISHOP_START = new int[][]{ //applies for the white side; for black, flip the board over the X axis.
+		{0, 0, 0, 0, 0, 0, 0, 0}, 
+		{0, 0, 0, 0, 0, 0, 0, 0}, 
+		{0, 0, 0, 0, 0, 0, 0, 0}, 
+		{0, 0, 0, 0, 0, 0, 0, 0}, 
+		{0, 0, 0, 0, 0, 0, 0, 0}, 
+		{0, 0, 0, 0, 0, 0, 0, 0}, 
+		{0, 0, 0, 0, 0, 0, 0, 0}, 
+		{0, 0, 0, 0, 0, 0, 0, 0}
+		};
+	
+	public static final int[][] PIECE_SQUARE_ROOK_START = new int[][]{ //applies for the white side; for black, flip the board over the X axis.
+		{-2, -2, -2, -2, -2, -2, -2, -2}, 
+		{14, 14, 14, 14, 14, 14, 14, 14}, 
+		{-2, -2, -2, -2, -2, -2, -2, -2}, 
+		{-2, -2, -2, -2, -2, -2, -2, -2}, 
+		{-2, -2, -2, -2, -2, -2, -2, -2}, 
+		{-2, -2, -2, -2, -2, -2, -2, -2}, 
+		{-2, -2, -2, -2, -2, -2, -2, -2}, 
+		{-2, -2, -2, -2, -2, -2, -2, -2}
+		};
+	
+	public static final int[][] PIECE_SQUARE_KNIGHT_START = new int[][]{ //applies for the white side; for black, flip the board over the X axis.
+		{-20, -10, -10, -10, -10, -10, -10, -20}, 
+		{-10, -7, 5, -5, -5, 5, -7, -10}, 
+		{-10, 5, 20, 20, 20, 20, 5, -10}, 
+		{-10, -5, 20, 27, 27, 20, -5, -10}, 
+		{-10, -5, 20, 27, 27, 20, -5, -10}, 
+		{-10, 5, 20, 20, 20, 20, 5, -10}, 
+		{-10, -7, 5, -5, -5, 5, -7, -10}, 
+		{-20, -10, -10, -10, -10, -10, -10, -20}
+		};
+	
+	public static final int[][] PIECE_SQUARE_PAWN_START = new int[][]{ //applies for the white side; for black, flip the board over the X axis.
+		{0, 0, 0, 0, 0, 0, 0, 0}, 
+		{8, 8, 8, 8, 8, 8, 8, 8}, 
+		{5, 5, 5, 5, 5, 5, 5, 5}, 
+		{0, 0, 0, 7, 7, 0, 0, 0}, 
+		{-3, -3, 10, 10, -3, -3, -3, -3}, 
+		{-6, -6, -6, -6, -6, -6, -6, -6}, 
+		{-9, -9, -9, -9, -9, -9, -9, -9}, 
+		{0, 0, 0, 0, 0, 0, 0, 0}
+		};
+	
 	// TODO
+	
+	int[][] getPieceSquareTables(int side, int type){ //given a side and a type, return the corresponding piece-square table. Flip if black, etc.
+		
+	}
+	
+	static int pieceSquareTableTotal(int[][] input){
+		int count = 0;
+		for(int i = 0; i < input.length; i++){
+			for (int j = 0; j < input[0].length; j++) {
+				count += input[i][j];
+			}
+		}
+		return count;
+	}
+	
+	static boolean isFairPieceSquareTable(int[][] input){
+		return(pieceSquareTableTotal(input) == 0);
+	}
+	
+	static boolean allPieceSquareTablesFair(){
+		boolean istrue = true;
+		if(isFairPieceSquareTable(Values.PIECE_SQUARE_KING_END)){ istrue = false; System.out.println("Failed"); }
+		if(isFairPieceSquareTable(Values.PIECE_SQUARE_KING_END)){ istrue = false; System.out.println("Failed"); }
+		if(isFairPieceSquareTable(Values.PIECE_SQUARE_KING_END)){ istrue = false; System.out.println("Failed"); }
+		if(isFairPieceSquareTable(Values.PIECE_SQUARE_KING_END)){ istrue = false; System.out.println("Failed"); }
+		if(isFairPieceSquareTable(Values.PIECE_SQUARE_KING_END)){ istrue = false; System.out.println("Failed"); }
+		if(isFairPieceSquareTable(Values.PIECE_SQUARE_KING_END)){ istrue = false; System.out.println("Failed"); }
+		if(isFairPieceSquareTable(Values.PIECE_SQUARE_KING_END)){ istrue = false; System.out.println("Failed"); }
+		if(isFairPieceSquareTable(Values.PIECE_SQUARE_KING_END)){ istrue = false; System.out.println("Failed"); }
+		
+		return istrue;
+			
+	}
 
 }
