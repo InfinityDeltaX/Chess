@@ -15,11 +15,13 @@ public class Board {
 
 	void setPieceAtPosition(Position positionToSet, int pieceToPlace){ //mostly a debugging function
 		//should NOT be passed a general 5, for instance. Has to have side as well; 205 is acceptable.
+		if(!((pieceToPlace == Values.EMPTY_SQUARE) || (pieceToPlace <= Values.KNIGHT_BLACK) && (pieceToPlace >= Values.PAWN_WHITE))){
+			assert(false); //needs to be a value between the biggest side-associated piece, KNIGHT_BLACK, and the smallest side-associated piece, PAWN_WHITE.
+		}
 		System.out.println(positionToSet);
 		boardPosition[positionToSet.getFile()][positionToSet.getRow()] = pieceToPlace;
+		
 	}
-
-
 
 	void setToDefaultBoard(){
 		boardPosition = new int[][]{
@@ -99,9 +101,29 @@ public class Board {
 		return output;
 	}
 
-	int evaluate(){
-
+	int evaluate(){ //White side is trying to maximize, Black to minimize. 
+		//first, deal with material, then, deal with piece-square tables.
 	}
+	
+	int evaluateMaterial(){ //returns the difference in material. Positive favors white.
+		return(evaluateMaterialSide(Values.SIDE_WHITE) - evaluateMaterialSide(Values.SIDE_BLACK));
+	}
+	
+	int evaluateMaterialSide(int side){ //gets a positive int representing the total material for either side. 
+		int count = 0;
+		count += Values.POINT_VALUE_PAWN * countPiecesOfType(Values.PAWN, side);
+		count += Values.POINT_VALUE_BISHOP * countPiecesOfType(Values.BISHOP, side);
+		count += Values.POINT_VALUE_KNIGHT * countPiecesOfType(Values.KNIGHT, side);
+		count += Values.POINT_VALUE_ROOK * countPiecesOfType(Values.ROOK, side);
+		count += Values.POINT_VALUE_QUEEN * countPiecesOfType(Values.QUEEN, side);
+		count += Values.POINT_VALUE_KING * countPiecesOfType(Values.KING, side);
+		return count;
+	}
+	
+	int evaluatePieceSquareSide(int side){
+		
+	}
+	
 	void makeMove(Move m){
 		setPieceAtPosition(m.originalPosition, Values.EMPTY_SQUARE);
 		setPieceAtPosition(m.toMoveTo, m.getPiece().getCorrespondingInt());
@@ -328,5 +350,15 @@ public class Board {
 		}
 		//System.out.println(output);
 		return output;
+	}
+	
+	int countPiecesOfType(int type, int side){ //sent pawn, black, will return the number of black pawns.
+		int counter = 0;
+		for(Piece p : getArrayListofMyRealPieces(side)){
+			if(p.getType() == type){
+				counter++;
+			}
+		}
+		return counter;
 	}
 }
