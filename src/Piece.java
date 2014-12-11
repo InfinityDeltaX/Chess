@@ -37,7 +37,8 @@ public class Piece {
 		return p.type;
 	}
 	int getCorrespondingInt(){
-		return this.type;
+		//return this.type; //wtf??? isn't this totally wrong?
+		return this.getSide()*100 + this.getType();
 	}
 	
 	static int getOpposingSide(int side){
@@ -67,19 +68,23 @@ public class Piece {
 	
 	//setters and getters
 	public int getFile() {
-		return file;
+		return myPosition.getFile();
+		//return file;
 	}
 
 	public void setFile(int file) {
-		this.file = file;
+		this.myPosition.setFile(file);
+		//this.file = file;
 	}
 
 	public int getRow() {
-		return row;
+		return myPosition.getRow();
+		//return row;
 	}
 
 	public void setRow(int row) {
-		this.row = row;
+		//this.row = row;
+		myPosition.setRow(row);
 	}
 
 	public int getSide() {

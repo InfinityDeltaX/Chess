@@ -13,14 +13,21 @@ public class Board {
 		boardPosition = new int[8][8];
 	}
 
-	void setPieceAtPosition(Position positionToSet, int pieceToPlace){ //mostly a debugging function
+	void setPieceAtPosition(Position positionToSet, Piece pieceToPlace){ //mostly a debugging function
+		int intOfPieceToPlace = pieceToPlace.getCorrespondingInt();
 		//should NOT be passed a general 5, for instance. Has to have side as well; 205 is acceptable.
-		if(!((pieceToPlace == Values.EMPTY_SQUARE) || (pieceToPlace <= Values.KNIGHT_BLACK) && (pieceToPlace >= Values.PAWN_WHITE))){
+		if(!((intOfPieceToPlace == Values.EMPTY_SQUARE) || (intOfPieceToPlace <= Values.KNIGHT_BLACK) && (intOfPieceToPlace >= Values.PAWN_WHITE))){
 			assert(false); //needs to be a value between the biggest side-associated piece, KNIGHT_BLACK, and the smallest side-associated piece, PAWN_WHITE.
 		}
 		System.out.println(positionToSet);
-		boardPosition[positionToSet.getFile()][positionToSet.getRow()] = pieceToPlace;
+		boardPosition[positionToSet.getFile()][positionToSet.getRow()] = intOfPieceToPlace;
 		
+		//we need to change the coordinates of the piece that we've been passes, as well.
+		pieceToPlace.setPosition(positionToSet);
+	}
+	
+	void setPositionToEmpty(Position positionToSet){
+		boardPosition[positionToSet.getFile()][positionToSet.getRow()] = 0;
 	}
 
 	void setToDefaultBoard(){
@@ -81,7 +88,7 @@ public class Board {
 				Move m = new Move(currentPiece, currentEndingPosition);
 				System.out.println(m);
 				if(isLegalMove(m)){ //this is not totally done yet...
-					output.add(m);
+					output.add(m); // TODO
 				}
 			}
 		}
@@ -103,6 +110,8 @@ public class Board {
 
 	int evaluate(){ //White side is trying to maximize, Black to minimize. 
 		//first, deal with material, then, deal with piece-square tables.
+		return evaluateMaterial();
+		// TODO add piece-square tables.
 	}
 	
 	int evaluateMaterial(){ //returns the difference in material. Positive favors white.
@@ -125,8 +134,9 @@ public class Board {
 	}
 	
 	void makeMove(Move m){
-		setPieceAtPosition(m.originalPosition, Values.EMPTY_SQUARE);
-		setPieceAtPosition(m.toMoveTo, m.getPiece().getCorrespondingInt());
+		//setPieceAtPosition(m.originalPosition, Values.EMPTY_SQUARE);
+		setPositionToEmpty(m.originalPosition);
+		setPieceAtPosition(m.toMoveTo, m.getPiece());
 	}
 	boolean isLegalMove(Move moveToCheck){
 

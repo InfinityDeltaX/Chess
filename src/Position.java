@@ -94,4 +94,10 @@ public class Position {
 	int getFile(){
 		return this.file;
 	}
+	void setRow(int row){
+		this.row = row;
+	}
+	void setFile(int file){
+		this.file = file;
+	}
 }
