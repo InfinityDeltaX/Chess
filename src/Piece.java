@@ -4,6 +4,7 @@ import javax.swing.plaf.basic.BasicLookAndFeel;
 
 
 public class Piece {
+	boolean hasBeenPromoted;
 	int file;
 	int row;
 	int side;
@@ -16,6 +17,7 @@ public class Piece {
 		this.side = side;
 		this.type = type;
 		this.myPosition = p;
+		hasBeenPromoted = false;
 	}
 	
 	@Override
