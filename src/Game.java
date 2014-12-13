@@ -97,6 +97,42 @@ public class Game {
 		return currentLowest;
 	}
 
+	static int perf(Board input, int side, int depth){
+		int total = 0;
+		if(depth == 0){
+			printBoard(input, side);
+			return 1;
+		}
+		else {
+			for(Board b : input.getAllPossibleNextBoards(Values.getOpposingSide(side))){
+				total+= perf(b, Values.getOpposingSide(side), depth-1);
+			}
+		}
+		return total;
+	}
+	
+
+static String printBoard(Board b, int activeSide){
+		char castling = '-';
+		char enPassant = '-';
+		int halfMoveClock = 0;
+		int fullMoveClock = 0;
+		
+		StringBuilder sb = new StringBuilder();
+		for(int i = 8; i >=1; i--){
+			for(int j = 0; j < 8; j++){
+				Position current = new Position(j, i);
+				if(b.getPieceAtPosition(current) == null)sb.append(' ');
+				else if(b.getPieceAtPosition(current).getSide() == Values.SIDE_WHITE){
+				sb.append(b.getPieceAtPosition(current).getTypeLetter());
+				} else sb.append(Character.toLowerCase(b.getPieceAtPosition(current).getTypeLetter()));
+			}
+			sb.append("/ \n");
+		}
+		System.out.println(sb);
+		return sb.toString();
+	}
+	
 	int maxNode(Board inputBoard, int remainingDepth){
 
 		int currentHighest = 0;

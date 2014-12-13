@@ -304,15 +304,15 @@ public class Board {
 		if(side == Values.SIDE_WHITE){
 			if((getPieceAtPosition(p.getPositionRelative(0, 1)).isEmpty() && getPieceAtPosition(p.getPositionRelative(0, 2)).isEmpty()) && isFirstMove){output.add(p.getPositionRelative(0, 2));} //there are two empty squares in front of us, and we're on the original file. We can move 2 forwards!
 			if(getPieceAtPosition(p.getPositionRelative(0, 1)).isEmpty()){output.add(p.getPositionRelative(0, 1));} //See if we can move forwards; there cannot be a piece there for this to work!
-			if(p.getPositionRelative(1, 1).doesExistOnBoard() && (getPieceAtPosition(p.getPositionRelative(1, 1)).getSide() == Piece.getOpposingSide(side))){output.add(p.getPositionRelative(1, 1));} //see if we can move diagonally for a capture. They must have a piece there for this to work!
-			if(p.getPositionRelative(-1, 1).doesExistOnBoard() && (getPieceAtPosition(p.getPositionRelative(-1, 1)).getSide() == Piece.getOpposingSide(side))){output.add(p.getPositionRelative(-1, 1));} //check diagonally the other way
+			if(p.getPositionRelative(1, 1).doesExistOnBoard() && (getPieceAtPosition(p.getPositionRelative(1, 1)).getSide() == Values.getOpposingSide(side))){output.add(p.getPositionRelative(1, 1));} //see if we can move diagonally for a capture. They must have a piece there for this to work!
+			if(p.getPositionRelative(-1, 1).doesExistOnBoard() && (getPieceAtPosition(p.getPositionRelative(-1, 1)).getSide() == Values.getOpposingSide(side))){output.add(p.getPositionRelative(-1, 1));} //check diagonally the other way
 		}
 
 		if(side == Values.SIDE_BLACK){
 			if((getPieceAtPosition(p.getPositionRelative(0, -1)).isEmpty() && getPieceAtPosition(p.getPositionRelative(0, -2)).isEmpty()) && isFirstMove){output.add(p.getPositionRelative(0, -2));} //there are two empty squares in front of us, and we're on the original file. We can move 2 forwards!
 			if(getPieceAtPosition(p.getPositionRelative(0, -1)).isEmpty()){output.add(p.getPositionRelative(0, -1));} //See if we can move forwards; there cannot be a piece there for this to work!
-			if(p.getPositionRelative(1, -1).doesExistOnBoard() && (getPieceAtPosition(p.getPositionRelative(1, -1)).getSide() == Piece.getOpposingSide(side))){output.add(p.getPositionRelative(1, -1));} //see if we can move diagonally for a capture. They must have a piece there for this to work!
-			if(p.getPositionRelative(-1, -1).doesExistOnBoard() && (getPieceAtPosition(p.getPositionRelative(-1, -1)).getSide() == Piece.getOpposingSide(side))){output.add(p.getPositionRelative(-1, -1));} //check diagonally the other way
+			if(p.getPositionRelative(1, -1).doesExistOnBoard() && (getPieceAtPosition(p.getPositionRelative(1, -1)).getSide() == Values.getOpposingSide(side))){output.add(p.getPositionRelative(1, -1));} //see if we can move diagonally for a capture. They must have a piece there for this to work!
+			if(p.getPositionRelative(-1, -1).doesExistOnBoard() && (getPieceAtPosition(p.getPositionRelative(-1, -1)).getSide() == Values.getOpposingSide(side))){output.add(p.getPositionRelative(-1, -1));} //check diagonally the other way
 		}
 		// TODO we still have to deal with en passant....
 

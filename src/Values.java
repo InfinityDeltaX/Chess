@@ -128,5 +128,14 @@ public class Values {
 		return istrue;
 			
 	}
+	
+	static int getOpposingSide(int side){
+		if(side == Values.SIDE_BLACK) return Values.SIDE_WHITE;
+		else if(side == Values.SIDE_WHITE) return Values.SIDE_BLACK;
+		else{
+			assert(false);
+			return -100;
+		}
+	}
 
 }

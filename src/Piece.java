@@ -41,15 +41,6 @@ public class Piece {
 		return this.getSide()*100 + this.getType();
 	}
 	
-	static int getOpposingSide(int side){
-		if(side == Values.SIDE_BLACK) return Values.SIDE_WHITE;
-		else if(side == Values.SIDE_WHITE) return Values.SIDE_BLACK;
-		else{
-			assert(false);
-			return -100;
-		}
-	}
-	
 	static String getTypeName(int type){
 		if(type == 1){
 			return "Pawn";
