@@ -57,6 +57,10 @@ public class Piece {
 		} else return "Invalid";
 	}
 	
+	char getTypeLetter(){
+		return getTypeName(this.getType()).charAt(0);
+	}
+	
 	//setters and getters
 	public int getFile() {
 		return myPosition.getFile();
@@ -92,6 +96,13 @@ public class Piece {
 
 	public void setPosition(Position myPosition) {
 		this.myPosition = myPosition;
+	}
+
+	public String getSideNames() {
+		if(this.getSide() == Values.SIDE_WHITE) return "white";
+		if(this.getSide() == Values.SIDE_BLACK) return "black";
+		else return "wtf";
+		
 	}
 
 }

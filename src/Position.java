@@ -15,14 +15,14 @@ public class Position {
 		this(p.getFile(), p.getRow());
 	}
 	
-	@Override public String toString(){
+	public String getMathCoords(){ //0-7
 		return "[" + this.file + ", " + this.row + "]";
 	}
 	
-	public String convertCoordsToNotation(){
+	@Override public String toString(){
 		char file;
 		file = (char) ((getFile() +(int) 'a'));
-		return(""+file+(row));
+		return(""+file+(row+1));
 	}
 
 	Position getPositionRelative(int x, int y){

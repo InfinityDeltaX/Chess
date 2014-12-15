@@ -19,13 +19,13 @@ public class Board {
 		if(!((intOfPieceToPlace == Values.EMPTY_SQUARE) || (intOfPieceToPlace <= Values.KNIGHT_BLACK) && (intOfPieceToPlace >= Values.PAWN_WHITE))){
 			assert(false); //needs to be a value between the biggest side-associated piece, KNIGHT_BLACK, and the smallest side-associated piece, PAWN_WHITE.
 		}
-		System.out.println(positionToSet);
+		//System.out.println(positionToSet);
 		boardPosition[positionToSet.getFile()][positionToSet.getRow()] = intOfPieceToPlace;
-		
+
 		//we need to change the coordinates of the piece that we've been passes, as well.
 		pieceToPlace.setPosition(positionToSet);
 	}
-	
+
 	void setPositionToEmpty(Position positionToSet){
 		boardPosition[positionToSet.getFile()][positionToSet.getRow()] = 0;
 	}
@@ -82,11 +82,11 @@ public class Board {
 		ArrayList<Move> output = new ArrayList<Move>();
 		ArrayList<Piece> myPieces = getArrayListofMyRealPieces(side);
 		for(Piece currentPiece : myPieces){ //iterate through each of our pieces.
-			System.out.println("Testing: " + currentPiece);
+			//System.out.println("Testing: " + currentPiece);
 			ArrayList<Position> possibleLocationsAfterMove = getPossibleMoves(currentPiece); //get all the places it can go
 			for(Position currentEndingPosition : possibleLocationsAfterMove){ //iterate through each place it can go
 				Move m = new Move(currentPiece, currentEndingPosition);
-				System.out.println(m);
+				//System.out.println(m);
 				if(isLegalMove(m)){ //this is not totally done yet...
 					output.add(m); // TODO
 				}
@@ -97,9 +97,9 @@ public class Board {
 
 	ArrayList<Board> getAllPossibleNextBoards(int side){
 		//iterate through getAllPossibleMoves and make the move.
-		
+
 		ArrayList<Board> output = new ArrayList<Board>();
-		
+
 		for(Move m : getAllPossibleMoves(side)){
 			Board newBoard = new Board(this);
 			newBoard.makeMove(m);
@@ -113,11 +113,11 @@ public class Board {
 		return evaluateMaterial();
 		// TODO add piece-square tables.
 	}
-	
+
 	int evaluateMaterial(){ //returns the difference in material. Positive favors white.
 		return(evaluateMaterialSide(Values.SIDE_WHITE) - evaluateMaterialSide(Values.SIDE_BLACK));
 	}
-	
+
 	int evaluateMaterialSide(int side){ //gets a positive int representing the total material for either side. 
 		int count = 0;
 		count += Values.POINT_VALUE_PAWN * countPiecesOfType(Values.PAWN, side);
@@ -128,11 +128,11 @@ public class Board {
 		count += Values.POINT_VALUE_KING * countPiecesOfType(Values.KING, side);
 		return count;
 	}
-	
+
 	int evaluatePieceSquareSide(int side){
-		
+
 	}
-	
+
 	void makeMove(Move m){
 		//setPieceAtPosition(m.originalPosition, Values.EMPTY_SQUARE);
 		setPositionToEmpty(m.originalPosition);
@@ -146,9 +146,9 @@ public class Board {
 		if(afterMove.isKingInCheck()){
 			return false; //if the king is in check after the move, we can't make it.
 		}
-		
+
 		//is this all that is required?
-		
+
 		return true;
 
 	}
@@ -302,15 +302,15 @@ public class Board {
 		if((side == Values.SIDE_BLACK && p.getRow() == Values.PAWN_ROW_BLACK) || (side == Values.SIDE_WHITE && p.getRow() == Values.PAWN_ROW_WHITE))isFirstMove = true; //we're on the original pawn file for our color. [Where all the pawns start]
 
 		if(side == Values.SIDE_WHITE){
-			if((getPieceAtPosition(p.getPositionRelative(0, 1)).isEmpty() && getPieceAtPosition(p.getPositionRelative(0, 2)).isEmpty()) && isFirstMove){output.add(p.getPositionRelative(0, 2));} //there are two empty squares in front of us, and we're on the original file. We can move 2 forwards!
-			if(getPieceAtPosition(p.getPositionRelative(0, 1)).isEmpty()){output.add(p.getPositionRelative(0, 1));} //See if we can move forwards; there cannot be a piece there for this to work!
+			if(p.getPositionRelative(0, 2).doesExistOnBoard() && (getPieceAtPosition(p.getPositionRelative(0, 1)).isEmpty() && getPieceAtPosition(p.getPositionRelative(0, 2)).isEmpty()) && isFirstMove){output.add(p.getPositionRelative(0, 2));} //there are two empty squares in front of us, and we're on the original file. We can move 2 forwards!
+			if(p.getPositionRelative(0, 1).doesExistOnBoard() && getPieceAtPosition(p.getPositionRelative(0, 1)).isEmpty()){output.add(p.getPositionRelative(0, 1));} //See if we can move forwards; there cannot be a piece there for this to work!
 			if(p.getPositionRelative(1, 1).doesExistOnBoard() && (getPieceAtPosition(p.getPositionRelative(1, 1)).getSide() == Values.getOpposingSide(side))){output.add(p.getPositionRelative(1, 1));} //see if we can move diagonally for a capture. They must have a piece there for this to work!
 			if(p.getPositionRelative(-1, 1).doesExistOnBoard() && (getPieceAtPosition(p.getPositionRelative(-1, 1)).getSide() == Values.getOpposingSide(side))){output.add(p.getPositionRelative(-1, 1));} //check diagonally the other way
 		}
 
 		if(side == Values.SIDE_BLACK){
-			if((getPieceAtPosition(p.getPositionRelative(0, -1)).isEmpty() && getPieceAtPosition(p.getPositionRelative(0, -2)).isEmpty()) && isFirstMove){output.add(p.getPositionRelative(0, -2));} //there are two empty squares in front of us, and we're on the original file. We can move 2 forwards!
-			if(getPieceAtPosition(p.getPositionRelative(0, -1)).isEmpty()){output.add(p.getPositionRelative(0, -1));} //See if we can move forwards; there cannot be a piece there for this to work!
+			if(p.getPositionRelative(0, -2).doesExistOnBoard() && (getPieceAtPosition(p.getPositionRelative(0, -1)).isEmpty() && getPieceAtPosition(p.getPositionRelative(0, -2)).isEmpty()) && isFirstMove){output.add(p.getPositionRelative(0, -2));} //there are two empty squares in front of us, and we're on the original file. We can move 2 forwards!
+			if(p.getPositionRelative(0, -1).doesExistOnBoard() && getPieceAtPosition(p.getPositionRelative(0, -1)).isEmpty()){output.add(p.getPositionRelative(0, -1));} //See if we can move forwards; there cannot be a piece there for this to work!
 			if(p.getPositionRelative(1, -1).doesExistOnBoard() && (getPieceAtPosition(p.getPositionRelative(1, -1)).getSide() == Values.getOpposingSide(side))){output.add(p.getPositionRelative(1, -1));} //see if we can move diagonally for a capture. They must have a piece there for this to work!
 			if(p.getPositionRelative(-1, -1).doesExistOnBoard() && (getPieceAtPosition(p.getPositionRelative(-1, -1)).getSide() == Values.getOpposingSide(side))){output.add(p.getPositionRelative(-1, -1));} //check diagonally the other way
 		}
@@ -360,6 +360,45 @@ public class Board {
 		}
 		//System.out.println(output);
 		return output;
+	}
+
+	static String FENString(Board b, int activeSide){
+		char castling = '-';
+		char enPassant = '-';
+		int halfMoveClock = 0;
+		int fullMoveClock = 0;
+
+		StringBuilder sb = new StringBuilder();
+		for(int i = 7; i >= 1; i--){
+			for(int j = 1; j < 8; j++){
+				Position current = new Position(j, i);
+				if(b.getPieceAtPosition(current) == null)sb.append(' ');
+				else if(b.getPieceAtPosition(current).getSide() == Values.SIDE_WHITE){
+					sb.append(b.getPieceAtPosition(current).getTypeLetter());
+				} else sb.append(Character.toLowerCase(b.getPieceAtPosition(current).getTypeLetter()));
+			}
+			sb.append("/ \n");
+		}
+		System.out.println(sb);
+		return sb.toString();
+	}
+
+	@Override
+	public String toString() {
+
+		StringBuilder sb = new StringBuilder();
+		for(int i = 7; i >= 0; i--){
+			for(int j = 0; j < 8; j++){
+				Position current = new Position(j, i);
+				if(this.getPieceAtPosition(current) == null)sb.append(' ');
+				else if(this.getPieceAtPosition(current).getSide() == Values.SIDE_WHITE){
+					sb.append(this.getPieceAtPosition(current).getTypeLetter());
+				} else sb.append(Character.toLowerCase(this.getPieceAtPosition(current).getTypeLetter()));
+			}
+			sb.append("\n");
+		}
+		System.out.println(sb);
+		return sb.toString();
 	}
 	
 	int countPiecesOfType(int type, int side){ //sent pawn, black, will return the number of black pawns.

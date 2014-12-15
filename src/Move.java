@@ -17,7 +17,7 @@ public class Move {
 
 	@Override
 	public String toString() {
-		return ("Move " + Piece.getTypeName(piece.type) + " at position " + originalPosition + " to " + toMoveTo);
+		return ("Move " + piece.getSideNames() + " " + Piece.getTypeName(piece.type) + " at position " + originalPosition + " to " + toMoveTo);
 	}
 
 

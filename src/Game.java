@@ -10,29 +10,18 @@ public class Game {
 		Position p = new Position(3, 4);
 		Position moveTo = new Position(5, 3);
 		Piece piece = new Piece(p, Values.SIDE_BLACK, Values.BISHOP);
-		//Move m = new Move(piece, moveTo);
+		Move m = new Move(piece, moveTo);
 		Board b = new Board();
 		b.setToDefaultBoard();
-
-
-
-		System.out.println(p.convertCoordsToNotation());
-
-		b.setPieceAtPosition(p, piece);
-
-		//System.out.println("Real Pieces: " + b.getArrayListofMyRealPieces(2));
-
-		System.out.println(b.getAllPossibleMoves(Values.SIDE_BLACK));
-
-		//System.out.println(m.getNotation());
-
-		System.out.println(Values.isFairPieceSquareTable(Values.PIECE_SQUARE_KING_END));
-		System.out.println(Values.pieceSquareTableTotal(Values.PIECE_SQUARE_PAWN_START));
-
-		System.out.println(b.getPossibleMoves(piece));
-		System.out.println(b.evaluateMaterial());
-		System.out.println("...");
-		System.out.println("...");
+		
+		//System.out.println(m);
+		
+		//System.out.println(perft(b, Values.SIDE_WHITE, 1));
+		//System.out.println("\n-----------------\n");
+		//System.out.println(b.getAllPossibleNextBoards(Values.SIDE_BLACK));
+		//System.out.println("\n-----------------\n");
+		System.out.println(b.getAllPossibleMoves(Values.SIDE_WHITE));
+		
 	}
 
 	Move minimax(int side, int depthToSearch, Board inputBoard){ //given a board state, determine a best move. Basically a min/max node, except that it keeps trach of the corresponding moves > scores hashmap.
@@ -97,40 +86,19 @@ public class Game {
 		return currentLowest;
 	}
 
-	static int perf(Board input, int side, int depth){
+	static int perft(Board _input, int side, int depth){
+		Board input = new Board(_input);
 		int total = 0;
 		if(depth == 0){
-			printBoard(input, side);
+			System.out.println(input);
 			return 1;
 		}
 		else {
 			for(Board b : input.getAllPossibleNextBoards(Values.getOpposingSide(side))){
-				total+= perf(b, Values.getOpposingSide(side), depth-1);
+				total+= perft(b, Values.getOpposingSide(side), depth-1);
 			}
 		}
 		return total;
-	}
-	
-
-static String printBoard(Board b, int activeSide){
-		char castling = '-';
-		char enPassant = '-';
-		int halfMoveClock = 0;
-		int fullMoveClock = 0;
-		
-		StringBuilder sb = new StringBuilder();
-		for(int i = 8; i >=1; i--){
-			for(int j = 0; j < 8; j++){
-				Position current = new Position(j, i);
-				if(b.getPieceAtPosition(current) == null)sb.append(' ');
-				else if(b.getPieceAtPosition(current).getSide() == Values.SIDE_WHITE){
-				sb.append(b.getPieceAtPosition(current).getTypeLetter());
-				} else sb.append(Character.toLowerCase(b.getPieceAtPosition(current).getTypeLetter()));
-			}
-			sb.append("/ \n");
-		}
-		System.out.println(sb);
-		return sb.toString();
 	}
 	
 	int maxNode(Board inputBoard, int remainingDepth){
