@@ -16,10 +16,14 @@ public class Piece {
 		
 		this.side = side;
 		this.type = type;
-		this.myPosition = p;
+		this.myPosition = new Position(p);
 		hasBeenPromoted = false;
 	}
 	
+	public Piece(Piece piece) {
+		this(piece.getPosition(), piece.getSide(), piece.getType());
+	}
+
 	@Override
 	public String toString(){
 		return (getTypeName(this.getType()) + " on position " + this.getPosition() + " [Side: " +this.getSide() + "]");

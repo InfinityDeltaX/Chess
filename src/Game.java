@@ -13,17 +13,10 @@ public class Game {
 		Move m = new Move(piece, moveTo);
 		Board b = new Board();
 		b.setToDefaultBoard();
-		//b.makeMove(m);
+		//b.setPieceAtPosition(new Position(4, 4), new Piece(new Position(4, 4), Values.SIDE_WHITE, Values.KING_WHITE));
 		
-		//System.out.println(Board.replaceIsWithNums("Digfsqwrifdgwqiiifisfiiqwisoitwiiidirsifiisfi"));
 		System.out.println(b.FENString(Values.SIDE_BLACK));
-		//System.out.println(m);
-		System.out.println("Starting");
-		//System.out.println(perft(b, Values.SIDE_BLACK, 2));
-		//System.out.println("\n-----------------\n");
-		//System.out.println(b.getAllPossibleNextBoards(Values.SIDE_BLACK));
-		//System.out.println("\n-----------------\n");
-		//System.out.println(b.getAllPossibleMoves(Values.SIDE_WHITE));
+		System.out.println(perft(b, Values.SIDE_BLACK, 4));
 		
 	}
 
@@ -93,12 +86,13 @@ public class Game {
 		Board input = new Board(_input);
 		int total = 0;
 		if(depth == 0){
+			//System.out.println(_input.FENString(Values.SIDE_BLACK));
 			//System.out.println(input);
 			return 1;
 		}
 		else {
 			for(Board b : input.getAllPossibleNextBoards(side)){
-				System.out.println("size of prev iteration: " + input.getAllPossibleMoves(side).size());
+				//System.out.println("size of prev iteration: " + input.getAllPossibleMoves(side).size());
 				total+= perft(b, Values.getOpposingSide(side), depth-1);
 			}
 		}

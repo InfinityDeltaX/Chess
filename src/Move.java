@@ -6,9 +6,9 @@ public class Move {
 	Position originalPosition;
 	
 	public Move(Piece p, Position toMoveTo){
-		piece = p;
-		this.toMoveTo = toMoveTo;
-		this.originalPosition = p.getPosition();
+		piece = new Piece(p);
+		this.toMoveTo = new Position(toMoveTo);
+		this.originalPosition = new Position(p.getPosition());
 	}
 	
 	public Move(Move input) {
@@ -27,15 +27,15 @@ public class Move {
 
 
 	public Piece getPiece() {
-		return piece;
+		return new Piece(piece);
 	}
 
 	public void setPiece(Piece piece) {
-		this.piece = piece;
+		this.piece = new Piece(piece);
 	}
 
 	public Position getToMoveTo() {
-		return toMoveTo;
+		return new Position(toMoveTo);
 	}
 
 	public void setToMoveTo(Position toMoveTo) {
@@ -43,7 +43,7 @@ public class Move {
 	}
 
 	public Position getOriginalPosition() {
-		return originalPosition;
+		return new Position(originalPosition);
 	}
 
 	public void setOriginalPosition(Position originalPosition) {

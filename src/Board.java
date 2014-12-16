@@ -7,7 +7,7 @@ public class Board {
 	private int[][] boardPosition;
 
 	public Board(Board input){
-		this.boardPosition = input.getBoardArrayInt();
+		this.boardPosition = deepCopyArray(input.getBoardArrayInt());
 	}
 	public Board(){
 		boardPosition = new int[8][8];
@@ -15,6 +15,8 @@ public class Board {
 
 	void setPieceAtPosition(Position positionToSet, Piece pieceToPlace){ //mostly a debugging function
 		int intOfPieceToPlace = pieceToPlace.getCorrespondingInt();
+		//if(!pieceToPlace.getPosition().equals(positionToSet)) assert(false);
+		pieceToPlace.setPosition(positionToSet);
 		//should NOT be passed a general 5, for instance. Has to have side as well; 205 is acceptable.
 		if(!((intOfPieceToPlace == Values.EMPTY_SQUARE) || (intOfPieceToPlace <= Values.KNIGHT_BLACK) && (intOfPieceToPlace >= Values.PAWN_WHITE))){
 			assert(false); //needs to be a value between the biggest side-associated piece, KNIGHT_BLACK, and the smallest side-associated piece, PAWN_WHITE.
@@ -85,7 +87,17 @@ public class Board {
 	}
 
 	int[][] getBoardArrayInt(){
-		return boardPosition;
+		return deepCopyArray(boardPosition);
+	}
+	
+	int[][] deepCopyArray(int[][] input){
+		int[][] output = new int[input.length][input[0].length];
+		for (int i = 0; i < input.length; i++) {
+			for (int j = 0; j < input[i].length; j++) {
+				output[i][j] = input[i][j];
+			}
+		}
+		return output;
 	}
 
 	ArrayList<Move> getAllPossibleMoves(int side){
@@ -108,7 +120,6 @@ public class Board {
 
 	ArrayList<Board> getAllPossibleNextBoards(int side){
 		//iterate through getAllPossibleMoves and make the move.
-
 		ArrayList<Board> output = new ArrayList<Board>();
 
 		for(Move m : getAllPossibleMoves(side)){
@@ -150,11 +161,11 @@ public class Board {
 		setPieceAtPosition(m.toMoveTo, m.getPiece());
 	}
 	boolean isLegalMove(Move input){
-		return true;
+		//return true;
 		
 		//for some reason, uncommenting this code creates a mega-derp with getAllPossibleMoves. Is this somehow modifying the input parameter??
 		
-		/*
+		
 		Move moveToCheck = new Move(input);
 		Board afterMove = new Board(this);
 		afterMove.makeMove(moveToCheck);
@@ -166,7 +177,7 @@ public class Board {
 		//is this all that is required?
 
 		return true;
-		*/
+		
 	}
 	boolean isKingInCheck(){
 		//is the king in check on this board?
@@ -411,19 +422,17 @@ public class Board {
 			//System.out.println("Looking at: " + current);
 			if(current == 'i'){
 				count++;
-				//sb.setCharAt(i, '~');
-				//i--;
-				sb.deleteCharAt(i);
-				i--;
 				lastWasI = true;
 			} else if(lastWasI){ //breaking a streak
-				sb.setCharAt(i, (char)((int)'0' + count));
+				sb.insert(i, (char)((int)'0' + count)); //insert the number of consecutive Is into the String.
 				count = 0;
 				lastWasI = false;
 			}
 		}
 		//sb.repl
-		return sb.toString();
+		String output = sb.toString();
+		output = output.replace("i", ""); //delete all remaining is.
+		return output;
 	}
 
 	@Override
@@ -440,7 +449,6 @@ public class Board {
 			}
 			sb.append("\n");
 		}
-		System.out.println(sb);
 		return sb.toString();
 	}
 	
