@@ -62,6 +62,16 @@ public class Board {
 		return output;
 	}
 
+	ArrayList<Board> NextBoardTest(int notUsed){ //always returns 5 boards. used for testing the perft function.
+		ArrayList<Board> output = new ArrayList<Board>();
+		output.add(new Board());
+		output.add(new Board());
+		output.add(new Board());
+		output.add(new Board());
+		output.add(new Board());
+		return output;
+	}
+	
 	ArrayList<Piece> getArrayListofMyRealPieces(int side){ //does not return empty spaces. Returns an ArrayList of pieces from the player specified in 'side'.
 		ArrayList<Piece> output = new ArrayList<Piece>();
 		for(int i = 0; i < boardPosition.length; i++){
@@ -89,6 +99,7 @@ public class Board {
 				//System.out.println(m);
 				if(isLegalMove(m)){ //this is not totally done yet...
 					output.add(m); // TODO
+					//System.out.println("Added move: " + m);
 				}
 			}
 		}
@@ -138,8 +149,13 @@ public class Board {
 		setPositionToEmpty(m.originalPosition);
 		setPieceAtPosition(m.toMoveTo, m.getPiece());
 	}
-	boolean isLegalMove(Move moveToCheck){
-
+	boolean isLegalMove(Move input){
+		return true;
+		
+		//for some reason, uncommenting this code creates a mega-derp with getAllPossibleMoves. Is this somehow modifying the input parameter??
+		
+		/*
+		Move moveToCheck = new Move(input);
 		Board afterMove = new Board(this);
 		afterMove.makeMove(moveToCheck);
 
@@ -150,7 +166,7 @@ public class Board {
 		//is this all that is required?
 
 		return true;
-
+		*/
 	}
 	boolean isKingInCheck(){
 		//is the king in check on this board?
@@ -380,6 +396,32 @@ public class Board {
 			sb.append("/ \n");
 		}
 		System.out.println(sb);
+		return sb.toString();
+	}
+	
+	static String replaceIsWithNums(String input){ //fen helper. Replaces rows of unoccupied cells with a number.
+		int count = 0;
+		boolean lastWasI = false;
+		
+		StringBuilder sb = new StringBuilder(input);
+		
+		for(int i = 0; i < sb.length(); i++){ //iterate over input string
+			char current = sb.charAt(i);
+			System.out.println("Looking at: " + current);
+			if(current == 'i'){
+				count++;
+				//sb.setCharAt(i, '~');
+				//i--;
+				sb.deleteCharAt(i);
+				i--;
+				lastWasI = true;
+			} else if(lastWasI){ //breaking a streak
+				sb.setCharAt(i, (char)((int)'0' + count));
+				count = 0;
+				lastWasI = false;
+			}
+		}
+		//sb.repl
 		return sb.toString();
 	}
 

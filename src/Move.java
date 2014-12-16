@@ -11,6 +11,10 @@ public class Move {
 		this.originalPosition = p.getPosition();
 	}
 	
+	public Move(Move input) {
+		this(input.getPiece(), input.getToMoveTo());
+	}
+
 	String getNotation(){
 		return (getToMoveTo().convertCoordsToNotation() + getOriginalPosition().convertCoordsToNotation());
 	}
