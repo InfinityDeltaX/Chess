@@ -13,13 +13,13 @@ public class Game {
 		Move m = new Move(piece, moveTo);
 		Board b = new Board();
 		b.setToDefaultBoard();
-		b.makeMove(m);
+		//b.makeMove(m);
 		
-		System.out.println(Board.replaceIsWithNums("Digfsqwrifdgwqiiifisfiiqwisoitwiiidirsifiisfi"));
-		
+		//System.out.println(Board.replaceIsWithNums("Digfsqwrifdgwqiiifisfiiqwisoitwiiidirsifiisfi"));
+		System.out.println(b.FENString(Values.SIDE_BLACK));
 		//System.out.println(m);
 		System.out.println("Starting");
-		System.out.println(perft(b, Values.SIDE_BLACK, 2));
+		//System.out.println(perft(b, Values.SIDE_BLACK, 2));
 		//System.out.println("\n-----------------\n");
 		//System.out.println(b.getAllPossibleNextBoards(Values.SIDE_BLACK));
 		//System.out.println("\n-----------------\n");

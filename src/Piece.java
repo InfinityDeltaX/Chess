@@ -58,7 +58,10 @@ public class Piece {
 	}
 	
 	char getTypeLetter(){
-		return getTypeName(this.getType()).charAt(0);
+		String name = getTypeName(this.getType());
+		if(!name.equals("Knight")){
+			return name.charAt(0);
+		} else return 'N'; 
 	}
 	
 	//setters and getters

@@ -378,25 +378,26 @@ public class Board {
 		return output;
 	}
 
-	static String FENString(Board b, int activeSide){
+	String FENString(int activeSide){
 		char castling = '-';
 		char enPassant = '-';
 		int halfMoveClock = 0;
 		int fullMoveClock = 0;
 
 		StringBuilder sb = new StringBuilder();
-		for(int i = 7; i >= 1; i--){
-			for(int j = 1; j < 8; j++){
+		for(int i = 7; i >= 0; i--){
+			for(int j = 0; j < 8; j++){
 				Position current = new Position(j, i);
-				if(b.getPieceAtPosition(current) == null)sb.append(' ');
-				else if(b.getPieceAtPosition(current).getSide() == Values.SIDE_WHITE){
-					sb.append(b.getPieceAtPosition(current).getTypeLetter());
-				} else sb.append(Character.toLowerCase(b.getPieceAtPosition(current).getTypeLetter()));
+				if(this.getPieceAtPosition(current) == null)sb.append(' ');
+				else if(this.getPieceAtPosition(current).getSide() == Values.SIDE_WHITE){
+					sb.append(this.getPieceAtPosition(current).getTypeLetter());
+				} else sb.append(Character.toLowerCase(this.getPieceAtPosition(current).getTypeLetter()));
 			}
-			sb.append("/ \n");
+			sb.append("/");
 		}
-		System.out.println(sb);
-		return sb.toString();
+		StringBuilder sb2 = new StringBuilder(replaceIsWithNums(sb.toString()));
+		sb2.append(castling + " " + enPassant + " " + halfMoveClock + " " + fullMoveClock);
+		return sb2.toString();
 	}
 	
 	static String replaceIsWithNums(String input){ //fen helper. Replaces rows of unoccupied cells with a number.
@@ -407,7 +408,7 @@ public class Board {
 		
 		for(int i = 0; i < sb.length(); i++){ //iterate over input string
 			char current = sb.charAt(i);
-			System.out.println("Looking at: " + current);
+			//System.out.println("Looking at: " + current);
 			if(current == 'i'){
 				count++;
 				//sb.setCharAt(i, '~');
