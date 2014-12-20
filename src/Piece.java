@@ -46,17 +46,17 @@ public class Piece {
 	}
 	
 	static String getTypeName(int type){
-		if(type == 1){
+		if(type == Values.PAWN){
 			return "Pawn";
-		} else if(type == 2){
+		} else if(type == Values.BISHOP){
 			return "Bishop";
-		} else if(type == 3){
+		} else if(type == Values.KING){
 			return "King";
-		} else if(type == 4){
+		} else if(type == Values.QUEEN){
 			return "Queen";
-		} else if(type == 5){
+		} else if(type == Values.ROOK){
 			return "Rook";
-		} else if(type == 6){
+		} else if(type == Values.KNIGHT){
 			return "Knight";
 		} else return "Invalid";
 	}
@@ -66,6 +66,37 @@ public class Piece {
 		if(!name.equals("Knight")){
 			return name.charAt(0);
 		} else return 'N'; 
+	}
+	
+	static int getTypeInt(char input){ //get the first letter of a type from it's number. Always returns capital!
+		input = Character.toUpperCase(input);
+		if(input == 'P'){
+			return Values.PAWN;
+		} else if(input == 'B'){
+			return Values.BISHOP;
+		} else if(input == 'K'){
+			return Values.KING;
+		} else if(input == 'Q'){
+			return Values.QUEEN;
+		} else if(input == 'R'){
+			return Values.ROOK;
+		} else if(input == 'N'){
+			return Values.KNIGHT;
+		} else {
+			assert(false);
+			return -1;
+		}
+	}
+	
+	static Piece getPieceFromLetter(char input, Position p){ //return a piece from an appropriately capitalized letter, such as those found in a fen string. White = capital, Black = lower case.
+		int type = -1; //no side encoded.
+		int side = -1;
+		
+		if(Character.isUpperCase(input)) side = Values.SIDE_WHITE;
+		else side = Values.SIDE_BLACK;
+		
+		type = getTypeInt(Character.toUpperCase(input));
+		return new Piece(p, side, type);
 	}
 	
 	//setters and getters

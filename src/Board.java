@@ -24,7 +24,7 @@ public class Board {
 		//System.out.println(positionToSet);
 		boardPosition[positionToSet.getFile()][positionToSet.getRow()] = intOfPieceToPlace;
 
-		//we need to change the coordinates of the piece that we've been passes, as well.
+		//we need to change the coordinates of the piece that we've been passed, as well.
 		pieceToPlace.setPosition(positionToSet);
 	}
 
@@ -32,6 +32,22 @@ public class Board {
 		boardPosition[positionToSet.getFile()][positionToSet.getRow()] = 0;
 	}
 
+	void setToFenString(String input){
+		String[] split = input.split("/"); //divides each row.
+		for(int i = 0; i < split.length; i++){
+			for (int j = 0; j < 8; j++) { //loop through each character.
+				char currentChar = split[i].charAt(j);
+				Position currentPosition = new Position(j, i);
+				if(currentChar <= '9' && currentChar >= '0'){ //if currentChar is an int, jump that number of spots.
+					j+= (currentChar-'0'); 
+				} else { //currentChar is not an int, and is therefore a character representing a piece.
+					setPieceAtPosition(currentPosition, Piece.getPieceFromLetter(currentChar, currentPosition));
+				}
+				
+			}
+		}
+	}
+	
 	void setToDefaultBoard(){
 		boardPosition = new int[][]{
 				{Values.ROOK_WHITE, Values.PAWN_WHITE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.PAWN_BLACK, Values.ROOK_BLACK},

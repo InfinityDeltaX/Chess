@@ -1,10 +1,13 @@
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Scanner;
 
 
 public class Game {
 	public static void main(String[] args){
 
+		Scanner in = new Scanner(System.in);
+		String fenString = in.nextLine();
 
 		//Testing
 		Position p = new Position(1, 0);
@@ -14,12 +17,14 @@ public class Game {
 		Board b = new Board();
 		b.setToDefaultBoard();
 		b.setPositionToEmpty(p);
+		b.setToFenString(fenString);
+		System.out.println(b.FENString(Values.SIDE_BLACK));
 		//b.setPieceAtPosition(new Position(4, 4), new Piece(new Position(4, 4), Values.SIDE_WHITE, Values.KING_WHITE));
 		
 		System.out.println(b.FENString(Values.SIDE_BLACK));
 		System.out.println(perft(b, Values.SIDE_BLACK, 4));
 		System.out.println("Nodes per second: " + calculateNPS(3));
-		System.out.println(minimax(Values.SIDE_WHITE, 4, b));
+		System.out.println(minimax(Values.SIDE_WHITE, 5, b));
 		
 	}
 
@@ -48,10 +53,11 @@ public class Game {
 				moveApplied.makeMove(currentMove);
 				int currentScore = maxNode(moveApplied, depthToSearch-1); //run max() on each board
 				if(currentScore < currentLowest){
-					currentScore = currentLowest; //return the minimum of the previous function calls.
+					currentLowest = currentScore; //return the minimum of the previous function calls.
 					currentBestMove = currentMove;
 				}
 			}
+			System.out.println("Minimax result: " + currentLowest);
 			return currentBestMove;
 
 		} else if(side == Values.SIDE_WHITE){ //maximizer
@@ -65,10 +71,11 @@ public class Game {
 				moveApplied.makeMove(currentMove);
 				int currentScore = maxNode(moveApplied, depthToSearch-1); //run max() on each board
 				if(currentScore > currentHighest){
-					currentScore = currentHighest; //return the minimum of the previous function calls.
+					currentHighest = currentScore; //return the minimum of the previous function calls.
 					currentBestMove = currentMove;
 				}
 			}
+			System.out.println("Minimax result: " + currentHighest);
 			return currentBestMove;
 		} else {
 			assert(false); //neither white nor black?
@@ -78,7 +85,7 @@ public class Game {
 
 	static int minNode(Board inputBoard, int remainingDepth){ //given a board state, minimal value.
 		
-		System.out.println("Running min...");
+		//System.out.println("Running min...");
 		
 		int currentLowest = Integer.MAX_VALUE;
 
@@ -92,9 +99,9 @@ public class Game {
 			Board moveApplied = new Board(inputBoard);//generate a board with the move applied
 			moveApplied.makeMove(currentMove);
 			int currentScore = maxNode(moveApplied, remainingDepth-1); //run max() on each board
-			System.out.println("current score is " + currentScore);
+			//System.out.println("current score is " + currentScore);
 			if(currentScore < currentLowest){
-				currentScore = currentLowest; //return the minimum of the previous function calls.
+				currentLowest = currentScore; //return the minimum of the previous function calls.
 			}
 		}
 		return currentLowest;
@@ -116,7 +123,7 @@ public class Game {
 	
 	static int maxNode(Board inputBoard, int remainingDepth){
 		
-		System.out.println("Running max...");
+		//System.out.println("Running max...");
 		
 		int currentHighest = Integer.MIN_VALUE;
 
@@ -130,9 +137,9 @@ public class Game {
 			Board moveApplied = new Board(inputBoard);//generate a board with the move applied
 			moveApplied.makeMove(currentMove);
 			int currentScore = minNode(moveApplied, remainingDepth-1); //run max() on each board
-			System.out.println("current score is " + currentScore);
+			//System.out.println("current score is " + currentScore);
 			if(currentScore > currentHighest){
-				currentScore = currentHighest; //return the minimum of the previous function calls.
+				currentHighest = currentScore; //return the minimum of the previous function calls.
 			}
 		}
 		return currentHighest;
