@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 public class Board {
 
-	int[][] boardPosition;
+	private int[][] boardPosition;
 
 	public Board(Board input){
 		this.boardPosition = deepCopyArray(input.getBoardArrayInt());
@@ -21,7 +21,7 @@ public class Board {
 		if(!((intOfPieceToPlace == Values.EMPTY_SQUARE) || (intOfPieceToPlace <= Values.KNIGHT_BLACK) && (intOfPieceToPlace >= Values.PAWN_WHITE))){
 			assert(false); //needs to be a value between the biggest side-associated piece, KNIGHT_BLACK, and the smallest side-associated piece, PAWN_WHITE.
 		}
-		System.out.println("Set piece " + pieceToPlace + " to position " + positionToSet);
+		//System.out.println("Set piece " + pieceToPlace + " to position " + positionToSet);
 		boardPosition[positionToSet.getFile()][positionToSet.getRow()] = intOfPieceToPlace;
 
 		//we need to change the coordinates of the piece that we've been passed, as well.
@@ -43,6 +43,7 @@ public class Board {
 	public void setToFenString(String input){
 		this.setToClearBoard();
 		String[] split = input.split("/"); //divides each row.
+		split = Arrays.copyOfRange(split, 0, 8);
 		System.out.println(Arrays.toString(split));
 		
 		for(int i = split.length-1; i > 0; i--){ //rows
@@ -59,7 +60,6 @@ public class Board {
 					setPieceAtPosition(currentPosition, Piece.getPieceFromLetter(currentChar, currentPosition));
 					currentXPositionOnBoard++;
 				}
-				System.out.println(this);
 			}
 		}
 	}

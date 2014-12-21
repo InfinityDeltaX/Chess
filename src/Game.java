@@ -16,25 +16,15 @@ public class Game {
 		Move m = new Move(piece, moveTo);
 		Board b = new Board();
 		
-		b.setPieceAtPosition(p, piece);
-		b.boardPosition[0][0] = Values.BISHOP_BLACK;
-		System.out.println(b);
-		
-		
 		String fenString = in.nextLine();
-		b.setToDefaultBoard();
-		System.out.println(b);
-		b.setPositionToEmpty(p);
 		b.setToFenString(fenString);
-		System.out.println(b);
 		System.out.println(b.FENString(Values.SIDE_BLACK));
-		System.out.println("Done.");
 		//b.setPieceAtPosition(new Position(4, 4), new Piece(new Position(4, 4), Values.SIDE_WHITE, Values.KING_WHITE));
 		
-		System.out.println(b.FENString(Values.SIDE_BLACK));
+		//System.out.println(b.FENString(Values.SIDE_BLACK));
 		//System.out.println(perft(b, Values.SIDE_BLACK, 4));
 		//System.out.println("Nodes per second: " + calculateNPS(3));
-		//System.out.println(minimax(Values.SIDE_WHITE, 5, b));
+		System.out.println(minimax(Values.SIDE_WHITE, 4, b));
 		
 	}
 
