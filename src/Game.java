@@ -18,13 +18,13 @@ public class Game {
 		
 		String fenString = in.nextLine();
 		b.setToFenString(fenString);
-		System.out.println(b.FENString(Values.SIDE_BLACK));
+		System.out.println(b.FENString(Values.SIDE_WHITE));
 		//b.setPieceAtPosition(new Position(4, 4), new Piece(new Position(4, 4), Values.SIDE_WHITE, Values.KING_WHITE));
 		
 		//System.out.println(b.FENString(Values.SIDE_BLACK));
 		//System.out.println(perft(b, Values.SIDE_BLACK, 4));
 		//System.out.println("Nodes per second: " + calculateNPS(3));
-		System.out.println(minimax(Values.SIDE_WHITE, 4, b));
+		System.out.println(minimax(Values.SIDE_WHITE, 3, b));
 		
 	}
 
@@ -41,10 +41,13 @@ public class Game {
 	
 	public static Move minimax(int side, int depthToSearch, Board inputBoard){ //given a board state, determine a best move. Basically a min/max node, except that it keeps trach of the corresponding moves > scores hashmap.
 		Move currentBestMove = null;
-
+		Move bestMove;
+		int bestMoveScore = 0;
+		long startTime = System.currentTimeMillis();
+		
 		if(side == Values.SIDE_BLACK){ //minimizer
 			int currentLowest = Integer.MAX_VALUE;
-
+			
 			ArrayList<Move> possibleNextMoves = inputBoard.getAllPossibleMoves(Values.SIDE_BLACK); //else, get a list of possible next moves. Black is always trying to minimize. The maximizer uses Values.SIDE_WHITE here.
 			//HashMap<Move, Integer> scores= new HashMap<Move, Integer>(); //make a hashmap of all possible moves to their corresponding scores.
 
@@ -57,8 +60,8 @@ public class Game {
 					currentBestMove = currentMove;
 				}
 			}
-			System.out.println("Minimax result: " + currentLowest);
-			return currentBestMove;
+			bestMove = currentBestMove;
+			bestMoveScore = currentLowest;
 
 		} else if(side == Values.SIDE_WHITE){ //maximizer
 			int currentHighest = Integer.MIN_VALUE;
@@ -75,12 +78,15 @@ public class Game {
 					currentBestMove = currentMove;
 				}
 			}
-			System.out.println("Minimax result: " + currentHighest);
-			return currentBestMove;
+			bestMove = currentBestMove;
+			bestMoveScore = currentHighest;
 		} else {
 			assert(false); //neither white nor black?
-			return null;
+			bestMove = null;
 		}
+		System.out.println("Done in " + (System.currentTimeMillis()-startTime) + " milliseconds!");
+		System.out.println("Minimax result: " + bestMove + "with score: " + bestMoveScore);
+		return bestMove;
 	}
 
 	private static int minNode(Board inputBoard, int remainingDepth){ //given a board state, minimal value.

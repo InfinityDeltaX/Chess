@@ -125,9 +125,7 @@ public class Board {
 	private int[][] deepCopyArray(int[][] input){
 		int[][] output = new int[input.length][input[0].length];
 		for (int i = 0; i < input.length; i++) {
-			for (int j = 0; j < input[i].length; j++) {
-				output[i][j] = input[i][j];
-			}
+			output[i] = Arrays.copyOf(input[i], input[i].length);
 		}
 		return output;
 	}
