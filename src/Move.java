@@ -15,8 +15,8 @@ public class Move {
 		this(input.getPiece(), input.getToMoveTo());
 	}
 
-	String getNotation(){
-		return (getToMoveTo().convertCoordsToNotation() + getOriginalPosition().convertCoordsToNotation());
+	public String getNotation(){
+		return ("" + getToMoveTo() + getOriginalPosition());
 	}
 
 	@Override

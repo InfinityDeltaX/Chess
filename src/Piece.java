@@ -29,23 +29,23 @@ public class Piece {
 		return (getTypeName(this.getType()) + " on position " + this.getPosition() + " [Side: " +this.getSide() + "]");
 	}
 	
-	static Piece getCorrespondingPiece(Position p, int input){
+	public static Piece getCorrespondingPiece(Position p, int input){
 		return new Piece(p, input/100, input%100);
 	}
 	
-	boolean isEmpty(){
+	public boolean isEmpty(){
 		return (side==0 && type == 0);
 	}
 	
-	static int getCorrespondingInt(Piece p){
-		return p.type;
+	public static int getCorrespondingInt(Piece p){
+		return p.getSide()*100 + p.type;
 	}
-	int getCorrespondingInt(){
+	public int getCorrespondingInt(){
 		//return this.type; //wtf??? isn't this totally wrong?
 		return this.getSide()*100 + this.getType();
 	}
 	
-	static String getTypeName(int type){
+	public static String getTypeName(int type){
 		if(type == Values.PAWN){
 			return "Pawn";
 		} else if(type == Values.BISHOP){
@@ -61,14 +61,14 @@ public class Piece {
 		} else return "Invalid";
 	}
 	
-	char getTypeLetter(){
+	public char getTypeLetter(){
 		String name = getTypeName(this.getType());
 		if(!name.equals("Knight")){
 			return name.charAt(0);
 		} else return 'N'; 
 	}
 	
-	static int getTypeInt(char input){ //get the first letter of a type from it's number. Always returns capital!
+	public static int getTypeInt(char input){ //get the first letter of a type from it's number. Always returns capital!
 		input = Character.toUpperCase(input);
 		if(input == 'P'){
 			return Values.PAWN;
@@ -88,7 +88,7 @@ public class Piece {
 		}
 	}
 	
-	static Piece getPieceFromLetter(char input, Position p){ //return a piece from an appropriately capitalized letter, such as those found in a fen string. White = capital, Black = lower case.
+	public static Piece getPieceFromLetter(char input, Position p){ //return a piece from an appropriately capitalized letter, such as those found in a fen string. White = capital, Black = lower case.
 		int type = -1; //no side encoded.
 		int side = -1;
 		

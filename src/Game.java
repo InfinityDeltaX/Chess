@@ -18,17 +18,19 @@ public class Game {
 		b.setToDefaultBoard();
 		b.setPositionToEmpty(p);
 		b.setToFenString(fenString);
+		System.out.println(b);
 		System.out.println(b.FENString(Values.SIDE_BLACK));
+		System.out.println("Done.");
 		//b.setPieceAtPosition(new Position(4, 4), new Piece(new Position(4, 4), Values.SIDE_WHITE, Values.KING_WHITE));
 		
 		System.out.println(b.FENString(Values.SIDE_BLACK));
-		System.out.println(perft(b, Values.SIDE_BLACK, 4));
-		System.out.println("Nodes per second: " + calculateNPS(3));
-		System.out.println(minimax(Values.SIDE_WHITE, 5, b));
+		//System.out.println(perft(b, Values.SIDE_BLACK, 4));
+		//System.out.println("Nodes per second: " + calculateNPS(3));
+		//System.out.println(minimax(Values.SIDE_WHITE, 5, b));
 		
 	}
 
-	static int calculateNPS(int depthToTest){
+	private static int calculateNPS(int depthToTest){
 		Board b = new Board();
 		b.setToDefaultBoard();
 		long startTime = System.currentTimeMillis();
@@ -39,14 +41,14 @@ public class Game {
 		return (int) (nodesSearched/(endTime-startTime)*1000);
 	}
 	
-	static Move minimax(int side, int depthToSearch, Board inputBoard){ //given a board state, determine a best move. Basically a min/max node, except that it keeps trach of the corresponding moves > scores hashmap.
+	public static Move minimax(int side, int depthToSearch, Board inputBoard){ //given a board state, determine a best move. Basically a min/max node, except that it keeps trach of the corresponding moves > scores hashmap.
 		Move currentBestMove = null;
 
 		if(side == Values.SIDE_BLACK){ //minimizer
 			int currentLowest = Integer.MAX_VALUE;
 
 			ArrayList<Move> possibleNextMoves = inputBoard.getAllPossibleMoves(Values.SIDE_BLACK); //else, get a list of possible next moves. Black is always trying to minimize. The maximizer uses Values.SIDE_WHITE here.
-			HashMap<Move, Integer> scores= new HashMap<Move, Integer>(); //make a hashmap of all possible moves to their corresponding scores.
+			//HashMap<Move, Integer> scores= new HashMap<Move, Integer>(); //make a hashmap of all possible moves to their corresponding scores.
 
 			for(Move currentMove : possibleNextMoves){ //loop through all moves
 				Board moveApplied = new Board(inputBoard);//generate a board with the move applied
@@ -83,7 +85,7 @@ public class Game {
 		}
 	}
 
-	static int minNode(Board inputBoard, int remainingDepth){ //given a board state, minimal value.
+	private static int minNode(Board inputBoard, int remainingDepth){ //given a board state, minimal value.
 		
 		//System.out.println("Running min...");
 		
@@ -107,7 +109,7 @@ public class Game {
 		return currentLowest;
 	}
 	
-	static int perft(Board _input, int side, int depth){
+	private static int perft(Board _input, int side, int depth){
 		Board input = new Board(_input);
 		int total = 0;
 		if(depth == 0){
@@ -121,7 +123,7 @@ public class Game {
 		return total;
 	}
 	
-	static int maxNode(Board inputBoard, int remainingDepth){
+	private static int maxNode(Board inputBoard, int remainingDepth){
 		
 		//System.out.println("Running max...");
 		

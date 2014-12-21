@@ -100,7 +100,7 @@ public class Values {
 		
 	}
 	
-	static int pieceSquareTableTotal(int[][] input){
+	private static int pieceSquareTableTotal(int[][] input){
 		int count = 0;
 		for(int i = 0; i < input.length; i++){
 			for (int j = 0; j < input[0].length; j++) {
@@ -110,11 +110,11 @@ public class Values {
 		return count;
 	}
 	
-	static boolean isFairPieceSquareTable(int[][] input){
+	private static boolean isFairPieceSquareTable(int[][] input){
 		return(pieceSquareTableTotal(input) == 0);
 	}
 	
-	static boolean allPieceSquareTablesFair(){
+	public static boolean allPieceSquareTablesFair(){
 		boolean istrue = true;
 		if(isFairPieceSquareTable(Values.PIECE_SQUARE_KING_END)){ istrue = false; System.out.println("Failed"); }
 		if(isFairPieceSquareTable(Values.PIECE_SQUARE_KING_END)){ istrue = false; System.out.println("Failed"); }
@@ -129,7 +129,7 @@ public class Values {
 			
 	}
 	
-	static int getOpposingSide(int side){
+	public static int getOpposingSide(int side){
 		if(side == Values.SIDE_BLACK) return Values.SIDE_WHITE;
 		else if(side == Values.SIDE_WHITE) return Values.SIDE_BLACK;
 		else{

@@ -25,16 +25,16 @@ public class Position {
 		return(""+file+(row+1));
 	}
 
-	Position getPositionRelative(int x, int y){
+	public Position getPositionRelative(int x, int y){
 		return new Position(file+x, row+y);
 	}
 	
-	void changePositionRelative(int x, int y){
+	public void changePositionRelative(int x, int y){
 		this.file+=x;
 		this.row+=y;
 	}
 
-	ArrayList<Position> getOtherPositionsOnDiagonalLtoR(){ //starts at bottom left and goes to right top
+	private ArrayList<Position> getOtherPositionsOnDiagonalLtoR(){ //starts at bottom left and goes to right top
 		ArrayList<Position> output = new ArrayList<Position>();
 		int startX = this.getFile();
 		int startY = this.getRow();
@@ -57,7 +57,7 @@ public class Position {
 		return output;
 	}
 
-	ArrayList<Position> getOtherPositionsOnDiagonalRtoL(){ //starts at bottom left and goes to right top. Method: Go down/left until we hit an edge, then go back right/up the whole way.
+	private ArrayList<Position> getOtherPositionsOnDiagonalRtoL(){ //starts at bottom left and goes to right top. Method: Go down/left until we hit an edge, then go back right/up the whole way.
 		ArrayList<Position> output = new ArrayList<Position>();
 		int startX = this.getFile();
 		int startY = this.getRow();
@@ -75,29 +75,28 @@ public class Position {
 			Position _current = new Position(current);
 			current.changePositionRelative(1,  1);
 			
-			if()output.add(_current); 
 			// TODO ^ check so that we don't add the original position!
 		}
 		
 		return output;
 	}
 	
-	boolean doesExistOnBoard(){
+	public boolean doesExistOnBoard(){
 		if((this.getFile() < 8 && this.getFile() >= 0) && (this.getRow() < 8 && this.getRow() >= 0)){
 			return true;
 		} else return false;
 	}
 
-	int getRow(){
+	public int getRow(){
 		return this.row;
 	}
-	int getFile(){
+	public int getFile(){
 		return this.file;
 	}
-	void setRow(int row){
+	public void setRow(int row){
 		this.row = row;
 	}
-	void setFile(int file){
+	public void setFile(int file){
 		this.file = file;
 	}
 }

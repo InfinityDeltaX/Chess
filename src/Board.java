@@ -13,7 +13,7 @@ public class Board {
 		boardPosition = new int[8][8];
 	}
 
-	void setPieceAtPosition(Position positionToSet, Piece pieceToPlace){ //mostly a debugging function
+	public void setPieceAtPosition(Position positionToSet, Piece pieceToPlace){
 		int intOfPieceToPlace = pieceToPlace.getCorrespondingInt();
 		//if(!pieceToPlace.getPosition().equals(positionToSet)) assert(false);
 		pieceToPlace.setPosition(positionToSet);
@@ -21,34 +21,48 @@ public class Board {
 		if(!((intOfPieceToPlace == Values.EMPTY_SQUARE) || (intOfPieceToPlace <= Values.KNIGHT_BLACK) && (intOfPieceToPlace >= Values.PAWN_WHITE))){
 			assert(false); //needs to be a value between the biggest side-associated piece, KNIGHT_BLACK, and the smallest side-associated piece, PAWN_WHITE.
 		}
-		//System.out.println(positionToSet);
+		System.out.println("Set piece " + pieceToPlace + " to position " + positionToSet);
 		boardPosition[positionToSet.getFile()][positionToSet.getRow()] = intOfPieceToPlace;
 
 		//we need to change the coordinates of the piece that we've been passed, as well.
 		pieceToPlace.setPosition(positionToSet);
 	}
 
-	void setPositionToEmpty(Position positionToSet){
+	public void setPositionToEmpty(Position positionToSet){
 		boardPosition[positionToSet.getFile()][positionToSet.getRow()] = 0;
 	}
 
-	void setToFenString(String input){
+	public void setToClearBoard(){
+		for(int i = 0; i < 8; i++){
+			for(int j = 0; j < 8; j++){
+				setPositionToEmpty(new Position(i, j));
+			}
+		}
+	}
+	
+	public void setToFenString(String input){
+		this.setToClearBoard();
 		String[] split = input.split("/"); //divides each row.
+		System.out.println(Arrays.toString(split));
+		
 		for(int i = 0; i < split.length; i++){
-			for (int j = 0; j < 8; j++) { //loop through each character.
+			int currentXPositionOnBoard = 0; //for example, if the first character we encounter is 5, this will go to 4, while j will iterate to 1.
+			for (int j = 0; j < split[i].length(); j++) { //loop through each character.
+				
 				char currentChar = split[i].charAt(j);
-				Position currentPosition = new Position(j, i);
+				Position currentPosition = new Position(currentXPositionOnBoard, i);
 				if(currentChar <= '9' && currentChar >= '0'){ //if currentChar is an int, jump that number of spots.
-					j+= (currentChar-'0'); 
+					currentXPositionOnBoard+= (currentChar-'1'); 
 				} else { //currentChar is not an int, and is therefore a character representing a piece.
 					setPieceAtPosition(currentPosition, Piece.getPieceFromLetter(currentChar, currentPosition));
+					currentXPositionOnBoard++;
 				}
 				
 			}
 		}
 	}
 	
-	void setToDefaultBoard(){
+	public void setToDefaultBoard(){
 		boardPosition = new int[][]{
 				{Values.ROOK_WHITE, Values.PAWN_WHITE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.PAWN_BLACK, Values.ROOK_BLACK},
 				{Values.KNIGHT_WHITE, Values.PAWN_WHITE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.PAWN_BLACK, Values.KNIGHT_BLACK},
@@ -60,7 +74,7 @@ public class Board {
 				{Values.ROOK_WHITE, Values.PAWN_WHITE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.PAWN_BLACK, Values.ROOK_BLACK}};
 	}
 
-	Piece getPieceAtPosition(Position p){
+	public Piece getPieceAtPosition(Position p){
 		if(p.doesExistOnBoard()){
 			return Piece.getCorrespondingPiece(p, boardPosition[p.getFile()][p.getRow()]);
 		} else return null;
@@ -80,7 +94,7 @@ public class Board {
 		return output;
 	}
 
-	ArrayList<Board> NextBoardTest(int notUsed){ //always returns 5 boards. used for testing the perft function.
+	public ArrayList<Board> NextBoardTest(int notUsed){ //always returns 5 boards. used for testing the perft function.
 		ArrayList<Board> output = new ArrayList<Board>();
 		output.add(new Board());
 		output.add(new Board());
@@ -90,7 +104,7 @@ public class Board {
 		return output;
 	}
 	
-	ArrayList<Piece> getArrayListofMyRealPieces(int side){ //does not return empty spaces. Returns an ArrayList of pieces from the player specified in 'side'.
+	public ArrayList<Piece> getArrayListofMyRealPieces(int side){ //does not return empty spaces. Returns an ArrayList of pieces from the player specified in 'side'.
 		ArrayList<Piece> output = new ArrayList<Piece>();
 		for(int i = 0; i < boardPosition.length; i++){
 			for(int j = 0; j < boardPosition[0].length; j++){ //these two loops iterate over the whole int array
@@ -102,11 +116,11 @@ public class Board {
 		return output;
 	}
 
-	int[][] getBoardArrayInt(){
+	public int[][] getBoardArrayInt(){
 		return deepCopyArray(boardPosition);
 	}
 	
-	int[][] deepCopyArray(int[][] input){
+	private int[][] deepCopyArray(int[][] input){
 		int[][] output = new int[input.length][input[0].length];
 		for (int i = 0; i < input.length; i++) {
 			for (int j = 0; j < input[i].length; j++) {
@@ -116,7 +130,7 @@ public class Board {
 		return output;
 	}
 
-	ArrayList<Move> getAllPossibleMoves(int side){
+	public ArrayList<Move> getAllPossibleMoves(int side){
 		ArrayList<Move> output = new ArrayList<Move>();
 		ArrayList<Piece> myPieces = getArrayListofMyRealPieces(side);
 		for(Piece currentPiece : myPieces){ //iterate through each of our pieces.
@@ -134,7 +148,7 @@ public class Board {
 		return output;
 	}
 
-	ArrayList<Board> getAllPossibleNextBoards(int side){
+	public ArrayList<Board> getAllPossibleNextBoards(int side){
 		//iterate through getAllPossibleMoves and make the move.
 		ArrayList<Board> output = new ArrayList<Board>();
 
@@ -146,17 +160,17 @@ public class Board {
 		return output;
 	}
 
-	int evaluate(){ //White side is trying to maximize, Black to minimize. 
+	public int evaluate(){ //White side is trying to maximize, Black to minimize. 
 		//first, deal with material, then, deal with piece-square tables.
 		return evaluateMaterial();
 		// TODO add piece-square tables.
 	}
 
-	int evaluateMaterial(){ //returns the difference in material. Positive favors white.
+	private int evaluateMaterial(){ //returns the difference in material. Positive favors white.
 		return(evaluateMaterialSide(Values.SIDE_WHITE) - evaluateMaterialSide(Values.SIDE_BLACK));
 	}
 
-	int evaluateMaterialSide(int side){ //gets a positive int representing the total material for either side. 
+	private int evaluateMaterialSide(int side){ //gets a positive int representing the total material for either side. 
 		int count = 0;
 		count += Values.POINT_VALUE_PAWN * countPiecesOfType(Values.PAWN, side);
 		count += Values.POINT_VALUE_BISHOP * countPiecesOfType(Values.BISHOP, side);
@@ -167,16 +181,16 @@ public class Board {
 		return count;
 	}
 
-	int evaluatePieceSquareSide(int side){
+	private int evaluatePieceSquareSide(int side){
 
 	}
 
-	void makeMove(Move m){
+	public void makeMove(Move m){
 		//setPieceAtPosition(m.originalPosition, Values.EMPTY_SQUARE);
 		setPositionToEmpty(m.originalPosition);
 		setPieceAtPosition(m.toMoveTo, m.getPiece());
 	}
-	boolean isLegalMove(Move input){
+	private boolean isLegalMove(Move input){
 		//return true;
 		
 		//for some reason, uncommenting this code creates a mega-derp with getAllPossibleMoves. Is this somehow modifying the input parameter??
@@ -195,12 +209,12 @@ public class Board {
 		return true;
 		
 	}
-	boolean isKingInCheck(){
+	private boolean isKingInCheck(){
 		//is the king in check on this board?
 		return false;
 	}
 
-	ArrayList<Position> getPossibleMoves(Piece p) { //wrapper function for getPossible___Moves. Given a piece, will return it's possible moves.
+	public ArrayList<Position> getPossibleMoves(Piece p) { //wrapper function for getPossible___Moves. Given a piece, will return it's possible moves.
 
 		if(p.getType() == Values.PAWN){
 			return getPossiblePawnMoves(p.getPosition());
@@ -227,7 +241,7 @@ public class Board {
 		}
 	}
 
-	ArrayList<Position> getPossibleQueenMoves(Position p){
+	private ArrayList<Position> getPossibleQueenMoves(Position p){
 
 		assert(getPieceAtPosition(p).type == Values.QUEEN); //make sure that it's a queen!
 		assert(p.doesExistOnBoard());
@@ -249,7 +263,7 @@ public class Board {
 		return output;
 	}
 
-	ArrayList<Position> getPossibleBishopMoves(Position p){
+	private ArrayList<Position> getPossibleBishopMoves(Position p){
 
 		assert(getPieceAtPosition(p).type == Values.BISHOP); //make sure that it's a queen!
 		assert(p.doesExistOnBoard());
@@ -267,7 +281,7 @@ public class Board {
 		return output;
 	}
 
-	ArrayList<Position> getPossibleRookMoves(Position p){
+	private ArrayList<Position> getPossibleRookMoves(Position p){
 
 		assert(getPieceAtPosition(p).type == Values.ROOK); //make sure that it's a queen!
 		assert(p.doesExistOnBoard());
@@ -285,7 +299,7 @@ public class Board {
 		return output;
 	}
 
-	ArrayList<Position> getPossibleKnightMoves(Position p){
+	private ArrayList<Position> getPossibleKnightMoves(Position p){
 
 		assert(getPieceAtPosition(p).type == Values.KNIGHT); //make sure that it's a queen!
 		assert(p.doesExistOnBoard());
@@ -307,7 +321,7 @@ public class Board {
 		return output;
 	}
 
-	ArrayList<Position> getPossibleKingMoves(Position p){
+	private ArrayList<Position> getPossibleKingMoves(Position p){
 
 		assert(getPieceAtPosition(p).type == Values.KING); //make sure that it's a queen!
 		assert(p.doesExistOnBoard());
@@ -329,7 +343,7 @@ public class Board {
 		return output;
 	}
 
-	ArrayList<Position> getPossiblePawnMoves(Position p){
+	private ArrayList<Position> getPossiblePawnMoves(Position p){
 
 		assert(getPieceAtPosition(p).type == Values.PAWN); //make sure that it's a queen!
 		assert(p.doesExistOnBoard());
@@ -362,16 +376,16 @@ public class Board {
 		return output;
 	}
 
-	boolean isCheckMate(){
+	public boolean isCheckMate(){
 
 	}
 
-	boolean isValidPlaceToMove(Position p, int side){ //designed for knights and kings, this tests if one of the spots where they "can" move is A: unoccupied or B: has an opposing piece, but does NOT have a friendly piece. //side should the be the side of the moving piece. p is the destination position.
+	private boolean isValidPlaceToMove(Position p, int side){ //designed for knights and kings, this tests if one of the spots where they "can" move is A: unoccupied or B: has an opposing piece, but does NOT have a friendly piece. //side should the be the side of the moving piece. p is the destination position.
 		return (p.doesExistOnBoard() && getPieceAtPosition(p).getSide() != side); //using getPositionRelative because it doesn't actually modify the object.
 		//This tests: is the new position on the board? and is the new position either enemy or unoccupied (not my own)?
 	}
 
-	ArrayList<Position> getMovesAlongDirectionalAxisUntilInterrupted(Position current, int x, int y){ //x = 0, y = 1 will move the unit up until it hits an opposing piece, it's own piece, or the edge of the board. All of these positions will be returned.
+	private ArrayList<Position> getMovesAlongDirectionalAxisUntilInterrupted(Position current, int x, int y){ //x = 0, y = 1 will move the unit up until it hits an opposing piece, it's own piece, or the edge of the board. All of these positions will be returned.
 
 		ArrayList<Position> output = new ArrayList<Position>();
 
@@ -405,7 +419,7 @@ public class Board {
 		return output;
 	}
 
-	String FENString(int activeSide){
+	public String FENString(int activeSide){
 		char castling = '-';
 		char enPassant = '-';
 		int halfMoveClock = 0;
@@ -427,7 +441,7 @@ public class Board {
 		return sb2.toString();
 	}
 	
-	static String replaceIsWithNums(String input){ //fen helper. Replaces rows of unoccupied cells with a number.
+	private static String replaceIsWithNums(String input){ //fen helper. Replaces rows of unoccupied cells with a number.
 		int count = 0;
 		boolean lastWasI = false;
 		
@@ -468,7 +482,7 @@ public class Board {
 		return sb.toString();
 	}
 	
-	int countPiecesOfType(int type, int side){ //sent pawn, black, will return the number of black pawns.
+	private int countPiecesOfType(int type, int side){ //sent pawn, black, will return the number of black pawns.
 		int counter = 0;
 		for(Piece p : getArrayListofMyRealPieces(side)){
 			if(p.getType() == type){
