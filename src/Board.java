@@ -4,13 +4,13 @@ import java.util.Arrays;
 
 public class Board {
 
-	private int[][] boardPosition;
+	int[][] boardPosition;
 
 	public Board(Board input){
 		this.boardPosition = deepCopyArray(input.getBoardArrayInt());
 	}
 	public Board(){
-		boardPosition = new int[8][8];
+		boardPosition = new int[8][8]; //x, y coordinates. a8 == 0, 0; h1 == 7, 7; a1 == 7, 0; h8 == 0, 7
 	}
 
 	public void setPieceAtPosition(Position positionToSet, Piece pieceToPlace){
@@ -45,19 +45,21 @@ public class Board {
 		String[] split = input.split("/"); //divides each row.
 		System.out.println(Arrays.toString(split));
 		
-		for(int i = 0; i < split.length; i++){
+		for(int i = split.length-1; i > 0; i--){ //rows
 			int currentXPositionOnBoard = 0; //for example, if the first character we encounter is 5, this will go to 4, while j will iterate to 1.
-			for (int j = 0; j < split[i].length(); j++) { //loop through each character.
-				
-				char currentChar = split[i].charAt(j);
+			for (int j = 0; j < split[7-i].length(); j++) { //loop through each character. Columns. 
+			
+				char currentChar = split[7-i].charAt(j);
 				Position currentPosition = new Position(currentXPositionOnBoard, i);
+				
 				if(currentChar <= '9' && currentChar >= '0'){ //if currentChar is an int, jump that number of spots.
-					currentXPositionOnBoard+= (currentChar-'1'); 
+					currentXPositionOnBoard+= (currentChar-'0'); //if we see one, we want to move 1 square. 
+					
 				} else { //currentChar is not an int, and is therefore a character representing a piece.
 					setPieceAtPosition(currentPosition, Piece.getPieceFromLetter(currentChar, currentPosition));
 					currentXPositionOnBoard++;
 				}
-				
+				System.out.println(this);
 			}
 		}
 	}

@@ -1,8 +1,3 @@
-import java.util.ArrayList;
-
-import javax.swing.plaf.basic.BasicLookAndFeel;
-
-
 public class Piece {
 	boolean hasBeenPromoted;
 	int file;

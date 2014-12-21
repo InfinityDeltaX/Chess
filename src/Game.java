@@ -7,7 +7,7 @@ public class Game {
 	public static void main(String[] args){
 
 		Scanner in = new Scanner(System.in);
-		String fenString = in.nextLine();
+		
 
 		//Testing
 		Position p = new Position(1, 0);
@@ -15,7 +15,15 @@ public class Game {
 		Piece piece = new Piece(p, Values.SIDE_WHITE, Values.KNIGHT);
 		Move m = new Move(piece, moveTo);
 		Board b = new Board();
+		
+		b.setPieceAtPosition(p, piece);
+		b.boardPosition[0][0] = Values.BISHOP_BLACK;
+		System.out.println(b);
+		
+		
+		String fenString = in.nextLine();
 		b.setToDefaultBoard();
+		System.out.println(b);
 		b.setPositionToEmpty(p);
 		b.setToFenString(fenString);
 		System.out.println(b);
