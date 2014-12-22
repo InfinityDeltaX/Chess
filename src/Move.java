@@ -11,6 +11,13 @@ public class Move {
 		this.originalPosition = new Position(p.getPosition());
 	}
 	
+	public Move(String notation, Board b){
+		//this constructor is only for reading in sequences of abstract moves.
+		originalPosition = new Position(notation.substring(0, 2));
+		toMoveTo = new Position(notation.substring(2));
+		piece = b.getPieceAtPosition(originalPosition);
+	}
+	
 	public Move(Move input) {
 		this(input.getPiece(), input.getToMoveTo());
 	}
@@ -21,10 +28,10 @@ public class Move {
 
 	@Override
 	public String toString() {
-		return ("Move " + piece.getSideNames() + " " + Piece.getTypeName(piece.type) + " at position " + originalPosition + " to " + toMoveTo);
+		if(piece!=null)
+			return ("Move " + piece.getSideNames() + " " + Piece.getTypeName(piece.type) + " at position " + originalPosition + " to " + toMoveTo);
+		else return "Piece is null....";
 	}
-
-
 
 	public Piece getPiece() {
 		return new Piece(piece);

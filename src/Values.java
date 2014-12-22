@@ -39,6 +39,8 @@ public class Values {
 	public static final int PAWN_ROW_BLACK = 6;
 	public static final int PAWN_ROW_WHITE = 1;
 	
+	public static final String defaultBoardFenString = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+	
 	public static final int[][] PIECE_SQUARE_KING_END = new int[][]{ //applies for the white side; for black, flip the board over the X axis.
 		{0, 0, 0, 0, 0, 0, 0, 0}, 
 		{0, 0, 0, 0, 0, 0, 0, 0}, 

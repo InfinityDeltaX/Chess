@@ -1,33 +1,13 @@
+import java.io.ObjectInputStream.GetField;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
 
 public class Game {
-	public static void main(String[] args){
-
-		Scanner in = new Scanner(System.in);
-		
-
-		//Testing
-		Position p = new Position(1, 0);
-		Position moveTo = new Position(0, 3);
-		Piece piece = new Piece(p, Values.SIDE_WHITE, Values.KNIGHT);
-		Move m = new Move(piece, moveTo);
-		Board b = new Board();
-		
-		String fenString = in.nextLine();
-		b.setToFenString(fenString);
-		System.out.println(b.FENString(Values.SIDE_WHITE));
-		//b.setPieceAtPosition(new Position(4, 4), new Piece(new Position(4, 4), Values.SIDE_WHITE, Values.KING_WHITE));
-		
-		//System.out.println(b.FENString(Values.SIDE_BLACK));
-		//System.out.println(perft(b, Values.SIDE_BLACK, 4));
-		//System.out.println("Nodes per second: " + calculateNPS(3));
-		System.out.println(minimax(Values.SIDE_WHITE, 3, b));
-		
-	}
-
+	
+	static Board mostRecentBoard;
+	
 	private static int calculateNPS(int depthToTest){
 		Board b = new Board();
 		b.setToDefaultBoard();

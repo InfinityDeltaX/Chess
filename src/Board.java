@@ -12,6 +12,17 @@ public class Board {
 	public Board(){
 		boardPosition = new int[8][8]; //x, y coordinates. a8 == 0, 0; h1 == 7, 7; a1 == 7, 0; h8 == 0, 7
 	}
+	public Board(String startingPosFEN, ArrayList<Move> movesMade){
+		this();
+		this.setToFenString(startingPosFEN);
+		for(Move current : movesMade){
+			this.makeMove(current);
+		}
+	}
+	public Board(String FenString){
+		this();
+		this.setToFenString(FenString);
+	}
 
 	public void setPieceAtPosition(Position positionToSet, Piece pieceToPlace){
 		int intOfPieceToPlace = pieceToPlace.getCorrespondingInt();

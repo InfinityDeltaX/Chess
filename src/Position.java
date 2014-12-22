@@ -11,6 +11,11 @@ public class Position {
 		this.file = file;
 	}
 	
+	public Position(String input){ //for example, e4 or h8.
+		this.row = Integer.parseInt("" + input.charAt(1)) - 1;
+		this.file = input.charAt(0)-'a';
+	}
+	
 	public Position(Position p){
 		this(p.getFile(), p.getRow());
 	}
