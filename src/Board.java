@@ -57,7 +57,7 @@ public class Board {
 		split = Arrays.copyOfRange(split, 0, 8);
 		System.out.println(Arrays.toString(split));
 		
-		for(int i = split.length-1; i > 0; i--){ //rows
+		for(int i = split.length-1; i >= 0; i--){ //rows
 			int currentXPositionOnBoard = 0; //for example, if the first character we encounter is 5, this will go to 4, while j will iterate to 1.
 			for (int j = 0; j < split[7-i].length(); j++) { //loop through each character. Columns. 
 			
@@ -141,6 +141,14 @@ public class Board {
 		return output;
 	}
 
+	public long testEvalSpeed(){
+		long start = System.currentTimeMillis();
+		for(int i = 0; i < 100; i++){
+		this.fastEvaluateMaterial();
+		}
+		return System.currentTimeMillis() - start;
+	}
+	
 	public ArrayList<Move> getAllPossibleMoves(int side){
 		ArrayList<Move> output = new ArrayList<Move>();
 		ArrayList<Piece> myPieces = getArrayListofMyRealPieces(side);
@@ -150,10 +158,10 @@ public class Board {
 			for(Position currentEndingPosition : possibleLocationsAfterMove){ //iterate through each place it can go
 				Move m = new Move(currentPiece, currentEndingPosition);
 				//System.out.println(m);
-				if(isLegalMove(m)){ //this is not totally done yet...
+				//if(isLegalMove(m)){ //this is not totally done yet...
 					output.add(m); // TODO
 					//System.out.println("Added move: " + m);
-				}
+				//}
 			}
 		}
 		return output;
@@ -173,12 +181,16 @@ public class Board {
 
 	public int evaluate(){ //White side is trying to maximize, Black to minimize. 
 		//first, deal with material, then, deal with piece-square tables.
-		return evaluateMaterial();
+		return fastEvaluateMaterial(); //About a 5x speed improvement by using fastEvaluateMaterial instead of evaluateMaterial.
 		// TODO add piece-square tables.
 	}
 
 	private int evaluateMaterial(){ //returns the difference in material. Positive favors white.
+		//System.out.println("White value: " + evaluateMaterialSide(Values.SIDE_WHITE));
+		//System.out.println("Black value: " + evaluateMaterialSide(Values.SIDE_BLACK));
+		
 		return(evaluateMaterialSide(Values.SIDE_WHITE) - evaluateMaterialSide(Values.SIDE_BLACK));
+		//return(fastEvaluateMaterial());
 	}
 
 	private int evaluateMaterialSide(int side){ //gets a positive int representing the total material for either side. 
@@ -189,6 +201,19 @@ public class Board {
 		count += Values.POINT_VALUE_ROOK * countPiecesOfType(Values.ROOK, side);
 		count += Values.POINT_VALUE_QUEEN * countPiecesOfType(Values.QUEEN, side);
 		count += Values.POINT_VALUE_KING * countPiecesOfType(Values.KING, side);
+		return count;
+	}
+	
+	public int fastEvaluateMaterial(){
+		int count = 0;
+		Piece[][] allPieces = getBoardArrayPiece();
+		for(int i = 0; i < 8; i++){
+			for(int j = 0; j < 8; j++){
+				int value = Values.POINT_VALUE_TABLE[allPieces[i][j].getType()]; //get 100, 200, etc.
+				if(allPieces[i][j].getSide() == Values.SIDE_BLACK) value = value*-1; //*-1 if it's black.
+				count += value;
+			}
+		}
 		return count;
 	}
 
@@ -400,24 +425,24 @@ public class Board {
 
 		ArrayList<Position> output = new ArrayList<Position>();
 
-		int side = getPieceAtPosition(current).side;
-		boolean didChange = false;
+		Position start = new Position(current);
+		
+		int side = getPieceAtPosition(start).side;
 
+		Piece temp = new Piece(getPieceAtPosition(start));
+		setPositionToEmpty(start);
+		
+		/*
 		//we don't add the starting position, because moving to your original location is not valid.
 		current.changePositionRelative(x, y); //without this, we look at the spot where we started, see our own piece in the spot where we are, end the loop, and return. This moves us 1 forwards immediately to avoid this.
-		output.add(new Position(current));
+		output.add(new Position(current)); */
 
 		while(current.doesExistOnBoard() && getPieceAtPosition(current).isEmpty()){ //while still valid
 			current.changePositionRelative(x, y);
 			output.add(new Position(current));
-			didChange = true;
 		}
-
-
-		if(!didChange){ //cannot move at all
-			//account for initial jump-start
-			output.remove(output.size()-1); //get rid of the last one
-		} else if(!current.doesExistOnBoard()){ //we're off the board
+		
+		if(!current.doesExistOnBoard()){ //we're off the board
 			//move back onto the board.
 			output.remove(output.size()-1); //get rid of the last one
 		} else if(getPieceAtPosition(current).side == side){ //the piece that we ran into is our own
@@ -426,6 +451,7 @@ public class Board {
 		} else { //we're on top of an opposing piece, and that is O.K.
 
 		}
+		setPieceAtPosition(start, temp); //replace ourselves. 
 		//System.out.println(output);
 		return output;
 	}

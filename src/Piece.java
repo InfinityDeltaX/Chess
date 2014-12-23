@@ -124,7 +124,7 @@ public class Piece {
 	}
 
 	public Position getPosition() {
-		return myPosition;
+		return new Position(myPosition);
 	}
 
 	public void setPosition(Position myPosition) {
