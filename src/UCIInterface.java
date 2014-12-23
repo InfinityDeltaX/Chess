@@ -4,13 +4,13 @@ import java.util.Scanner;
 public class UCIInterface implements Runnable{
 
 	public volatile Position lastPositionRecieved;
-	
+	static Game game;
 	
 	@Override
 	public void run() {
 		Scanner in = new Scanner(System.in);
 		// TODO Auto-generated method stub
-		
+		game = new Game();
 		while(1==1){
 			String input = in.nextLine();
 			routeCommand(input);
@@ -60,11 +60,10 @@ public class UCIInterface implements Runnable{
 	}
 	
 	private static void goCommand(String[] split){
-		
 	}
 	
 	private static void stopCommand(){
-		
+		tellGUI("Stopping not supported at this time.");
 	}
 	
 	public static void sendCommand(){

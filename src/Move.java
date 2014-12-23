@@ -23,7 +23,7 @@ public class Move {
 	}
 
 	public String getNotation(){
-		return ("" + getToMoveTo() + getOriginalPosition());
+		return ("" + getOriginalPosition() + getToMoveTo());
 	}
 
 	@Override

@@ -30,12 +30,20 @@ public class Values {
 	public static final int POINT_VALUE_QUEEN = 900;
 	public static final int POINT_VALUE_ROOK = 500;
 	public static final int POINT_VALUE_KNIGHT = 300;
+	public static final int POINT_VALUE_EMPTY_SQUARE = 300;
+	
+	public static final int[] POINT_VALUE_TABLE = new int[]{POINT_VALUE_EMPTY_SQUARE, POINT_VALUE_PAWN, POINT_VALUE_BISHOP, POINT_VALUE_KING, POINT_VALUE_QUEEN, POINT_VALUE_ROOK, POINT_VALUE_KNIGHT};
 	
 	public static final int SIDE_WHITE = 1;
 	public static final int SIDE_BLACK = 2;
 	
 	public static int SIDE_COMPUTER;
 	public static int SIDE_USER;
+	
+	public static final int ACCEPTABLE_TIME_MIN = (int) ((double) 0.5*60*1000); //ms
+	public static final int ACCEPTABLE_TIME_MAX = 1*60*1000; //ms
+	
+	public static final int STARTING_DEPTH = 5;
 	
 	public static final int PAWN_ROW_BLACK = 6;
 	public static final int PAWN_ROW_WHITE = 1;
