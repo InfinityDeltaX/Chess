@@ -10,6 +10,7 @@ public class UCIInterface implements Runnable{
 	public void run() {
 		Scanner in = new Scanner(System.in);
 		// TODO Auto-generated method stub
+		
 		while(1==1){
 			String input = in.nextLine();
 			routeCommand(input);

@@ -1,13 +1,63 @@
-import java.io.ObjectInputStream.GetField;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 import java.util.Scanner;
 
 
 public class Game {
-	
+
 	static Board mostRecentBoard;
-	
+
+	public static void main(String[] args){
+		Scanner in = new Scanner(System.in);
+
+		String input = in.nextLine();
+		Board b = new Board();
+		if(input.contains("new")){
+
+			System.out.println("Randomly determined sides.");
+			Random r = new Random();
+			if(r.nextDouble() > 0.5){//computer is white
+				Values.SIDE_COMPUTER = Values.SIDE_WHITE;
+				Values.SIDE_USER = Values.SIDE_BLACK;
+				System.out.println("User is side BLACK!");
+			}	
+			else{
+				Values.SIDE_COMPUTER = Values.SIDE_BLACK;
+				Values.SIDE_USER = Values.SIDE_WHITE;
+				System.out.println("User is side WHITE!");
+			}
+
+			b.setToDefaultBoard();
+		} else {
+			b.setToFenString(input);
+			System.out.println("Please input user's side: ");
+			input = in.nextLine();
+			if(input.contains("white")){
+				Values.SIDE_COMPUTER = Values.SIDE_BLACK;
+				Values.SIDE_USER = Values.SIDE_WHITE;
+			} else {
+				Values.SIDE_COMPUTER = Values.SIDE_BLACK;
+				Values.SIDE_USER = Values.SIDE_WHITE;
+			}
+		}
+
+		//game loop
+		while(1==1){
+			System.out.println("Current Board State: ");
+			System.out.println(b.FENString(Values.SIDE_USER));
+			System.out.println("Please input your move: [ex: e2e4]");
+			String userMove = in.nextLine();
+			b.makeMove(new Move(userMove, b));
+			System.out.println("Calculating on board position...");
+			Move bestMove = minimax(Values.SIDE_COMPUTER, 4, b);
+			System.out.println("Made move: " + bestMove);
+			b.makeMove(bestMove);
+
+
+		}
+	}
+
 	private static int calculateNPS(int depthToTest){
 		Board b = new Board();
 		b.setToDefaultBoard();
@@ -18,16 +68,16 @@ public class Game {
 		System.out.println("Nodes searched: " + nodesSearched);
 		return (int) (nodesSearched/(endTime-startTime)*1000);
 	}
-	
+
 	public static Move minimax(int side, int depthToSearch, Board inputBoard){ //given a board state, determine a best move. Basically a min/max node, except that it keeps trach of the corresponding moves > scores hashmap.
 		Move currentBestMove = null;
 		Move bestMove;
 		int bestMoveScore = 0;
 		long startTime = System.currentTimeMillis();
-		
+
 		if(side == Values.SIDE_BLACK){ //minimizer
 			int currentLowest = Integer.MAX_VALUE;
-			
+
 			ArrayList<Move> possibleNextMoves = inputBoard.getAllPossibleMoves(Values.SIDE_BLACK); //else, get a list of possible next moves. Black is always trying to minimize. The maximizer uses Values.SIDE_WHITE here.
 			//HashMap<Move, Integer> scores= new HashMap<Move, Integer>(); //make a hashmap of all possible moves to their corresponding scores.
 
@@ -70,9 +120,9 @@ public class Game {
 	}
 
 	private static int minNode(Board inputBoard, int remainingDepth){ //given a board state, minimal value.
-		
+
 		//System.out.println("Running min...");
-		
+
 		int currentLowest = Integer.MAX_VALUE;
 
 		if(remainingDepth == 0){ //if we have no layers left to search, return the current board eval.
@@ -92,7 +142,7 @@ public class Game {
 		}
 		return currentLowest;
 	}
-	
+
 	private static int perft(Board _input, int side, int depth){
 		Board input = new Board(_input);
 		int total = 0;
@@ -106,11 +156,11 @@ public class Game {
 		}
 		return total;
 	}
-	
+
 	private static int maxNode(Board inputBoard, int remainingDepth){
-		
+
 		//System.out.println("Running max...");
-		
+
 		int currentHighest = Integer.MIN_VALUE;
 
 		if(remainingDepth == 0){ //if we have no layers left to search, return the current board eval.
