@@ -7,11 +7,12 @@ import java.util.Scanner;
 
 public class Game {
 	
-	static int lastDepth = Values.STARTING_DEPTH; //keep track of how far we searched, and how it took us, last time.
-	static long lastSearch = Values.ACCEPTABLE_TIME_MIN; //how long did that depth take us?
 	
+	int lastDepth = Values.STARTING_DEPTH; //keep track of how far we searched, and how it took us, last time.
+	long lastSearch = Values.ACCEPTABLE_TIME_MIN; //how long did that depth take us?
+	Board theBoard;
 
-	public static void main(String[] args){
+	public void main(String[] args){
 		Scanner in = new Scanner(System.in);
 		System.out.println(Values.ACCEPTABLE_TIME_MIN);
 		String input = in.nextLine();
@@ -48,7 +49,24 @@ public class Game {
 		}
 	}
 	
-	private static void eachSideMoves(Board b){ //get a move from the user, then from the computer. 
+	public void setBoard(Board b){
+		theBoard = new Board(b);
+	}
+	
+	public Board getBoard(){
+		return new Board(theBoard);
+	}
+	
+	public Game(int computerSide){
+		setSides(computerSide);
+		theBoard = null;
+	}
+	
+	public void setup(){
+		
+	}
+	
+	private void eachSideMoves(Board b){ //get a move from the user, then from the computer. 
 		//get user's move
 		b.makeMove(getUserMove(b));
 		b.makeMove(getComputerMove(b));
@@ -57,15 +75,16 @@ public class Game {
 	
 	
 	
-	public static Move getComputerMove(Board b){
-		int depth = getDepth();
+	public Move getComputerMove(Board b){
+		if(!Values.lockDepth)
+			getDepth();
 		System.out.println("Calculating to " + lastDepth + "...");
-		Move bestMove = minimax(Values.SIDE_COMPUTER, depth, b);
+		Move bestMove = minimax(Values.SIDE_COMPUTER, lastDepth, b);
 		System.out.println("Made move: " + bestMove.getNotation());
 		return bestMove;
 	}
 	
-	private static Move getUserMove(Board input){
+	private Move getUserMove(Board input){
 		Scanner in = new Scanner(System.in);
 		System.out.print("Current Board State: ");
 		System.out.println(input.FENString(Values.SIDE_USER));
@@ -81,7 +100,7 @@ public class Game {
 	
 	
 	
-	private static int getDepth(){
+	private int getDepth(){
 		if(lastSearch < Values.ACCEPTABLE_TIME_MIN){
 			lastDepth++;
 			System.out.println("Depth increased by one to " + lastDepth);
@@ -93,20 +112,20 @@ public class Game {
 		return lastDepth;
 	}
 
-	private static void setSides(int computerside){
+	public void setSides(int computerside){
 		if(computerside == Values.SIDE_WHITE){//computer is white
 			Values.SIDE_COMPUTER = Values.SIDE_WHITE;
 			Values.SIDE_USER = Values.SIDE_BLACK;
-			System.out.println("User is side BLACK!");
+			System.out.println("Computer is side WHITE!");
 		}	
 		else{
 			Values.SIDE_COMPUTER = Values.SIDE_BLACK;
 			Values.SIDE_USER = Values.SIDE_WHITE;
-			System.out.println("User is side WHITE!");
+			System.out.println("Computer is side BLACK!");
 		}
 	}
 	
-	private static int calculateNPS(int depthToTest){ //uses perft...
+	private int calculateNPS(int depthToTest){ //uses perft...
 		Board b = new Board();
 		b.setToDefaultBoard();
 		long startTime = System.currentTimeMillis();
@@ -117,13 +136,13 @@ public class Game {
 		return (int) (nodesSearched/(endTime-startTime)*1000);
 	}
 	
-	private static void printTabs(int i){
+	private void printTabs(int i){
 		for(int j = 0; j < i; j++){
 			System.out.print("  ");
 		}
 	}
 	
-	public static Move minimax(int side, int depthToSearch, Board inputBoard){ //given a board state, determine a best move. Basically a min/max node, except that it keeps trach of the corresponding moves > scores hashmap.
+	public Move minimax(int side, int depthToSearch, Board inputBoard){ //given a board state, determine a best move. Basically a min/max node, except that it keeps trach of the corresponding moves > scores hashmap.
 		Move currentBestMove = null;
 		Move bestMove;
 		int bestMoveScore = 0;
@@ -180,7 +199,7 @@ public class Game {
 		return bestMove;
 	}
 
-	private static int minNode(Board inputBoard, int remainingDepth){ //given a board state, minimal value.
+	private int minNode(Board inputBoard, int remainingDepth){ //given a board state, minimal value.
 
 		//System.out.println("Running min...");
 		
@@ -208,7 +227,7 @@ public class Game {
 		return currentLowest;
 	}
 
-	private static int perft(Board _input, int side, int depth){
+	private int perft(Board _input, int side, int depth){
 		Board input = new Board(_input);
 		int total = 0;
 		if(depth == 0){
@@ -222,7 +241,7 @@ public class Game {
 		return total;
 	}
 
-	private static int maxNode(Board inputBoard, int remainingDepth){
+	private int maxNode(Board inputBoard, int remainingDepth){
 
 		//System.out.println("Running max...");
 		
