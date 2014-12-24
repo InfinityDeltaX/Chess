@@ -40,6 +40,9 @@ public class Values {
 	public static int SIDE_COMPUTER;
 	public static int SIDE_USER;
 	
+	public static int GAME_STATE_START = 0;
+	public static int GAME_STATE_END = 1;
+	
 	public static final int ACCEPTABLE_TIME_MIN = (int) ((double) 0.5*60*1000); //ms
 	public static final int ACCEPTABLE_TIME_MAX = 1*60*1000; //ms
 	
@@ -52,25 +55,25 @@ public class Values {
 	public static final String defaultBoardFenString = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
 	
 	public static final int[][] PIECE_SQUARE_KING_END = new int[][]{ //applies for the white side; for black, flip the board over the X axis.
-		{0, 0, 0, 0, 0, 0, 0, 0}, 
-		{0, 0, 0, 0, 0, 0, 0, 0}, 
-		{0, 0, 0, 0, 0, 0, 0, 0}, 
-		{0, 0, 0, 0, 0, 0, 0, 0}, 
-		{0, 0, 0, 0, 0, 0, 0, 0}, 
-		{0, 0, 0, 0, 0, 0, 0, 0}, 
-		{0, 0, 0, 0, 0, 0, 0, 0}, 
-		{0, 0, 0, 0, 0, 0, 0, 0}
+		{-20, -10, -10, -10, -10, -10, -10, -20}, 
+		{-10, -7, 5, -5, -5, 5, -7, -10}, 
+		{-10, 5, 20, 20, 20, 20, 5, -10}, 
+		{-10, -5, 20, 27, 27, 20, -5, -10}, 
+		{-10, -5, 20, 27, 27, 20, -5, -10}, 
+		{-10, 5, 20, 20, 20, 20, 5, -10}, 
+		{-10, -7, 5, -5, -5, 5, -7, -10}, 
+		{-20, -10, -10, -10, -10, -10, -10, -20}
 		};
 	
 	public static final int[][] PIECE_SQUARE_BISHOP_START = new int[][]{ //applies for the white side; for black, flip the board over the X axis.
-		{0, 0, 0, 0, 0, 0, 0, 0}, 
-		{0, 0, 0, 0, 0, 0, 0, 0}, 
-		{0, 0, 0, 0, 0, 0, 0, 0}, 
-		{0, 0, 0, 0, 0, 0, 0, 0}, 
-		{0, 0, 0, 0, 0, 0, 0, 0}, 
-		{0, 0, 0, 0, 0, 0, 0, 0}, 
-		{0, 0, 0, 0, 0, 0, 0, 0}, 
-		{0, 0, 0, 0, 0, 0, 0, 0}
+		{-8, -8, -8, -8, -8, -8, -8, -8}, 
+		{-8, 0, 0, 0, 0, 0, 0, -8}, 
+		{-8, 0, 12, 12, 12, 12, 0, -8}, 
+		{-8, 0, 12, 20, 20, 12, 0, -8}, 
+		{-8, 0, 12, 20, 20, 12, 0, -8}, 
+		{-8, 0, 12, 12, 12, 12, 0, -8}, 
+		{-8, 0, 0, 0, 0, 0, 0, -8}, 
+		{-8, -8, -8, -8, -8, -8, -8, -8}
 		};
 	
 	public static final int[][] PIECE_SQUARE_ROOK_START = new int[][]{ //applies for the white side; for black, flip the board over the X axis.
@@ -106,9 +109,60 @@ public class Values {
 		{0, 0, 0, 0, 0, 0, 0, 0}
 		};
 	
+	public static final int[][] PIECE_SQUARE_PAWN_END = PIECE_SQUARE_PAWN_START;
+	
+	public static final int[][] PIECE_SQUARE_KNIGHT_END = PIECE_SQUARE_KNIGHT_START;
+	
+	public static final int[][] PIECE_SQUARE_BISHOP_END = PIECE_SQUARE_BISHOP_START;
+	
+	public static final int[][] PIECE_SQUARE_ROOK_END = PIECE_SQUARE_ROOK_START;
+	
+	public static final int[][] PIECE_SQUARE_KING_START = new int[][]{
+		{-4, -4, -4, -4, -4, -4, -4, -4}, 
+		{-4, -4, -4, -4, -4, -4, -4, -4}, 
+		{-4, -4, -4, -4, -4, -4, -4, -4}, 
+		{-4, -4, -4, -4, -4, -4, -4, -4}, 
+		{-4, -4, -4, -4, -4, -4, -4, -4}, 
+		{-4, -4, -4, -4, -4, -4, -4, -4}, 
+		{5, 5, 5, 5, 5, 5, 5, 5}, 
+		{25, 25, 15, 11, 11, 15, 25, 25}
+		};
+	
+	public static final int[][] PIECE_SQUARE_QUEEN_START = new int[][] {
+		{-8, -8, -8, -8, -8, -8, -8, -8}, 
+		{-8, 0, 0, 0, 0, 0, 0, -8}, 
+		{-8, 0, 12, 12, 12, 12, 0, -8}, 
+		{-8, 0, 12, 20, 20, 12, 0, -8}, 
+		{-8, 0, 12, 20, 20, 12, 0, -8}, 
+		{-8, 0, 12, 12, 12, 12, 0, -8}, 
+		{-8, 0, 0, 0, 0, 0, 0, -8}, 
+		{-8, -8, -8, -8, -8, -8, -8, -8}
+		};
+	
+	public static final int[][] PIECE_SQUARE_QUEEN_END = PIECE_SQUARE_QUEEN_START;
+	
+	public static final int[][][][] PIECE_SQUARE_TABLE = new int[][][][]{
+		{null, PIECE_SQUARE_PAWN_START, PIECE_SQUARE_BISHOP_START, PIECE_SQUARE_KING_START, PIECE_SQUARE_QUEEN_START, PIECE_SQUARE_ROOK_START, PIECE_SQUARE_KNIGHT_START},
+		{null, PIECE_SQUARE_PAWN_END, PIECE_SQUARE_BISHOP_END, PIECE_SQUARE_KING_END, PIECE_SQUARE_QUEEN_END, PIECE_SQUARE_ROOK_END, PIECE_SQUARE_KNIGHT_END}
+		}; //[0=start, 1=end][piece type][x coord][y coord]
+	
 	// TODO
 	
-	int[][] getPieceSquareTables(int side, int type){ //given a side and a type, return the corresponding piece-square table. Flip if black, etc.
+	int[][] getPieceSquareTable(int gameState, int type){ //given a side and a type, return the corresponding piece-square table. Flip if black, etc.
+		return PIECE_SQUARE_TABLE[gameState][type];
+	}
+	
+	int getPieceSquareValue(Piece input){
+		int type = input.getType();
+		int side = input.getSide();
+		int XCoord = input.getFile();
+		int YCoord = input.getRow();
+		
+		if(type == Values.SIDE_BLACK){
+			YCoord = 7-YCoord;
+		}
+		
+		//TODO
 		
 	}
 	
