@@ -13,25 +13,11 @@ public class Game {
 	Board theBoard;
 
 	public void main(String[] args){
-		Scanner in = new Scanner(System.in);
+		Scanner in = new Scanner(System.in);		
 		System.out.println(Values.ACCEPTABLE_TIME_MIN);
 		String input = in.nextLine();
 		Board b = new Board();
 		b.setToFenString(input);
-		System.out.println(b.evaluate());
-		System.out.println(b);
-		System.out.println("Evaluation Score: " + b.testEvalSpeed());
-		System.out.println("New eval: " + b.evaluate());
-		System.out.println("Old eval: " + b.fastEvaluateMaterial());
-		//System.out.println(b.getAllPossibleMoves(Values.SIDE_WHITE).size());
-		
-		//System.out.println(b.getPossibleMoves(b.getPieceAtPosition(new Position("e2"))));
-		
-		System.out.println(b.getAllPossibleMoves(Values.SIDE_BLACK).size());
-		
-		for(Move m : b.getAllPossibleMoves(Values.SIDE_BLACK)){
-			System.out.println(m.getToMoveTo());
-		}
 		
 		setSides(Values.SIDE_BLACK);
 		

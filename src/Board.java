@@ -50,23 +50,23 @@ public class Board {
 			}
 		}
 	}
-	
+
 	public void setToFenString(String input){
 		this.setToClearBoard();
 		String[] split = input.split("/"); //divides each row.
 		split = Arrays.copyOfRange(split, 0, 8);
 		System.out.println(Arrays.toString(split));
-		
+
 		for(int i = split.length-1; i >= 0; i--){ //rows
 			int currentXPositionOnBoard = 0; //for example, if the first character we encounter is 5, this will go to 4, while j will iterate to 1.
 			for (int j = 0; j < split[7-i].length(); j++) { //loop through each character. Columns. 
-			
+
 				char currentChar = split[7-i].charAt(j);
 				Position currentPosition = new Position(currentXPositionOnBoard, i);
-				
+
 				if(currentChar <= '9' && currentChar >= '0'){ //if currentChar is an int, jump that number of spots.
 					currentXPositionOnBoard+= (currentChar-'0'); //if we see one, we want to move 1 square. 
-					
+
 				} else { //currentChar is not an int, and is therefore a character representing a piece.
 					setPieceAtPosition(currentPosition, Piece.getPieceFromLetter(currentChar, currentPosition));
 					currentXPositionOnBoard++;
@@ -74,7 +74,7 @@ public class Board {
 			}
 		}
 	}
-	
+
 	public void setToDefaultBoard(){
 		boardPosition = new int[][]{
 				{Values.ROOK_WHITE, Values.PAWN_WHITE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.PAWN_BLACK, Values.ROOK_BLACK},
@@ -116,7 +116,7 @@ public class Board {
 		output.add(new Board());
 		return output;
 	}
-	
+
 	public ArrayList<Piece> getArrayListofMyRealPieces(int side){ //does not return empty spaces. Returns an ArrayList of pieces from the player specified in 'side'.
 		ArrayList<Piece> output = new ArrayList<Piece>();
 		for(int i = 0; i < boardPosition.length; i++){
@@ -132,7 +132,7 @@ public class Board {
 	public int[][] getBoardArrayInt(){
 		return deepCopyArray(boardPosition);
 	}
-	
+
 	private int[][] deepCopyArray(int[][] input){
 		int[][] output = new int[input.length][input[0].length];
 		for (int i = 0; i < input.length; i++) {
@@ -144,11 +144,11 @@ public class Board {
 	public long testEvalSpeed(){
 		long start = System.currentTimeMillis();
 		for(int i = 0; i < 100; i++){
-		this.fastEvaluateMaterial();
+			this.fastEvaluateMaterial();
 		}
 		return System.currentTimeMillis() - start;
 	}
-	
+
 	public ArrayList<Move> getAllPossibleMoves(int side){
 		ArrayList<Move> output = new ArrayList<Move>();
 		ArrayList<Piece> myPieces = getArrayListofMyRealPieces(side);
@@ -159,8 +159,8 @@ public class Board {
 				Move m = new Move(currentPiece, currentEndingPosition);
 				//System.out.println(m);
 				//if(isLegalMove(m)){ //this is not totally done yet...
-					output.add(m); // TODO
-					//System.out.println("Added move: " + m);
+				output.add(m); // TODO
+				//System.out.println("Added move: " + m);
 				//}
 			}
 		}
@@ -186,11 +186,7 @@ public class Board {
 	}
 
 	private int evaluateMaterial(){ //returns the difference in material. Positive favors white.
-		//System.out.println("White value: " + evaluateMaterialSide(Values.SIDE_WHITE));
-		//System.out.println("Black value: " + evaluateMaterialSide(Values.SIDE_BLACK));
-		
 		return(evaluateMaterialSide(Values.SIDE_WHITE) - evaluateMaterialSide(Values.SIDE_BLACK));
-		//return(fastEvaluateMaterial());
 	}
 
 	private int evaluateMaterialSide(int side){ //gets a positive int representing the total material for either side. 
@@ -203,22 +199,36 @@ public class Board {
 		count += Values.POINT_VALUE_KING * countPiecesOfType(Values.KING, side);
 		return count;
 	}
-	
+
 	public int fastEvaluateMaterial(){
 		int count = 0;
+		int gameState = getGameState();
+		
 		Piece[][] allPieces = getBoardArrayPiece();
 		for(int i = 0; i < 8; i++){
 			for(int j = 0; j < 8; j++){
-				int value = Values.POINT_VALUE_TABLE[allPieces[i][j].getType()]; //get 100, 200, etc.
+				int value = Values.POINT_VALUE_TABLE[allPieces[i][j].getType()]; //get 100, 900, etc.
+				value += Values.getPieceSquareValue(allPieces[i][j], gameState); //get Piece-square tables. 
 				if(allPieces[i][j].getSide() == Values.SIDE_BLACK) value = value*-1; //*-1 if it's black.
+				
 				count += value;
 			}
 		}
+
 		return count;
 	}
-
-	private int evaluatePieceSquareSide(int side){
-
+	
+	public int getGameState(){
+		int totalPieces = 0;
+		int gameState = 0;
+		Piece[][] allPieces = getBoardArrayPiece();
+		
+		for(int i = 0; i < 8; i++){
+			for(int j = 0; j < 8; j++){
+				totalPieces += (allPieces[i][j].getType() == Values.SIDE_BLACK || allPieces[i][j].getType() == Values.SIDE_WHITE) ? 1 : 0;
+			}
+		}
+		 return (totalPieces > Values.END_GAME_THRESHOLD ? Values.GAME_STATE_START : Values.GAME_STATE_END);
 	}
 
 	public void makeMove(Move m){
@@ -228,10 +238,10 @@ public class Board {
 	}
 	private boolean isLegalMove(Move input){
 		//return true;
-		
+
 		//for some reason, uncommenting this code creates a mega-derp with getAllPossibleMoves. Is this somehow modifying the input parameter??
-		
-		
+
+
 		Move moveToCheck = new Move(input);
 		Board afterMove = new Board(this);
 		afterMove.makeMove(moveToCheck);
@@ -243,7 +253,7 @@ public class Board {
 		//is this all that is required?
 
 		return true;
-		
+
 	}
 	private boolean isKingInCheck(){
 		//is the king in check on this board?
@@ -426,12 +436,12 @@ public class Board {
 		ArrayList<Position> output = new ArrayList<Position>();
 
 		Position start = new Position(current);
-		
+
 		int side = getPieceAtPosition(start).side;
 
 		Piece temp = new Piece(getPieceAtPosition(start));
 		setPositionToEmpty(start);
-		
+
 		/*
 		//we don't add the starting position, because moving to your original location is not valid.
 		current.changePositionRelative(x, y); //without this, we look at the spot where we started, see our own piece in the spot where we are, end the loop, and return. This moves us 1 forwards immediately to avoid this.
@@ -441,7 +451,7 @@ public class Board {
 			current.changePositionRelative(x, y);
 			output.add(new Position(current));
 		}
-		
+
 		if(!current.doesExistOnBoard()){ //we're off the board
 			//move back onto the board.
 			output.remove(output.size()-1); //get rid of the last one
@@ -477,13 +487,13 @@ public class Board {
 		sb2.append(castling + " " + enPassant + " " + halfMoveClock + " " + fullMoveClock);
 		return sb2.toString();
 	}
-	
+
 	private static String replaceIsWithNums(String input){ //fen helper. Replaces rows of unoccupied cells with a number.
 		int count = 0;
 		boolean lastWasI = false;
-		
+
 		StringBuilder sb = new StringBuilder(input);
-		
+
 		for(int i = 0; i < sb.length(); i++){ //iterate over input string
 			char current = sb.charAt(i);
 			//System.out.println("Looking at: " + current);
@@ -518,7 +528,7 @@ public class Board {
 		}
 		return sb.toString();
 	}
-	
+
 	private int countPiecesOfType(int type, int side){ //sent pawn, black, will return the number of black pawns.
 		int counter = 0;
 		for(Piece p : getArrayListofMyRealPieces(side)){

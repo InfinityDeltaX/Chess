@@ -30,7 +30,7 @@ public class Values {
 	public static final int POINT_VALUE_QUEEN = 900;
 	public static final int POINT_VALUE_ROOK = 500;
 	public static final int POINT_VALUE_KNIGHT = 300;
-	public static final int POINT_VALUE_EMPTY_SQUARE = 300;
+	public static final int POINT_VALUE_EMPTY_SQUARE = 0;
 	
 	public static final int[] POINT_VALUE_TABLE = new int[]{POINT_VALUE_EMPTY_SQUARE, POINT_VALUE_PAWN, POINT_VALUE_BISHOP, POINT_VALUE_KING, POINT_VALUE_QUEEN, POINT_VALUE_ROOK, POINT_VALUE_KNIGHT};
 	
@@ -52,7 +52,11 @@ public class Values {
 	public static final int PAWN_ROW_BLACK = 6;
 	public static final int PAWN_ROW_WHITE = 1;
 	
+	public static final int END_GAME_THRESHOLD = 10;
+	
 	public static final String defaultBoardFenString = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
+	
+	public static final double[] PIECE_SQUARE_VALUE_TYPE_MULTIPLIER = new double[]{0, 1, 1, 1, 1, 1, 0.5}; //multiply any values for knights by this[6].
 	
 	public static final int[][] PIECE_SQUARE_KING_END = new int[][]{ //applies for the white side; for black, flip the board over the X axis.
 		{-20, -10, -10, -10, -10, -10, -10, -20}, 
@@ -87,6 +91,17 @@ public class Values {
 		{-2, -2, -2, -2, -2, -2, -2, -2}
 		};
 	
+	public static final int[][] PIECE_SQUARE_EMPTY_SQUARE = new int[][]{ //applies for the white side; for black, flip the board over the X axis.
+		{0, 0, 0, 0, 0, 0, 0, 0}, 
+		{0, 0, 0, 0, 0, 0, 0, 0}, 
+		{0, 0, 0, 0, 0, 0, 0, 0}, 
+		{0, 0, 0, 0, 0, 0, 0, 0}, 
+		{0, 0, 0, 0, 0, 0, 0, 0}, 
+		{0, 0, 0, 0, 0, 0, 0, 0}, 
+		{0, 0, 0, 0, 0, 0, 0, 0}, 
+		{0, 0, 0, 0, 0, 0, 0, 0}
+		};
+	
 	public static final int[][] PIECE_SQUARE_KNIGHT_START = new int[][]{ //applies for the white side; for black, flip the board over the X axis.
 		{-20, -10, -10, -10, -10, -10, -10, -20}, 
 		{-10, -7, 5, -5, -5, 5, -7, -10}, 
@@ -118,7 +133,7 @@ public class Values {
 	public static final int[][] PIECE_SQUARE_ROOK_END = PIECE_SQUARE_ROOK_START;
 	
 	public static final int[][] PIECE_SQUARE_KING_START = new int[][]{
-		{-4, -4, -4, -4, -4, -4, -4, -4}, 
+		{-4, -4, -4, 0, -4, -4, -4, -4}, 
 		{-4, -4, -4, -4, -4, -4, -4, -4}, 
 		{-4, -4, -4, -4, -4, -4, -4, -4}, 
 		{-4, -4, -4, -4, -4, -4, -4, -4}, 
@@ -139,31 +154,34 @@ public class Values {
 		{-8, -8, -8, -8, -8, -8, -8, -8}
 		};
 	
+	
+	
 	public static final int[][] PIECE_SQUARE_QUEEN_END = PIECE_SQUARE_QUEEN_START;
 	
 	public static final int[][][][] PIECE_SQUARE_TABLE = new int[][][][]{
-		{null, PIECE_SQUARE_PAWN_START, PIECE_SQUARE_BISHOP_START, PIECE_SQUARE_KING_START, PIECE_SQUARE_QUEEN_START, PIECE_SQUARE_ROOK_START, PIECE_SQUARE_KNIGHT_START},
-		{null, PIECE_SQUARE_PAWN_END, PIECE_SQUARE_BISHOP_END, PIECE_SQUARE_KING_END, PIECE_SQUARE_QUEEN_END, PIECE_SQUARE_ROOK_END, PIECE_SQUARE_KNIGHT_END}
+		{PIECE_SQUARE_EMPTY_SQUARE, PIECE_SQUARE_PAWN_START, PIECE_SQUARE_BISHOP_START, PIECE_SQUARE_KING_START, PIECE_SQUARE_QUEEN_START, PIECE_SQUARE_ROOK_START, PIECE_SQUARE_KNIGHT_START},
+		{PIECE_SQUARE_EMPTY_SQUARE, PIECE_SQUARE_PAWN_END, PIECE_SQUARE_BISHOP_END, PIECE_SQUARE_KING_END, PIECE_SQUARE_QUEEN_END, PIECE_SQUARE_ROOK_END, PIECE_SQUARE_KNIGHT_END}
 		}; //[0=start, 1=end][piece type][x coord][y coord]
 	
 	// TODO
 	
-	int[][] getPieceSquareTable(int gameState, int type){ //given a side and a type, return the corresponding piece-square table. Flip if black, etc.
+	static int[][] getPieceSquareTable(int gameState, int type){ //given a side and a type, return the corresponding piece-square table. Flip if black, etc.
 		return PIECE_SQUARE_TABLE[gameState][type];
 	}
 	
-	int getPieceSquareValue(Piece input){
+	public static int getPieceSquareValue(Piece input, int gameState){
 		int type = input.getType();
 		int side = input.getSide();
 		int XCoord = input.getFile();
-		int YCoord = input.getRow();
+		int YCoord = 7-input.getRow(); //this is just how the array is stored. 
 		
-		if(type == Values.SIDE_BLACK){
+		if(side == Values.SIDE_BLACK){ //invert for black side
 			YCoord = 7-YCoord;
 		}
 		
-		//TODO
+		//System.out.println(YCoord + " " + XCoord);
 		
+		return (int) ((double) getPieceSquareTable(gameState, type)[YCoord][XCoord] * PIECE_SQUARE_VALUE_TYPE_MULTIPLIER[type]);
 	}
 	
 	private static int pieceSquareTableTotal(int[][] input){
@@ -181,18 +199,7 @@ public class Values {
 	}
 	
 	public static boolean allPieceSquareTablesFair(){
-		boolean istrue = true;
-		if(isFairPieceSquareTable(Values.PIECE_SQUARE_KING_END)){ istrue = false; System.out.println("Failed"); }
-		if(isFairPieceSquareTable(Values.PIECE_SQUARE_KING_END)){ istrue = false; System.out.println("Failed"); }
-		if(isFairPieceSquareTable(Values.PIECE_SQUARE_KING_END)){ istrue = false; System.out.println("Failed"); }
-		if(isFairPieceSquareTable(Values.PIECE_SQUARE_KING_END)){ istrue = false; System.out.println("Failed"); }
-		if(isFairPieceSquareTable(Values.PIECE_SQUARE_KING_END)){ istrue = false; System.out.println("Failed"); }
-		if(isFairPieceSquareTable(Values.PIECE_SQUARE_KING_END)){ istrue = false; System.out.println("Failed"); }
-		if(isFairPieceSquareTable(Values.PIECE_SQUARE_KING_END)){ istrue = false; System.out.println("Failed"); }
-		if(isFairPieceSquareTable(Values.PIECE_SQUARE_KING_END)){ istrue = false; System.out.println("Failed"); }
-		
-		return istrue;
-			
+		//TODO
 	}
 	
 	public static int getOpposingSide(int side){
