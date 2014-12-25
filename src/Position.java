@@ -5,10 +5,14 @@ public class Position {
 
 	private int row;
 	private int file;
-
+	
 	public Position(int file, int row){
 		this.row = row;
 		this.file = file;
+	}
+	
+	public Position(int file, int row, boolean hasOpposingPiece){
+		this(file, row);
 	}
 	
 	public Position(String input){ //for example, e4 or h8.

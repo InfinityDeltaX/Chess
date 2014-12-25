@@ -144,7 +144,7 @@ public class Board {
 	public long testEvalSpeed(){
 		long start = System.currentTimeMillis();
 		for(int i = 0; i < 100; i++){
-			this.fastEvaluateMaterial();
+			this.evaluate();
 		}
 		return System.currentTimeMillis() - start;
 	}
@@ -179,12 +179,6 @@ public class Board {
 		return output;
 	}
 
-	public int evaluate(){ //White side is trying to maximize, Black to minimize. 
-		//first, deal with material, then, deal with piece-square tables.
-		return fastEvaluateMaterial(); //About a 5x speed improvement by using fastEvaluateMaterial instead of evaluateMaterial.
-		// TODO add piece-square tables.
-	}
-
 	private int evaluateMaterial(){ //returns the difference in material. Positive favors white.
 		return(evaluateMaterialSide(Values.SIDE_WHITE) - evaluateMaterialSide(Values.SIDE_BLACK));
 	}
@@ -200,7 +194,7 @@ public class Board {
 		return count;
 	}
 
-	public int fastEvaluateMaterial(){
+	public int evaluate(){ //White side is trying to maximize, Black to minimize. 
 		int count = 0;
 		int gameState = getGameState();
 		
@@ -233,8 +227,8 @@ public class Board {
 
 	public void makeMove(Move m){
 		//setPieceAtPosition(m.originalPosition, Values.EMPTY_SQUARE);
-		setPositionToEmpty(m.originalPosition);
-		setPieceAtPosition(m.toMoveTo, m.getPiece());
+		setPositionToEmpty(m.getOriginalPosition());
+		setPieceAtPosition(m.getToMoveTo(), m.getPiece());
 	}
 	private boolean isLegalMove(Move input){
 		//return true;

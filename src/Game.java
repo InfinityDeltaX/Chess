@@ -19,7 +19,7 @@ public class Game {
 		Board b = new Board();
 		b.setToFenString(input);
 		
-		setSides(Values.SIDE_BLACK);
+		setSides(Values.SIDE_WHITE);
 		
 		if(input.contains("play"))
 			b.setToDefaultBoard();
@@ -144,7 +144,7 @@ public class Game {
 			for(Move currentMove : possibleNextMoves){ //loop through all moves
 				Board moveApplied = new Board(inputBoard);//generate a board with the move applied
 				moveApplied.makeMove(currentMove);
-				int currentScore = maxNode(moveApplied, depthToSearch-1); //run max() on each board
+				int currentScore = minNode(moveApplied, depthToSearch-1, Integer.MIN_VALUE, Integer.MAX_VALUE); //run max() on each board... Changed this line from max to min. Can't tell if that was a really dumb bug, or what.
 				counter++;
 				System.out.printf("%d percent done. \n", (int) ((double) counter/topLevelBranches*100));
 				if(currentScore < currentLowest){
@@ -164,7 +164,7 @@ public class Game {
 			for(Move currentMove : possibleNextMoves){ //loop through all moves
 				Board moveApplied = new Board(inputBoard);//generate a board with the move applied
 				moveApplied.makeMove(currentMove);
-				int currentScore = maxNode(moveApplied, depthToSearch-1); //run max() on each board
+				int currentScore = maxNode(moveApplied, depthToSearch-1, Integer.MIN_VALUE, Integer.MAX_VALUE); //run max() on each board
 				counter++;
 				System.out.printf("%d percent done. \n", (int) ((double) counter/topLevelBranches*100));
 				if(currentScore > currentHighest){
@@ -185,7 +185,7 @@ public class Game {
 		return bestMove;
 	}
 
-	private int minNode(Board inputBoard, int remainingDepth){ //given a board state, minimal value.
+	private int minNode(Board inputBoard, int remainingDepth, int alpha, int beta){ //given a board state, minimal value.
 
 		//System.out.println("Running min...");
 		
@@ -198,19 +198,31 @@ public class Game {
 
 		ArrayList<Move> possibleNextMoves = inputBoard.getAllPossibleMoves(Values.SIDE_BLACK); //else, get a list of possible next moves. Black is always trying to minimize. The maximizer uses Values.SIDE_WHITE here.
 
+		//move ordering.
+			if(Values.MOVE_ORDERING && remainingDepth > Values.DEPTH_NOT_TO_ORDER){
+					Move.orderMoves(possibleNextMoves, inputBoard);
+			}
+		
 		for(Move currentMove : possibleNextMoves){ //loop through all moves
+			
+			if(alpha >= beta){
+				break;
+			}
+			
 			Board moveApplied = new Board(inputBoard);//generate a board with the move applied
 			moveApplied.makeMove(currentMove);
-			int currentScore = maxNode(moveApplied, remainingDepth-1); //run max() on each board
+			int currentScore = maxNode(moveApplied, remainingDepth-1, alpha, beta); //run max() on each board
 			//System.out.println("current score is " + currentScore);
-			if(currentScore < currentLowest){
-				currentLowest = currentScore; //return the minimum of the previous function calls.
+			//if(currentScore < currentLowest){
+				//currentLowest = currentScore; //return the minimum of the previous function calls.
+			if(currentScore < beta){
+				beta = currentScore;
 				currentBestMove = currentMove;
 			}
 		}
 		//printTabs(remainingDepth);
 		//System.out.println("Best move found in this branch [Minimizer]: " + currentBestMove.getNotation() + "; Score: " + currentLowest);
-		return currentLowest;
+		return beta;
 	}
 
 	private int perft(Board _input, int side, int depth){
@@ -227,7 +239,7 @@ public class Game {
 		return total;
 	}
 
-	private int maxNode(Board inputBoard, int remainingDepth){
+	private int maxNode(Board inputBoard, int remainingDepth, int alpha, int beta){
 
 		//System.out.println("Running max...");
 		
@@ -237,22 +249,34 @@ public class Game {
 		if(remainingDepth == 0){ //if we have no layers left to search, return the current board eval.
 			return inputBoard.evaluate();
 		}
-
+		
 		ArrayList<Move> possibleNextMoves = inputBoard.getAllPossibleMoves(Values.SIDE_WHITE); //else, get a list of possible next moves. White is always trying to maximize. The minimizer uses Values.SIDE_BLACK here.
 
+		//move ordering.
+		if(Values.MOVE_ORDERING && remainingDepth > Values.DEPTH_NOT_TO_ORDER){
+			Move.orderMoves(possibleNextMoves, inputBoard);
+		}
+		
 		for(Move currentMove : possibleNextMoves){ //loop through all moves
+			
+			if(alpha >= beta){
+				break;
+			}
+			
 			Board moveApplied = new Board(inputBoard);//generate a board with the move applied
 			moveApplied.makeMove(currentMove);
-			int currentScore = minNode(moveApplied, remainingDepth-1); //run max() on each board
+			int currentScore = minNode(moveApplied, remainingDepth-1, alpha, beta); //run max() on each board
 			//System.out.println("current score is " + currentScore);
-			if(currentScore > currentHighest){
-				currentHighest = currentScore; //return the minimum of the previous function calls.
+			//if(currentScore > currentHighest){
+				//currentHighest = currentScore; //return the minimum of the previous function calls.
+			if(currentScore > alpha){
+				alpha = currentScore;
 				currentBestMove = currentMove;
 			}
 		}
 		//printTabs(remainingDepth);
 		//System.out.println("Best move found in this branch [Maximizer]: " + currentBestMove.getNotation()  + "; Score: " + currentHighest);
-		return currentHighest;
+		return alpha;
 	}
 
 }
