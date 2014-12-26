@@ -180,24 +180,29 @@ public class Board {
 		return output;
 	}
 
-	public int testSpeed(int maxDepth, int minPieces, int maxPieces, int certainty){
+	public int[][] testSpeed(int maxDepth, int minPieces, int maxPieces, int certainty){
 		//certainty is the number of times we repeat to get a good estimate.
 		//test each number of pieces at each depth to get an idea of how fast the program runs.
+		int[][] output = new int[maxDepth][maxPieces]; //[depth][pieces]
 		Game game;
 		Board board;
-		for(int i = 0; i < maxDepth; i++){
+		for(int i = 1; i < maxDepth; i++){
 			for(int j = minPieces; j < maxPieces; j++){
+				long total = 0;
 				for(int repeat = 0; repeat < certainty; repeat++){ //TODO make this average
-				game = new Game(Values.SIDE_WHITE);
-				long start = System.currentTimeMillis();
-				game.minimax(Values.SIDE_WHITE, i, Board.generateRandomBoard(j));
-				long end = System.currentTimeMillis();
-				
+					game = new Game(Values.SIDE_WHITE);
+					long start = System.currentTimeMillis();
+					game.minimax(Values.SIDE_WHITE, i, Board.generateRandomBoard(j), false);
+					long end = System.currentTimeMillis();
+					total += (end-start);
 				}
+				output[i][j] = (int) ((double) total/certainty);
+				System.out.printf("Depth: %d; Pieces: %d; Average Time%d; \n", i, j, (total/certainty));
 			}
 		}
+		return output;
 	}
-	
+
 	private static Board generateRandomBoard(int numberOfPieces){
 		Board output = new Board();
 		Random r = new Random();
@@ -206,13 +211,13 @@ public class Board {
 			int yCoord = r.nextInt(7);
 			int type = r.nextInt(6)+1;
 			int side = r.nextInt(2)+1; //1 or 2
-			System.out.printf("Generated new piece; x=%d, y=%d, side=%d, type=%d \n", xCoord, yCoord, side, type);
+			//System.out.printf("Generated new piece; x=%d, y=%d, side=%d, type=%d \n", xCoord, yCoord, side, type);
 			Piece p = new Piece(new Position(xCoord, yCoord), side, type);
 			output.setPieceAtPosition(p.getPosition(), p);
 		}
 		return output;
 	}
-	
+
 	private int evaluateMaterial(){ //returns the difference in material. Positive favors white.
 		return(evaluateMaterialSide(Values.SIDE_WHITE) - evaluateMaterialSide(Values.SIDE_BLACK));
 	}
@@ -231,32 +236,32 @@ public class Board {
 	public int evaluate(){ //White side is trying to maximize, Black to minimize. 
 		int count = 0;
 		int gameState = getGameState();
-		
+
 		Piece[][] allPieces = getBoardArrayPiece();
 		for(int i = 0; i < 8; i++){
 			for(int j = 0; j < 8; j++){
 				int value = Values.POINT_VALUE_TABLE[allPieces[i][j].getType()]; //get 100, 900, etc.
 				value += Values.getPieceSquareValue(allPieces[i][j], gameState); //get Piece-square tables. 
 				if(allPieces[i][j].getSide() == Values.SIDE_BLACK) value = value*-1; //*-1 if it's black.
-				
+
 				count += value;
 			}
 		}
 
 		return count;
 	}
-	
+
 	public int getGameState(){
 		int totalPieces = 0;
 		int gameState = 0;
 		Piece[][] allPieces = getBoardArrayPiece();
-		
+
 		for(int i = 0; i < 8; i++){
 			for(int j = 0; j < 8; j++){
 				totalPieces += (allPieces[i][j].getType() == Values.SIDE_BLACK || allPieces[i][j].getType() == Values.SIDE_WHITE) ? 1 : 0;
 			}
 		}
-		 return (totalPieces > Values.END_GAME_THRESHOLD ? Values.GAME_STATE_START : Values.GAME_STATE_END);
+		return (totalPieces > Values.END_GAME_THRESHOLD ? Values.GAME_STATE_START : Values.GAME_STATE_END);
 	}
 
 	public void makeMove(Move m){

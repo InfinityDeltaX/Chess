@@ -49,7 +49,7 @@ public class Values {
 	public static final boolean MOVE_ORDERING = true;
 	public static final int DEPTH_NOT_TO_ORDER = 0; //when only this many nodes remain, we won't bother with ordering, because it takes longer to sort than to guess. 
 	
-	public static final int STARTING_DEPTH = 7;
+	public static final int STARTING_DEPTH = 6;
 	public static boolean lockDepth = true;
 	
 	public static final int PAWN_ROW_BLACK = 6;

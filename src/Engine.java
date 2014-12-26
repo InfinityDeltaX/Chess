@@ -14,7 +14,7 @@ public class Engine {
 			String input = in.nextLine();
 			Board b = new Board();
 			b.setToFenString(input);
-			System.out.println(b.generateRandomBoard(4));
+			//b.testSpeed(6, 5, 20, 10);
 			System.out.println(b.evaluate());
 			System.out.println(b.getAllPossibleMoves(Values.SIDE_BLACK).size());
 			//System.out.println(Move.orderMoves(b.getAllPossibleMoves(Values.SIDE_WHITE), b));

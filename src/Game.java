@@ -65,7 +65,7 @@ public class Game {
 		if(!Values.lockDepth)
 			getDepth();
 		System.out.println("Calculating to " + lastDepth + "...");
-		Move bestMove = minimax(Values.SIDE_COMPUTER, lastDepth, b);
+		Move bestMove = minimax(Values.SIDE_COMPUTER, lastDepth, b, true);
 		System.out.println("Made move: " + bestMove.getNotation());
 		return bestMove;
 	}
@@ -128,7 +128,7 @@ public class Game {
 		}
 	}
 	
-	public Move minimax(int side, int depthToSearch, Board inputBoard){ //given a board state, determine a best move. Basically a min/max node, except that it keeps trach of the corresponding moves > scores hashmap.
+	public Move minimax(int side, int depthToSearch, Board inputBoard, boolean shouldPrint){ //given a board state, determine a best move. Basically a min/max node, except that it keeps trach of the corresponding moves > scores hashmap.
 		Move currentBestMove = null;
 		Move bestMove;
 		int bestMoveScore = 0;
@@ -146,7 +146,7 @@ public class Game {
 				moveApplied.makeMove(currentMove);
 				int currentScore = maxNode(moveApplied, depthToSearch-1, Integer.MIN_VALUE, Integer.MAX_VALUE); //run max() on each board... Changed this line from max to min. Can't tell if that was a really dumb bug, or what.
 				counter++;
-				System.out.printf("%d percent done. \n", (int) ((double) counter/topLevelBranches*100));
+				if(shouldPrint) System.out.printf("%d percent done. \n", (int) ((double) counter/topLevelBranches*100));
 				if(currentScore < currentLowest){
 					currentLowest = currentScore; //return the minimum of the previous function calls.
 					currentBestMove = currentMove;
@@ -166,7 +166,7 @@ public class Game {
 				moveApplied.makeMove(currentMove);
 				int currentScore = minNode(moveApplied, depthToSearch-1, Integer.MIN_VALUE, Integer.MAX_VALUE); //run max() on each board
 				counter++;
-				System.out.printf("%d percent done. \n", (int) ((double) counter/topLevelBranches*100));
+				if(shouldPrint) System.out.printf("%d percent done. \n", (int) ((double) counter/topLevelBranches*100));
 				if(currentScore > currentHighest){
 					currentHighest = currentScore; //return the minimum of the previous function calls.
 					currentBestMove = currentMove;
@@ -179,8 +179,8 @@ public class Game {
 			bestMove = null;
 		}
 		
-		System.out.println("Done in " + (System.currentTimeMillis()-startTime) + " milliseconds!");
-		System.out.println("Minimax result: " + bestMove + " with score: " + bestMoveScore);
+		if(shouldPrint) System.out.println("Done in " + (System.currentTimeMillis()-startTime) + " milliseconds!");
+		if(shouldPrint) System.out.println("Minimax result: " + bestMove + " with score: " + bestMoveScore);
 		lastSearch = ((System.currentTimeMillis()-startTime));
 		return bestMove;
 	}
@@ -191,7 +191,12 @@ public class Game {
 		
 		Move currentBestMove = null;
 		int currentLowest = Integer.MAX_VALUE;
-
+		
+		if(Math.abs(inputBoard.evaluate()) > Values.POINT_VALUE_KING){ //one side is missing a king. Check for bugs!
+			//System.out.println("King missing!");
+			return inputBoard.evaluate();
+		}
+		
 		if(remainingDepth == 0){ //if we have no layers left to search, return the current board eval.
 			return inputBoard.evaluate();
 		}
@@ -247,6 +252,11 @@ public class Game {
 		int currentHighest = Integer.MIN_VALUE;
 
 		if(remainingDepth == 0){ //if we have no layers left to search, return the current board eval.
+			return inputBoard.evaluate();
+		}
+		
+		if(Math.abs(inputBoard.evaluate()) > Values.POINT_VALUE_KING){ //one side is missing a king. Check for bugs!
+			//System.out.println("King missing!");
 			return inputBoard.evaluate();
 		}
 		
