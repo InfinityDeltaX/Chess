@@ -6,7 +6,8 @@ public class Engine {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		Scanner in = new Scanner(System.in);
-		if(in.nextLine().equals("test")){
+		String first = in.nextLine();
+		if(first.equals("test")){
 			System.out.println("Now in testing mode.");
 			Game theGame = new Game(Values.SIDE_BLACK);
 			
@@ -30,6 +31,7 @@ public class Engine {
 		} else {
 		UCIInterface theInterface = new UCIInterface();
 		(new Thread(theInterface)).start();
+		UCIInterface.routeCommand(first);
 		}
 	}
 

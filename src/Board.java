@@ -251,6 +251,23 @@ public class Board {
 		return count;
 	}
 
+	public int kingStatus(){ //returns zero if there are two kings, or -1 if white king gone, 1 if black king gone.
+		boolean whiteKing = false; //do they exist
+		boolean blackKing = false;
+		int bKingVal = Piece.getCorrespondingInt(new Piece(new Position(0,0), Values.SIDE_BLACK, Values.KING));
+		int wKingVal = Piece.getCorrespondingInt(new Piece(new Position(0,0), Values.SIDE_WHITE, Values.KING));
+		for (int i = 0; i < 8; i++) {
+			for(int j = 0; j < 8; j++){
+				if(boardPosition[i][j] == wKingVal) whiteKing = true;
+				if(boardPosition[i][j] == bKingVal) blackKing = true;
+			}
+		}
+		if(blackKing && whiteKing) return 0;
+		else if(blackKing && !whiteKing) return -1;
+		else if(!blackKing && whiteKing) return 1;
+		else return 0;
+	}
+	
 	public int getGameState(){
 		int totalPieces = 0;
 		int gameState = 0;

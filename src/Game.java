@@ -192,7 +192,7 @@ public class Game {
 		Move currentBestMove = null;
 		int currentLowest = Integer.MAX_VALUE;
 		
-		if(Math.abs(inputBoard.evaluate()) > Values.POINT_VALUE_KING){ //one side is missing a king. Check for bugs!
+		if(inputBoard.kingStatus() != 0){ //one side is missing a king. Check for bugs!
 			//System.out.println("King missing!");
 			return inputBoard.evaluate();
 		}
@@ -255,7 +255,7 @@ public class Game {
 			return inputBoard.evaluate();
 		}
 		
-		if(Math.abs(inputBoard.evaluate()) > Values.POINT_VALUE_KING){ //one side is missing a king. Check for bugs!
+		if(inputBoard.kingStatus() != 0){ //one side is missing a king. Check for bugs!
 			//System.out.println("King missing!");
 			return inputBoard.evaluate();
 		}
