@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Random;
 
 
 public class Board {
@@ -179,6 +180,39 @@ public class Board {
 		return output;
 	}
 
+	public int testSpeed(int maxDepth, int minPieces, int maxPieces, int certainty){
+		//certainty is the number of times we repeat to get a good estimate.
+		//test each number of pieces at each depth to get an idea of how fast the program runs.
+		Game game;
+		Board board;
+		for(int i = 0; i < maxDepth; i++){
+			for(int j = minPieces; j < maxPieces; j++){
+				for(int repeat = 0; repeat < certainty; repeat++){ //TODO make this average
+				game = new Game(Values.SIDE_WHITE);
+				long start = System.currentTimeMillis();
+				game.minimax(Values.SIDE_WHITE, i, Board.generateRandomBoard(j));
+				long end = System.currentTimeMillis();
+				
+				}
+			}
+		}
+	}
+	
+	private static Board generateRandomBoard(int numberOfPieces){
+		Board output = new Board();
+		Random r = new Random();
+		while(output.getArrayListofMyRealPieces(Values.SIDE_WHITE).size() + output.getArrayListofMyRealPieces(Values.SIDE_BLACK).size() < numberOfPieces){
+			int xCoord = r.nextInt(7);
+			int yCoord = r.nextInt(7);
+			int type = r.nextInt(6)+1;
+			int side = r.nextInt(2)+1; //1 or 2
+			System.out.printf("Generated new piece; x=%d, y=%d, side=%d, type=%d \n", xCoord, yCoord, side, type);
+			Piece p = new Piece(new Position(xCoord, yCoord), side, type);
+			output.setPieceAtPosition(p.getPosition(), p);
+		}
+		return output;
+	}
+	
 	private int evaluateMaterial(){ //returns the difference in material. Positive favors white.
 		return(evaluateMaterialSide(Values.SIDE_WHITE) - evaluateMaterialSide(Values.SIDE_BLACK));
 	}

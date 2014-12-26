@@ -144,7 +144,7 @@ public class Game {
 			for(Move currentMove : possibleNextMoves){ //loop through all moves
 				Board moveApplied = new Board(inputBoard);//generate a board with the move applied
 				moveApplied.makeMove(currentMove);
-				int currentScore = minNode(moveApplied, depthToSearch-1, Integer.MIN_VALUE, Integer.MAX_VALUE); //run max() on each board... Changed this line from max to min. Can't tell if that was a really dumb bug, or what.
+				int currentScore = maxNode(moveApplied, depthToSearch-1, Integer.MIN_VALUE, Integer.MAX_VALUE); //run max() on each board... Changed this line from max to min. Can't tell if that was a really dumb bug, or what.
 				counter++;
 				System.out.printf("%d percent done. \n", (int) ((double) counter/topLevelBranches*100));
 				if(currentScore < currentLowest){
@@ -164,7 +164,7 @@ public class Game {
 			for(Move currentMove : possibleNextMoves){ //loop through all moves
 				Board moveApplied = new Board(inputBoard);//generate a board with the move applied
 				moveApplied.makeMove(currentMove);
-				int currentScore = maxNode(moveApplied, depthToSearch-1, Integer.MIN_VALUE, Integer.MAX_VALUE); //run max() on each board
+				int currentScore = minNode(moveApplied, depthToSearch-1, Integer.MIN_VALUE, Integer.MAX_VALUE); //run max() on each board
 				counter++;
 				System.out.printf("%d percent done. \n", (int) ((double) counter/topLevelBranches*100));
 				if(currentScore > currentHighest){

@@ -14,9 +14,12 @@ public class Engine {
 			String input = in.nextLine();
 			Board b = new Board();
 			b.setToFenString(input);
-			
+			System.out.println(b.generateRandomBoard(4));
+			System.out.println(b.evaluate());
+			System.out.println(b.getAllPossibleMoves(Values.SIDE_BLACK).size());
+			//System.out.println(Move.orderMoves(b.getAllPossibleMoves(Values.SIDE_WHITE), b));
+			System.out.println("---");
 			System.out.println(b.getAllPossibleMoves(Values.SIDE_BLACK));
-			System.out.println(Move.orderMoves(b.getAllPossibleMoves(Values.SIDE_WHITE), b));
 			
 			
 			for(Move m : b.getAllPossibleMoves(Values.SIDE_BLACK)){
