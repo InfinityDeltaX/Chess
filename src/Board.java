@@ -134,10 +134,10 @@ public class Board {
 		return deepCopyArray(boardPosition);
 	}
 
-	private int[][] deepCopyArray(int[][] input){
-		int[][] output = new int[input.length][input[0].length];
-		for (int i = 0; i < input.length; i++) {
-			output[i] = Arrays.copyOf(input[i], input[i].length);
+	private int[][] deepCopyArray(int[][] input){ //Designed with 8 instead of .length because speed really matters here.
+		int[][] output = new int[8][8];
+		for (int i = 0; i < 8; i++) {
+			output[i] = Arrays.copyOf(input[i], 8);
 		}
 		return output;
 	}
@@ -154,15 +154,9 @@ public class Board {
 		ArrayList<Move> output = new ArrayList<Move>();
 		ArrayList<Piece> myPieces = getArrayListofMyRealPieces(side);
 		for(Piece currentPiece : myPieces){ //iterate through each of our pieces.
-			//System.out.println("Testing: " + currentPiece);
-			ArrayList<Position> possibleLocationsAfterMove = getPossibleMoves(currentPiece); //get all the places it can go
-			for(Position currentEndingPosition : possibleLocationsAfterMove){ //iterate through each place it can go
-				Move m = new Move(currentPiece, currentEndingPosition);
-				//System.out.println(m);
-				//if(isLegalMove(m)){ //this is not totally done yet...
-				output.add(m); // TODO
-				//System.out.println("Added move: " + m);
-				//}
+			for(Position currentEndingPosition : getPossibleMoves(currentPiece)){ //iterate through each place it can go
+				output.add(new Move(currentPiece, currentEndingPosition)); // TODO
+
 			}
 		}
 		return output;
@@ -185,7 +179,6 @@ public class Board {
 		//test each number of pieces at each depth to get an idea of how fast the program runs.
 		int[][] output = new int[maxDepth][maxPieces]; //[depth][pieces]
 		Game game;
-		Board board;
 		for(int i = 1; i < maxDepth; i++){
 			for(int j = minPieces; j < maxPieces; j++){
 				long total = 0;
@@ -218,7 +211,7 @@ public class Board {
 		return output;
 	}
 
-	private int evaluateMaterial(){ //returns the difference in material. Positive favors white.
+	private int evaluateMaterialSlow(){ //returns the difference in material. Positive favors white. VERY SLOW - DO NOT USE!
 		return(evaluateMaterialSide(Values.SIDE_WHITE) - evaluateMaterialSide(Values.SIDE_BLACK));
 	}
 
@@ -262,15 +255,11 @@ public class Board {
 				if(boardPosition[i][j] == bKingVal) blackKing = true;
 			}
 		}
-		if(blackKing && whiteKing) return 0;
-		else if(blackKing && !whiteKing) return -1;
-		else if(!blackKing && whiteKing) return 1;
-		else return 0;
+		return Boolean.compare(blackKing, whiteKing);
 	}
 	
 	public int getGameState(){
 		int totalPieces = 0;
-		int gameState = 0;
 		Piece[][] allPieces = getBoardArrayPiece();
 
 		for(int i = 0; i < 8; i++){
@@ -285,29 +274,6 @@ public class Board {
 		//setPieceAtPosition(m.originalPosition, Values.EMPTY_SQUARE);
 		setPositionToEmpty(m.getOriginalPosition());
 		setPieceAtPosition(m.getToMoveTo(), m.getPiece());
-	}
-	private boolean isLegalMove(Move input){
-		//return true;
-
-		//for some reason, uncommenting this code creates a mega-derp with getAllPossibleMoves. Is this somehow modifying the input parameter??
-
-
-		Move moveToCheck = new Move(input);
-		Board afterMove = new Board(this);
-		afterMove.makeMove(moveToCheck);
-
-		if(afterMove.isKingInCheck()){
-			return false; //if the king is in check after the move, we can't make it.
-		}
-
-		//is this all that is required?
-
-		return true;
-
-	}
-	private boolean isKingInCheck(){
-		//is the king in check on this board?
-		return false;
 	}
 
 	public ArrayList<Position> getPossibleMoves(Piece p) { //wrapper function for getPossible___Moves. Given a piece, will return it's possible moves.
@@ -467,13 +433,8 @@ public class Board {
 			if(p.getPositionRelative(1, -1).doesExistOnBoard() && (getPieceAtPosition(p.getPositionRelative(1, -1)).getSide() == Values.getOpposingSide(side))){output.add(p.getPositionRelative(1, -1));} //see if we can move diagonally for a capture. They must have a piece there for this to work!
 			if(p.getPositionRelative(-1, -1).doesExistOnBoard() && (getPieceAtPosition(p.getPositionRelative(-1, -1)).getSide() == Values.getOpposingSide(side))){output.add(p.getPositionRelative(-1, -1));} //check diagonally the other way
 		}
-		// TODO we still have to deal with en passant....
 
 		return output;
-	}
-
-	public boolean isCheckMate(){
-
 	}
 
 	private boolean isValidPlaceToMove(Position p, int side){ //designed for knights and kings, this tests if one of the spots where they "can" move is A: unoccupied or B: has an opposing piece, but does NOT have a friendly piece. //side should the be the side of the moving piece. p is the destination position.

@@ -1,5 +1,3 @@
-import java.util.ArrayList;
-
 
 public class Position {
 
@@ -41,53 +39,6 @@ public class Position {
 	public void changePositionRelative(int x, int y){
 		this.file+=x;
 		this.row+=y;
-	}
-
-	private ArrayList<Position> getOtherPositionsOnDiagonalLtoR(){ //starts at bottom left and goes to right top
-		ArrayList<Position> output = new ArrayList<Position>();
-		int startX = this.getFile();
-		int startY = this.getRow();
-		
-		Position current = new Position(startX, startY);
-		
-		while(current.doesExistOnBoard()){ //
-			current.changePositionRelative(1, -1);
-		} //when done, current will be at the farthest down-right position 
-		
-		current.changePositionRelative(-1, 1); //go back 1 unit.
-		
-		while(current.doesExistOnBoard()){ //go towards the top left corner, adding positions as you go. 
-			
-			Position _current = new Position(current);
-			current.changePositionRelative(-1,  1);
-			output.add(_current);
-		}
-		
-		return output;
-	}
-
-	private ArrayList<Position> getOtherPositionsOnDiagonalRtoL(){ //starts at bottom left and goes to right top. Method: Go down/left until we hit an edge, then go back right/up the whole way.
-		ArrayList<Position> output = new ArrayList<Position>();
-		int startX = this.getFile();
-		int startY = this.getRow();
-		
-		Position current = new Position(startX, startY);
-		
-		while(current.doesExistOnBoard()){ //
-			current.changePositionRelative(-1, -1);
-		} //when done, current will be at the farthest down-right position 
-		
-		current.changePositionRelative(1, 1); //go back 1 unit.
-		
-		while(current.doesExistOnBoard()){ //go towards the top left corner, adding positions as you go. 
-			
-			Position _current = new Position(current);
-			current.changePositionRelative(1,  1);
-			
-			// TODO ^ check so that we don't add the original position!
-		}
-		
-		return output;
 	}
 	
 	public boolean doesExistOnBoard(){

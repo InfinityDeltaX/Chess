@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 
@@ -34,7 +33,7 @@ public class Move{
 	}
 
 	public static boolean isCapture(Move m, Board b){
-		return !(m.getPiece().getSide() == Values.getOpposingSide(b.getPieceAtPosition(m.getToMoveTo()).getSide()));
+		return (m.getPiece().getSide() != Values.getOpposingSide(b.getPieceAtPosition(m.getToMoveTo()).getSide()));
 	}
 	
 	@Override
@@ -68,21 +67,12 @@ public class Move{
 		this.originalPosition = originalPosition;
 	}
 	
-	static public int whichMoveFirst(Move a, Move b, Board board){
-		boolean isCapA = Move.isCapture(a, board);
-		boolean isCapB = Move.isCapture(b, board);
-		
-		if(isCapA == isCapB) return 0;
-		else if(isCapA) return 1;
-		else return -1;
-	}
-	
 	public static ArrayList<Move> orderMoves(ArrayList<Move> input, final Board board){
 		Collections.sort(input, new Comparator<Move>(){
 
 			@Override
 			public int compare(Move arg0, Move arg1) {
-				return whichMoveFirst(arg0, arg1, board);
+				return Boolean.compare(Move.isCapture(arg0, board), Move.isCapture(arg1, board));
 			}
 		});
 		return input;
