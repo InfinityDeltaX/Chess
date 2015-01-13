@@ -17,9 +17,9 @@ public class Game {
 		System.out.println(Values.ACCEPTABLE_TIME_MIN);
 		String input = in.nextLine();
 		Board b = new Board();
-		b.setToFenString(input);
+		//b.setToFenString(input);
 		
-		setSides(Values.SIDE_WHITE);
+		setSides(Values.SIDE_BLACK);
 		
 		if(input.contains("play"))
 			b.setToDefaultBoard();
@@ -33,6 +33,10 @@ public class Game {
 		while(1==1){
 			eachSideMoves(b);
 		}
+	}
+	
+	public void play(){
+		
 	}
 	
 	public void setBoard(Board b){
@@ -70,7 +74,7 @@ public class Game {
 		return bestMove;
 	}
 	
-	private Move getUserMove(Board input){
+	public Move getUserMove(Board input){
 		Scanner in = new Scanner(System.in);
 		System.out.print("Current Board State: ");
 		System.out.println(input.FENString(Values.SIDE_USER));

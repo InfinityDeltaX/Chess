@@ -28,6 +28,20 @@ public class Engine {
 			}
 			theGame.main(null);
 			
+		} else if(first.equals("mrpoles")){
+			System.out.println("Now in text-based interface mode.");
+			Board b = new Board();
+			b.setToDefaultBoard();
+			Game theGame = new Game(Values.SIDE_BLACK);
+			theGame.setBoard(b);
+			theGame.main(null);
+			
+			while(true){
+				System.out.println("Current board state:");
+				System.out.println(b);
+				System.out.println("Please enter a move. ");
+				//theGame.theBoard.makeMove();
+			}
 		} else {
 		UCIInterface theInterface = new UCIInterface();
 		(new Thread(theInterface)).start();
