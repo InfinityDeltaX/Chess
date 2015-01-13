@@ -525,8 +525,9 @@ public class Board {
 
 	@Override
 	public String toString() {
-
+		
 		StringBuilder sb = new StringBuilder();
+		sb.append("===========\n");
 		for(int i = 7; i >= 0; i--){
 			for(int j = 0; j < 8; j++){
 				Position current = new Position(j, i);
@@ -537,6 +538,7 @@ public class Board {
 			}
 			sb.append("\n");
 		}
+		sb.append("===========\n");
 		return sb.toString();
 	}
 

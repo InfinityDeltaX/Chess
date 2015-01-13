@@ -78,6 +78,7 @@ public class Game {
 		Scanner in = new Scanner(System.in);
 		System.out.print("Current Board State: ");
 		System.out.println(input.FENString(Values.SIDE_USER));
+		System.out.println(input);
 		System.out.print("Please input your move: ");
 		String userMove = in.nextLine();
 		if(userMove.contains("exit")){
