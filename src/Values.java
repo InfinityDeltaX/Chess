@@ -1,3 +1,5 @@
+import java.awt.Point;
+
 
 public class Values {
 	
@@ -43,13 +45,13 @@ public class Values {
 	public static int GAME_STATE_START = 0;
 	public static int GAME_STATE_END = 1;
 	
-	public static final int ACCEPTABLE_TIME_MIN = (int) ((double) 0.5*60*1000); //ms
-	public static final int ACCEPTABLE_TIME_MAX = 1*60*1000; //ms
+	public static int ACCEPTABLE_TIME_MIN = (int) ((double) 0.5*60*1000); //ms
+	public static int ACCEPTABLE_TIME_MAX = 1*60*1000; //ms
 	
-	public static final boolean MOVE_ORDERING = true;
+	public static boolean MOVE_ORDERING = true;
 	public static final int DEPTH_NOT_TO_ORDER = 1; //when only this many nodes remain, we won't bother with ordering, because it takes longer to sort than to guess. 
 	
-	public static final int STARTING_DEPTH = 6;
+	public static int STARTING_DEPTH = 6;
 	public static boolean lockDepth = true;
 	
 	public static final int PAWN_ROW_BLACK = 6;
@@ -143,7 +145,7 @@ public class Values {
 		{-4, -4, -4, -4, -4, -4, -4, -4}, 
 		{-4, -4, -4, -4, -4, -4, -4, -4}, 
 		{5, 5, 5, 5, 5, 5, 5, 5}, 
-		{25, 25, 15, 11, 11, 15, 25, 25}
+		{15, 15, 15, 15, 15, 15, 15, 15}
 		};
 	
 	public static final int[][] PIECE_SQUARE_QUEEN_START = new int[][] {
@@ -166,7 +168,9 @@ public class Values {
 		{PIECE_SQUARE_EMPTY_SQUARE, PIECE_SQUARE_PAWN_END, PIECE_SQUARE_BISHOP_END, PIECE_SQUARE_KING_END, PIECE_SQUARE_QUEEN_END, PIECE_SQUARE_ROOK_END, PIECE_SQUARE_KNIGHT_END}
 		}; //[0=start, 1=end][piece type][x coord][y coord]
 	
-	// TODO
+	public static Point getAbsolutePoint(Point input){
+		return new Point(Math.abs(input.x), Math.abs(input.x));
+	}
 	
 	static int[][] getPieceSquareTable(int gameState, int type){ //given a side and a type, return the corresponding piece-square table. Flip if black, etc.
 		return PIECE_SQUARE_TABLE[gameState][type];

@@ -1,3 +1,5 @@
+import java.awt.Point;
+
 public class Piece {
 	boolean hasBeenPromoted;
 	int file;
@@ -61,6 +63,10 @@ public class Piece {
 		if(!name.equals("Knight")){
 			return name.charAt(0);
 		} else return 'N'; 
+	}
+	
+	public static Point getDifference(Position a, Position b){
+		return new Point(a.getFile()-b.getFile(), a.getRow()-b.getRow());
 	}
 	
 	public static int getTypeInt(char input){ //get the first letter of a type from it's number. Always returns capital!

@@ -1,3 +1,4 @@
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
@@ -41,6 +42,7 @@ public class Board {
 	}
 
 	public void setPositionToEmpty(Position positionToSet){
+		//System.out.println("Setting to empty: " + positionToSet);
 		boardPosition[positionToSet.getFile()][positionToSet.getRow()] = 0;
 	}
 
@@ -271,6 +273,41 @@ public class Board {
 	}
 
 	public void makeMove(Move m){
+		
+		//check if the move is an en passant
+		if(m.getPiece().getType() == Values.PAWN && this.getPieceAtPosition(m.getToMoveTo()).isEmpty() && (Values.getAbsolutePoint(Piece.getDifference(m.getToMoveTo(), m.getOriginalPosition())).equals(new Point(1, 1)))){
+			//System.out.println("En Passant detected!");
+			if(Piece.getDifference(m.getToMoveTo(), m.getOriginalPosition()).equals(new Point(1, 1))){
+				setPositionToEmpty(m.getToMoveTo().getPositionRelative(0, -1));
+			}
+			if(Piece.getDifference(m.getToMoveTo(), m.getOriginalPosition()).equals(new Point(-1, 1))){
+				setPositionToEmpty(m.getToMoveTo().getPositionRelative(0, -1));
+			}
+			if(Piece.getDifference(m.getToMoveTo(), m.getOriginalPosition()).equals(new Point(1, -1))){
+				setPositionToEmpty(m.getToMoveTo().getPositionRelative(0, 1));
+			}
+			if(Piece.getDifference(m.getToMoveTo(), m.getOriginalPosition()).equals(new Point(1, -1))){
+				setPositionToEmpty(m.getToMoveTo().getPositionRelative(0, 1));
+			}
+		}
+		
+		//check if the move is a promotion
+		else if(m.getPiece().getType() == Values.PAWN && ((m.getPiece().getSide() == Values.SIDE_WHITE && m.getToMoveTo().getRow() == 7) || (m.getPiece().getSide() == Values.SIDE_BLACK && m.getToMoveTo().getRow() == 0))){
+			//System.out.println("Promotion detected.");
+			m.setPiece(new Piece(m.getOriginalPosition(), m.getPiece().getSide(), Values.QUEEN));
+		}
+		
+		//check if the move is a castle.
+		else if(m.getPiece().getType() == Values.KING){
+			//System.out.println("Castling detected!");
+			//System.out.println(Piece.getDifference(m.getOriginalPosition(), m.getToMoveTo()));
+			if(m.getPiece().getSide() == Values.SIDE_WHITE && Piece.getDifference(m.getOriginalPosition(), m.getToMoveTo()).equals(new Point(-2, 0))){
+				this.makeMove(new Move(this.getPieceAtPosition(new Position("h1")), new Position("f1")));
+			} else if(m.getPiece().getSide() == Values.SIDE_BLACK && Piece.getDifference(m.getOriginalPosition(), m.getToMoveTo()).equals(new Point(2, 0))){
+				this.makeMove(new Move(this.getPieceAtPosition(new Position("a8")), new Position("c8")));
+			}
+		}
+		
 		//setPieceAtPosition(m.originalPosition, Values.EMPTY_SQUARE);
 		setPositionToEmpty(m.getOriginalPosition());
 		setPieceAtPosition(m.getToMoveTo(), m.getPiece());

@@ -8,7 +8,6 @@ public class Engine {
 		Scanner in = new Scanner(System.in);
 		String first = in.nextLine();
 		if(first.equals("test")){
-			System.out.println("Now in testing mode.");
 			Game theGame = new Game(Values.SIDE_BLACK);
 			
 			System.out.println(Values.ACCEPTABLE_TIME_MIN);
@@ -21,20 +20,47 @@ public class Engine {
 			//System.out.println(Move.orderMoves(b.getAllPossibleMoves(Values.SIDE_WHITE), b));
 			System.out.println("---");
 			System.out.println(b.getAllPossibleMoves(Values.SIDE_BLACK));
-			
+			System.out.println(b.toString());
 			
 			for(Move m : b.getAllPossibleMoves(Values.SIDE_BLACK)){
 				System.out.println(m.getToMoveTo());
 			}
+			
+			b.makeMove(new Move(in.nextLine(), b));
+			System.out.println(b.toString());
+			
+			theGame.minimax(Values.SIDE_BLACK, 1, b, true);
+			
+			System.exit(0);
+			
 			theGame.main(null);
 			
 		} else if(first.equals("mrpoles")){
 			System.out.println("Now in text-based interface mode.");
 			Board b = new Board();
-			b.setToDefaultBoard();
-			Game theGame = new Game(Values.SIDE_BLACK);
-			theGame.setBoard(b);
-			theGame.main(null);
+			
+			System.out.println("Please enter a FEN string to resume a game, or type 'new' to begin a new game.");
+			String possibleFEN = in.nextLine();
+			if(possibleFEN.toLowerCase().trim().equals("new")){
+				b.setToDefaultBoard();
+			} else {
+				b.setToFenString(possibleFEN);
+			}
+			
+			//choose sides
+			Game theGame = null;
+			System.out.println("Please enter the side you wish to be: ");
+			if(in.nextLine().toLowerCase().trim().equals("white")){
+				theGame = new Game(Values.SIDE_BLACK); //takes user side, not computer side.
+				theGame.setBoard(b);
+			} else {
+				theGame = new Game(Values.SIDE_WHITE);
+				b.makeMove(theGame.getComputerMove(b)); //the user has to move first. Let them make a move, then start the game.
+				theGame.setBoard(b);
+			}
+			
+			theGame.play(); //starts with a user move.
+			//theGame.main(null);
 			
 			while(true){
 				System.out.println("Current board state:");
