@@ -257,7 +257,7 @@ public class Board {
 				if(boardPosition[i][j] == bKingVal) blackKing = true;
 			}
 		}
-		return Boolean.compare(blackKing, whiteKing);
+		return Values.booleanCompare(blackKing, whiteKing);
 	}
 	
 	public int getGameState(){

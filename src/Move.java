@@ -72,7 +72,7 @@ public class Move{
 
 			@Override
 			public int compare(Move arg0, Move arg1) {
-				return Boolean.compare(Move.isCapture(arg0, board), Move.isCapture(arg1, board));
+				return Values.booleanCompare(Move.isCapture(arg0, board), Move.isCapture(arg1, board));
 			}
 		});
 		return input;

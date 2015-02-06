@@ -212,5 +212,11 @@ public class Values {
 			return -101;
 		}
 	}
+	
+	public static int booleanCompare(boolean x, boolean y){
+		if(x==y) return 0;
+		else if((!x) && y) return -1;
+		else return 1;
+	}
 
 }
