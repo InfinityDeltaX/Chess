@@ -102,9 +102,13 @@ public class Game {
 			}
 			else if(input.contains("moverrdering")){
 				Values.MOVE_ORDERING = Boolean.valueOf(input.split(" ")[1]);
+			} else if(input.contains("nps")){
+				System.out.println("NPS: " + new Game(Values.SIDE_BLACK).calculateNPSMinimax(6));
 			}
 			else if(input.contains("help")){
-				System.out.println("Valid commands: lockdepth, maxtime, mintime, startingdepth, moveordering");
+				System.out.println("Valid commands: lockdepth, maxtime, mintime, startingdepth, moveordering, setDepth");
+			} else if(input.contains("setdepth")){
+				lastDepth = Integer.parseInt(input.split(" ")[1]);
 			}
 			
 			else{changeSucessful = false;}
@@ -169,6 +173,18 @@ public class Game {
 		System.out.println("Time taken (ms): " + (endTime - startTime));
 		System.out.println("Nodes searched: " + nodesSearched);
 		return (int) (nodesSearched/(endTime-startTime)*1000);
+	}
+	
+	private int calculateNPSMinimax(int depthToTest){
+		Board b = new Board();
+		b.setToDefaultBoard();
+		Values.nodeCounter = 0;
+		long startTime = System.currentTimeMillis();
+		getComputerMove(b);//change to minimax soon.
+		long endTime = System.currentTimeMillis();
+		System.out.println("Time taken (ms): " + (endTime - startTime));
+		System.out.println("Nodes searched: " + Values.nodeCounter);
+		return (int) (Values.nodeCounter/(endTime-startTime)*1000);
 	}
 
 	private void printTabs(int i){
@@ -235,7 +251,8 @@ public class Game {
 	}
 
 	private int minNode(Board inputBoard, int remainingDepth, int alpha, int beta){ //given a board state, minimal value.
-
+		
+		Values.nodeCounter++;
 		//System.out.println("Running min...");
 
 		Move currentBestMove = null;
@@ -296,6 +313,7 @@ public class Game {
 	private int maxNode(Board inputBoard, int remainingDepth, int alpha, int beta){
 
 		//System.out.println("Running max...");
+		Values.nodeCounter++;
 
 		Move currentBestMove = null;
 		int currentHighest = Integer.MIN_VALUE;

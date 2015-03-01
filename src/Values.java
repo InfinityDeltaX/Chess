@@ -34,6 +34,8 @@ public class Values {
 	public static final int POINT_VALUE_KNIGHT = 300;
 	public static final int POINT_VALUE_EMPTY_SQUARE = 0;
 	
+	public static int nodeCounter = 0;
+	
 	public static final int[] POINT_VALUE_TABLE = new int[]{POINT_VALUE_EMPTY_SQUARE, POINT_VALUE_PAWN, POINT_VALUE_BISHOP, POINT_VALUE_KING, POINT_VALUE_QUEEN, POINT_VALUE_ROOK, POINT_VALUE_KNIGHT};
 	
 	public static final int SIDE_WHITE = 1;

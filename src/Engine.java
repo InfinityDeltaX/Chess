@@ -23,6 +23,7 @@ public class Engine {
 			System.out.println(b.toString());
 			
 			for(Move m : b.getAllPossibleMoves(Values.SIDE_BLACK)){
+				
 				System.out.println(m.getToMoveTo());
 			}
 			
@@ -35,7 +36,7 @@ public class Engine {
 			
 			theGame.main(null);
 			
-		} else if(first.equals("mrpoles")){
+		} else if(first.equals("text")){
 			System.out.println("Now in text-based interface mode.");
 			Board b = new Board();
 			
