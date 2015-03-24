@@ -36,6 +36,8 @@ public class UCIInterface implements Runnable{
 			stopCommand();
 		} else if(split[0].equals("quit")){
 			quitCommand(split);
+		} else if(split[0].equals("setdepth")){
+			try{game.lastDepth = Integer.parseInt(split[1]);} catch(Exception e){tellGUI("failed.");}
 		} else {
 			System.err.println("Command not recognized!");
 		}

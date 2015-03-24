@@ -1,45 +1,32 @@
 import java.awt.Point;
+import java.util.ArrayList;
 
-public class Piece {
+public abstract class Piece {
 	boolean hasBeenPromoted;
 	int file;
 	int row;
-	int side;
-	int type; //int 1 through 10
+	Side side;
+	//int side;
+	//int type; //int 1 through 10
 	int singleInt;
 	Position myPosition;
 	
-	public Piece(Position p, int side, int type){
+	public Piece(Position p, Side side){
 		
 		this.side = side;
-		this.type = type;
 		this.myPosition = new Position(p);
 		hasBeenPromoted = false;
 	}
 	
+	public abstract ArrayList<Position> getPossibleMoves(Board b);
+	
 	public Piece(Piece piece) {
-		this(piece.getPosition(), piece.getSide(), piece.getType());
+		this(piece.getPosition(), piece.getSide());
 	}
 
 	@Override
 	public String toString(){
 		return (getTypeName(this.getType()) + " on position " + this.getPosition() + " [Side: " +this.getSide() + "]");
-	}
-	
-	public static Piece getCorrespondingPiece(Position p, int input){
-		return new Piece(p, input/100, input%100);
-	}
-	
-	public boolean isEmpty(){
-		return (side==0 && type == 0);
-	}
-	
-	public static int getCorrespondingInt(Piece p){
-		return p.getSide()*100 + p.type;
-	}
-	public int getCorrespondingInt(){
-		//return this.type; //wtf??? isn't this totally wrong?
-		return this.getSide()*100 + this.getType();
 	}
 	
 	public static String getTypeName(int type){
@@ -89,15 +76,20 @@ public class Piece {
 		}
 	}
 	
+	public int evaluateValue(){
+		
+		//TODO
+	}
+	
 	public static Piece getPieceFromLetter(char input, Position p){ //return a piece from an appropriately capitalized letter, such as those found in a fen string. White = capital, Black = lower case.
 		int type = -1; //no side encoded.
-		int side = -1;
+		Side s;
 		
-		if(Character.isUpperCase(input)) side = Values.SIDE_WHITE;
-		else side = Values.SIDE_BLACK;
+		if(Character.isUpperCase(input)) s = Side.WHITE;
+		else s = Side.BLACK;
 		
 		type = getTypeInt(Character.toUpperCase(input));
-		return new Piece(p, side, type);
+		return new Piece(p, s);
 	}
 	
 	//setters and getters
@@ -121,7 +113,7 @@ public class Piece {
 		myPosition.setRow(row);
 	}
 
-	public int getSide() {
+	public Side getSide() {
 		return side;
 	}
 
@@ -135,13 +127,6 @@ public class Piece {
 
 	public void setPosition(Position myPosition) {
 		this.myPosition = myPosition;
-	}
-
-	public String getSideNames() {
-		if(this.getSide() == Values.SIDE_WHITE) return "white";
-		if(this.getSide() == Values.SIDE_BLACK) return "black";
-		else return "wtf";
-		
 	}
 
 }

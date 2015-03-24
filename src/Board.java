@@ -1,15 +1,19 @@
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 
 
 public class Board {
 
-	private int[][] boardPosition;
+	//private int[][] boardPosition;
+	private HashSet<Piece> boardPosition;
 
 	public Board(Board input){
-		this.boardPosition = deepCopyArray(input.getBoardArrayInt());
+		this.boardPosition = new HashSet<Piece>(input.)
 	}
 	public Board(){
 		boardPosition = new int[8][8]; //x, y coordinates. a8 == 0, 0; h1 == 7, 7; a1 == 7, 0; h8 == 0, 7
@@ -25,33 +29,22 @@ public class Board {
 		this();
 		this.setToFenString(FenString);
 	}
+	
+	public Set<Piece> getBoardPosition(){
+		return new HashSet<Piece>(boardPosition);
+	}
 
 	public void setPieceAtPosition(Position positionToSet, Piece pieceToPlace){
-		int intOfPieceToPlace = pieceToPlace.getCorrespondingInt();
-		//if(!pieceToPlace.getPosition().equals(positionToSet)) assert(false);
-		pieceToPlace.setPosition(positionToSet);
-		//should NOT be passed a general 5, for instance. Has to have side as well; 205 is acceptable.
-		if(!((intOfPieceToPlace == Values.EMPTY_SQUARE) || (intOfPieceToPlace <= Values.KNIGHT_BLACK) && (intOfPieceToPlace >= Values.PAWN_WHITE))){
-			assert(false); //needs to be a value between the biggest side-associated piece, KNIGHT_BLACK, and the smallest side-associated piece, PAWN_WHITE.
-		}
-		//System.out.println("Set piece " + pieceToPlace + " to position " + positionToSet);
-		boardPosition[positionToSet.getFile()][positionToSet.getRow()] = intOfPieceToPlace;
-
-		//we need to change the coordinates of the piece that we've been passed, as well.
-		pieceToPlace.setPosition(positionToSet);
+		assert(pieceToPlace.getPosition().equals(positionToSet));
+		boardPosition.add(pieceToPlace);
 	}
 
 	public void setPositionToEmpty(Position positionToSet){
-		//System.out.println("Setting to empty: " + positionToSet);
-		boardPosition[positionToSet.getFile()][positionToSet.getRow()] = 0;
+		boardPosition.removeIf(p -> p.getPosition().equals(positionToSet));
 	}
 
 	public void setToClearBoard(){
-		for(int i = 0; i < 8; i++){
-			for(int j = 0; j < 8; j++){
-				setPositionToEmpty(new Position(i, j));
-			}
-		}
+		boardPosition = new HashSet<Piece>();
 	}
 
 	public void setToFenString(String input){
@@ -96,6 +89,7 @@ public class Board {
 		} else return null;
 	}
 
+	/*
 	Piece[][] getBoardArrayPiece(){
 
 		Piece[][] output = new Piece[8][8];
@@ -109,31 +103,13 @@ public class Board {
 		}
 		return output;
 	}
+	*/
 
-	public ArrayList<Board> NextBoardTest(int notUsed){ //always returns 5 boards. used for testing the perft function.
-		ArrayList<Board> output = new ArrayList<Board>();
-		output.add(new Board());
-		output.add(new Board());
-		output.add(new Board());
-		output.add(new Board());
-		output.add(new Board());
+	public HashSet<Piece> getArrayListofMyRealPieces(Side side){ //does not return empty spaces. Returns an ArrayList of pieces from the player specified in 'side'.
+		HashSet<Piece> output = new HashSet<Piece>();
+		
+		boardPosition.stream().filter(derp -> derp.getSide().equals(side)).forEach(output::add);
 		return output;
-	}
-
-	public ArrayList<Piece> getArrayListofMyRealPieces(int side){ //does not return empty spaces. Returns an ArrayList of pieces from the player specified in 'side'.
-		ArrayList<Piece> output = new ArrayList<Piece>();
-		for(int i = 0; i < boardPosition.length; i++){
-			for(int j = 0; j < boardPosition[0].length; j++){ //these two loops iterate over the whole int array
-				//convert int to piece
-				Piece current = Piece.getCorrespondingPiece(new Position(i, j), boardPosition[i][j]);
-				if(current.getSide() == side) output.add(current); //we only want to add current if it's our piece; not enemy's or blank.
-			}
-		}
-		return output;
-	}
-
-	public int[][] getBoardArrayInt(){
-		return deepCopyArray(boardPosition);
 	}
 
 	private int[][] deepCopyArray(int[][] input){ //Designed with 8 instead of .length because speed really matters here.
@@ -185,9 +161,9 @@ public class Board {
 			for(int j = minPieces; j < maxPieces; j++){
 				long total = 0;
 				for(int repeat = 0; repeat < certainty; repeat++){ //TODO make this average
-					game = new Game(Values.SIDE_WHITE);
+					game = new Game(Side.WHITE);
 					long start = System.currentTimeMillis();
-					game.minimax(Values.SIDE_WHITE, i, Board.generateRandomBoard(j), false);
+					game.minimax(Side.WHITE, i, Board.generateRandomBoard(j), false);
 					long end = System.currentTimeMillis();
 					total += (end-start);
 				}
@@ -201,7 +177,7 @@ public class Board {
 	private static Board generateRandomBoard(int numberOfPieces){
 		Board output = new Board();
 		Random r = new Random();
-		while(output.getArrayListofMyRealPieces(Values.SIDE_WHITE).size() + output.getArrayListofMyRealPieces(Values.SIDE_BLACK).size() < numberOfPieces){
+		while(output.getArrayListofMyRealPieces(Side.WHITE).size() + output.getArrayListofMyRealPieces(Side.BLACK).size() < numberOfPieces){
 			int xCoord = r.nextInt(7);
 			int yCoord = r.nextInt(7);
 			int type = r.nextInt(6)+1;
@@ -213,21 +189,6 @@ public class Board {
 		return output;
 	}
 
-	private int evaluateMaterialSlow(){ //returns the difference in material. Positive favors white. VERY SLOW - DO NOT USE!
-		return(evaluateMaterialSide(Values.SIDE_WHITE) - evaluateMaterialSide(Values.SIDE_BLACK));
-	}
-
-	private int evaluateMaterialSide(int side){ //gets a positive int representing the total material for either side. 
-		int count = 0;
-		count += Values.POINT_VALUE_PAWN * countPiecesOfType(Values.PAWN, side);
-		count += Values.POINT_VALUE_BISHOP * countPiecesOfType(Values.BISHOP, side);
-		count += Values.POINT_VALUE_KNIGHT * countPiecesOfType(Values.KNIGHT, side);
-		count += Values.POINT_VALUE_ROOK * countPiecesOfType(Values.ROOK, side);
-		count += Values.POINT_VALUE_QUEEN * countPiecesOfType(Values.QUEEN, side);
-		count += Values.POINT_VALUE_KING * countPiecesOfType(Values.KING, side);
-		return count;
-	}
-
 	public int evaluate(){ //White side is trying to maximize, Black to minimize. 
 		int count = 0;
 		int gameState = getGameState();
@@ -237,7 +198,7 @@ public class Board {
 			for(int j = 0; j < 8; j++){
 				int value = Values.POINT_VALUE_TABLE[allPieces[i][j].getType()]; //get 100, 900, etc.
 				value += Values.getPieceSquareValue(allPieces[i][j], gameState); //get Piece-square tables. 
-				if(allPieces[i][j].getSide() == Values.SIDE_BLACK) value = value*-1; //*-1 if it's black.
+				if(allPieces[i][j].getSide() == Side.BLACK) value = value*-1; //*-1 if it's black.
 
 				count += value;
 			}
@@ -245,12 +206,16 @@ public class Board {
 
 		return count;
 	}
+	
+	public int evaluateOneLiner(){
+		return boardPosition.stream().mapToInt(Piece::evaluateValue).sum();
+	}
 
 	public int kingStatus(){ //returns zero if there are two kings, or -1 if white king gone, 1 if black king gone.
 		boolean whiteKing = false; //do they exist
 		boolean blackKing = false;
-		int bKingVal = Piece.getCorrespondingInt(new Piece(new Position(0,0), Values.SIDE_BLACK, Values.KING));
-		int wKingVal = Piece.getCorrespondingInt(new Piece(new Position(0,0), Values.SIDE_WHITE, Values.KING));
+		int bKingVal = Piece.getCorrespondingInt(new Piece(new Position(0,0), Side.BLACK, Values.KING));
+		int wKingVal = Piece.getCorrespondingInt(new Piece(new Position(0,0), Side.WHITE, Values.KING));
 		for (int i = 0; i < 8; i++) {
 			for(int j = 0; j < 8; j++){
 				if(boardPosition[i][j] == wKingVal) whiteKing = true;
@@ -266,7 +231,7 @@ public class Board {
 
 		for(int i = 0; i < 8; i++){
 			for(int j = 0; j < 8; j++){
-				totalPieces += (allPieces[i][j].getType() == Values.SIDE_BLACK || allPieces[i][j].getType() == Values.SIDE_WHITE) ? 1 : 0;
+				totalPieces += (allPieces[i][j].getType() == Side.BLACK || allPieces[i][j].getType() == Side.WHITE) ? 1 : 0;
 			}
 		}
 		return (totalPieces > Values.END_GAME_THRESHOLD ? Values.GAME_STATE_START : Values.GAME_STATE_END);
@@ -292,7 +257,7 @@ public class Board {
 		}
 		
 		//check if the move is a promotion
-		else if(m.getPiece().getType() == Values.PAWN && ((m.getPiece().getSide() == Values.SIDE_WHITE && m.getToMoveTo().getRow() == 7) || (m.getPiece().getSide() == Values.SIDE_BLACK && m.getToMoveTo().getRow() == 0))){
+		else if(m.getPiece().getType() == Values.PAWN && ((m.getPiece().getSide() == Side.WHITE && m.getToMoveTo().getRow() == 7) || (m.getPiece().getSide() == Side.BLACK && m.getToMoveTo().getRow() == 0))){
 			//System.out.println("Promotion detected.");
 			m.setPiece(new Piece(m.getOriginalPosition(), m.getPiece().getSide(), Values.QUEEN));
 		}
@@ -301,9 +266,9 @@ public class Board {
 		else if(m.getPiece().getType() == Values.KING){
 			//System.out.println("Castling detected!");
 			//System.out.println(Piece.getDifference(m.getOriginalPosition(), m.getToMoveTo()));
-			if(m.getPiece().getSide() == Values.SIDE_WHITE && Piece.getDifference(m.getOriginalPosition(), m.getToMoveTo()).equals(new Point(-2, 0))){
+			if(m.getPiece().getSide() == Side.WHITE && Piece.getDifference(m.getOriginalPosition(), m.getToMoveTo()).equals(new Point(-2, 0))){
 				this.makeMove(new Move(this.getPieceAtPosition(new Position("h1")), new Position("f1")));
-			} else if(m.getPiece().getSide() == Values.SIDE_BLACK && Piece.getDifference(m.getOriginalPosition(), m.getToMoveTo()).equals(new Point(2, 0))){
+			} else if(m.getPiece().getSide() == Side.BLACK && Piece.getDifference(m.getOriginalPosition(), m.getToMoveTo()).equals(new Point(2, 0))){
 				this.makeMove(new Move(this.getPieceAtPosition(new Position("a8")), new Position("c8")));
 			}
 		}
@@ -455,16 +420,16 @@ public class Board {
 		//System.out.println(side);
 
 		boolean isFirstMove = false; //figure out if it is our first move; if it is, we can move forwards 2.
-		if((side == Values.SIDE_BLACK && p.getRow() == Values.PAWN_ROW_BLACK) || (side == Values.SIDE_WHITE && p.getRow() == Values.PAWN_ROW_WHITE))isFirstMove = true; //we're on the original pawn file for our color. [Where all the pawns start]
+		if((side == Side.BLACK && p.getRow() == Values.PAWN_ROW_BLACK) || (side == Side.WHITE && p.getRow() == Values.PAWN_ROW_WHITE))isFirstMove = true; //we're on the original pawn file for our color. [Where all the pawns start]
 
-		if(side == Values.SIDE_WHITE){
+		if(side == Side.WHITE){
 			if(p.getPositionRelative(0, 2).doesExistOnBoard() && (getPieceAtPosition(p.getPositionRelative(0, 1)).isEmpty() && getPieceAtPosition(p.getPositionRelative(0, 2)).isEmpty()) && isFirstMove){output.add(p.getPositionRelative(0, 2));} //there are two empty squares in front of us, and we're on the original file. We can move 2 forwards!
 			if(p.getPositionRelative(0, 1).doesExistOnBoard() && getPieceAtPosition(p.getPositionRelative(0, 1)).isEmpty()){output.add(p.getPositionRelative(0, 1));} //See if we can move forwards; there cannot be a piece there for this to work!
 			if(p.getPositionRelative(1, 1).doesExistOnBoard() && (getPieceAtPosition(p.getPositionRelative(1, 1)).getSide() == Values.getOpposingSide(side))){output.add(p.getPositionRelative(1, 1));} //see if we can move diagonally for a capture. They must have a piece there for this to work!
 			if(p.getPositionRelative(-1, 1).doesExistOnBoard() && (getPieceAtPosition(p.getPositionRelative(-1, 1)).getSide() == Values.getOpposingSide(side))){output.add(p.getPositionRelative(-1, 1));} //check diagonally the other way
 		}
 
-		if(side == Values.SIDE_BLACK){
+		if(side == Side.BLACK){
 			if(p.getPositionRelative(0, -2).doesExistOnBoard() && (getPieceAtPosition(p.getPositionRelative(0, -1)).isEmpty() && getPieceAtPosition(p.getPositionRelative(0, -2)).isEmpty()) && isFirstMove){output.add(p.getPositionRelative(0, -2));} //there are two empty squares in front of us, and we're on the original file. We can move 2 forwards!
 			if(p.getPositionRelative(0, -1).doesExistOnBoard() && getPieceAtPosition(p.getPositionRelative(0, -1)).isEmpty()){output.add(p.getPositionRelative(0, -1));} //See if we can move forwards; there cannot be a piece there for this to work!
 			if(p.getPositionRelative(1, -1).doesExistOnBoard() && (getPieceAtPosition(p.getPositionRelative(1, -1)).getSide() == Values.getOpposingSide(side))){output.add(p.getPositionRelative(1, -1));} //see if we can move diagonally for a capture. They must have a piece there for this to work!
@@ -474,18 +439,18 @@ public class Board {
 		return output;
 	}
 
-	private boolean isValidPlaceToMove(Position p, int side){ //designed for knights and kings, this tests if one of the spots where they "can" move is A: unoccupied or B: has an opposing piece, but does NOT have a friendly piece. //side should the be the side of the moving piece. p is the destination position.
+	boolean isValidPlaceToMove(Position p, Side side){ //designed for knights and kings, this tests if one of the spots where they "can" move is A: unoccupied or B: has an opposing piece, but does NOT have a friendly piece. //side should the be the side of the moving piece. p is the destination position.
 		return (p.doesExistOnBoard() && getPieceAtPosition(p).getSide() != side); //using getPositionRelative because it doesn't actually modify the object.
 		//This tests: is the new position on the board? and is the new position either enemy or unoccupied (not my own)?
 	}
 
-	private ArrayList<Position> getMovesAlongDirectionalAxisUntilInterrupted(Position current, int x, int y){ //x = 0, y = 1 will move the unit up until it hits an opposing piece, it's own piece, or the edge of the board. All of these positions will be returned.
+	public ArrayList<Position> getMovesAlongDirectionalAxisUntilInterrupted(Position current, RelativePosition r){ //x = 0, y = 1 will move the unit up until it hits an opposing piece, it's own piece, or the edge of the board. All of these positions will be returned.
 
 		ArrayList<Position> output = new ArrayList<Position>();
 
 		Position start = new Position(current);
 
-		int side = getPieceAtPosition(start).side;
+		Side side = getPieceAtPosition(start).side;
 
 		Piece temp = new Piece(getPieceAtPosition(start));
 		setPositionToEmpty(start);
@@ -496,7 +461,7 @@ public class Board {
 		output.add(new Position(current)); */
 
 		while(current.doesExistOnBoard() && getPieceAtPosition(current).isEmpty()){ //while still valid
-			current.changePositionRelative(x, y);
+			current.changePositionRelative(r.getX(), r.getY());
 			output.add(new Position(current));
 		}
 
@@ -525,7 +490,7 @@ public class Board {
 			for(int j = 0; j < 8; j++){
 				Position current = new Position(j, i);
 				if(this.getPieceAtPosition(current) == null)sb.append(' ');
-				else if(this.getPieceAtPosition(current).getSide() == Values.SIDE_WHITE){
+				else if(this.getPieceAtPosition(current).getSide() == Side.WHITE){
 					sb.append(this.getPieceAtPosition(current).getTypeLetter());
 				} else sb.append(Character.toLowerCase(this.getPieceAtPosition(current).getTypeLetter()));
 			}
@@ -569,7 +534,7 @@ public class Board {
 			for(int j = 0; j < 8; j++){
 				Position current = new Position(j, i);
 				if(this.getPieceAtPosition(current) == null)sb.append(' ');
-				else if(this.getPieceAtPosition(current).getSide() == Values.SIDE_WHITE){
+				else if(this.getPieceAtPosition(current).getSide() == Side.WHITE){
 					sb.append(this.getPieceAtPosition(current).getTypeLetter());
 				} else sb.append(Character.toLowerCase(this.getPieceAtPosition(current).getTypeLetter()));
 			}
@@ -577,15 +542,5 @@ public class Board {
 		}
 		sb.append("===========\n");
 		return sb.toString();
-	}
-
-	private int countPiecesOfType(int type, int side){ //sent pawn, black, will return the number of black pawns.
-		int counter = 0;
-		for(Piece p : getArrayListofMyRealPieces(side)){
-			if(p.getType() == type){
-				counter++;
-			}
-		}
-		return counter;
 	}
 }

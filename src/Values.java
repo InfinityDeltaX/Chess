@@ -53,7 +53,7 @@ public class Values {
 	public static boolean MOVE_ORDERING = true;
 	public static final int DEPTH_NOT_TO_ORDER = 1; //when only this many nodes remain, we won't bother with ordering, because it takes longer to sort than to guess. 
 	
-	public static int STARTING_DEPTH = 6;
+	public static int STARTING_DEPTH = 5;
 	public static boolean lockDepth = true;
 	
 	public static final int PAWN_ROW_BLACK = 6;
@@ -207,12 +207,10 @@ public class Values {
 		return(pieceSquareTableTotal(input) == 0);
 	}
 	
-	public static int getOpposingSide(int side){
-		if(side == Values.SIDE_BLACK) return Values.SIDE_WHITE;
-		else if(side == Values.SIDE_WHITE) return Values.SIDE_BLACK;
-		else{
-			return -101;
-		}
+	public static Side getOpposingSide(Side side){
+		if(side.equals(Side.BLACK)) return Side.WHITE;
+		else if(side.equals(Side.WHITE)) return Side.BLACK;
+		else return null;
 	}
 	
 	public static int booleanCompare(boolean x, boolean y){
