@@ -1,15 +1,13 @@
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Random;
 
-public abstract class Piece implements PieceGroup{
+public abstract class Piece implements PieceGroup, Comparable<Piece>{
 	boolean hasBeenPromoted;
-	int file;
-	int row;
 	Side side;
 	//int side;
 	//int type; //int 1 through 10
-	int singleInt;
 	Position myPosition;
 	
 	protected Piece(){};
@@ -130,6 +128,11 @@ public abstract class Piece implements PieceGroup{
 		}
 		
 		return null;
+	}
+	
+	@Override
+	public int compareTo(Piece a){
+			return getPosition().compareTo(a.getPosition());
 	}
 	
 	//setters and getters

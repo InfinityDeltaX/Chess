@@ -1,23 +1,27 @@
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 
 public class Board {
 
 	//private int[][] boardPosition;
-	private HashSet<Piece> boardPosition;
+	private TreeSet<Piece> boardPosition;
 
 	public Board(Board input){
-		this.boardPosition = new HashSet<Piece>(input.getBoardPosition());
+		this.boardPosition = new TreeSet<Piece>(byPosition);
+		this.boardPosition.addAll(input.getBoardPosition());
 	}
 	public Board(){
-		boardPosition = new HashSet<Piece>(); //x, y coordinates. a8 == 0, 0; h1 == 7, 7; a1 == 7, 0; h8 == 0, 7
+		boardPosition = new TreeSet<Piece>(byPosition); //x, y coordinates. a8 == 0, 0; h1 == 7, 7; a1 == 7, 0; h8 == 0, 7
 	}
 	public Board(String startingPosFEN, ArrayList<Move> movesMade){
 		this();
@@ -32,7 +36,7 @@ public class Board {
 	}
 
 	public Set<Piece> getBoardPosition(){
-		return new HashSet<Piece>(boardPosition);
+		return new TreeSet<Piece>(boardPosition);
 	}
 
 	public void setPieceAtPosition(Position positionToSet, Piece pieceToPlace){
@@ -45,7 +49,7 @@ public class Board {
 	}
 
 	public void setToClearBoard(){
-		boardPosition = new HashSet<Piece>();
+		boardPosition = new TreeSet<Piece>();
 	}
 
 	public boolean isPositionEmpty(Position input){
@@ -82,12 +86,22 @@ public class Board {
 
 	public Piece getPieceAtPosition(Position input){
 		
+		//Collections.binarySearch(this.boardPosition, new Rook(input, Side.WHITE));
+		ArrayList<Piece> temp = new ArrayList<Piece>(boardPosition);
+		int i = Collections.binarySearch(temp, new Rook(input, Side.WHITE));
+		if(i < 0){
+			return null;
+		} else {
+		return temp.get(i);
+		}
+		/*
 		Optional<Piece> op =  boardPosition.stream().filter(piece -> piece.getPosition().equals(input)).findAny();
 		if(op.isPresent()){
 			return op.get();
 		} else {
 			return null;
 		}
+		*/
 	}
 
 	public HashSet<Piece> getArrayListofMyRealPieces(Side side){ //does not return empty spaces. Returns an ArrayList of pieces from the player specified in 'side'.
@@ -246,6 +260,9 @@ public class Board {
 
 		//setPieceAtPosition(m.originalPosition, Values.EMPTY_SQUARE);
 		setPositionToEmpty(m.getOriginalPosition());
+		Piece toSet = m.getPiece();
+		toSet.setPosition(m.getToMoveTo());
+		m.setPiece(toSet);
 		setPieceAtPosition(m.getToMoveTo(), m.getPiece());
 	}
 
@@ -296,8 +313,6 @@ public class Board {
 	}
 	
 	public String FENString(Side activeSide){
-		dumpBoard();
-		
 		char castling = '-';
 		char enPassant = '-';
 		int halfMoveClock = 0;
@@ -328,7 +343,7 @@ public class Board {
 		for(int i = 0; i < sb.length(); i++){ //iterate over input string
 			char current = sb.charAt(i);
 			//System.out.println("Looking at: " + current);
-			if(current == 'i'){
+			if(current == ' '){
 				count++;
 				lastWasI = true;
 			} else if(lastWasI){ //breaking a streak
@@ -339,7 +354,7 @@ public class Board {
 		}
 		//sb.repl
 		String output = sb.toString();
-		output = output.replace("i", ""); //delete all remaining is.
+		output = output.replace(" ", ""); //delete all remaining is.
 		return output;
 	}
 
@@ -361,7 +376,14 @@ public class Board {
 		sb.append("===========\n");
 		return sb.toString();
 	}
-	public void setBoardPosition(HashSet<Piece> boardPosition) {
+	public void setBoardPosition(TreeSet<Piece> boardPosition) {
 		this.boardPosition = boardPosition;
 	}
+	
+	Comparator<Piece> byPosition = new Comparator<Piece>(){
+		@Override
+		public int compare(Piece a, Piece b){
+			return a.getPosition().compareTo(b.getPosition());
+		}
+	};
 }

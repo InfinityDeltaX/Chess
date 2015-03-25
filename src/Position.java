@@ -1,5 +1,7 @@
+import java.util.Comparator;
 
-public class Position {
+
+public class Position implements Comparable<Position>{
 
 	private int row;
 	private int file;
@@ -22,6 +24,11 @@ public class Position {
 		this(p.getFile(), p.getRow());
 	}
 	
+	public void changePositionRelative(int x, int y){
+		this.row += y;
+		this.file += x;
+	}
+	
 	public String getMathCoords(){ //0-7
 		return "[" + this.file + ", " + this.row + "]";
 	}
@@ -34,11 +41,6 @@ public class Position {
 
 	public Position getPositionRelative(int x, int y){
 		return new Position(file+x, row+y);
-	}
-	
-	public void changePositionRelative(int x, int y){
-		this.file+=x;
-		this.row+=y;
 	}
 	
 	public boolean doesExistOnBoard(){
@@ -83,6 +85,15 @@ public class Position {
 		if (row != other.row)
 			return false;
 		return true;
+	}
+
+	@Override
+	public int compareTo(Position o) {
+		if(this.getFile() == o.getFile()){
+			return this.getRow()-o.getRow();
+		} else {
+			return this.getFile()-o.getFile();
+		}
 	}
 	
 }
