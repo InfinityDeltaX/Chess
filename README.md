@@ -1,4 +1,4 @@
-2015 Western Civ Project.
+Chess Engine written in entirely in Java.
 
 Implements UCI protocol, as seen here: http://wbec-ridderkerk.nl/html/UCIProtocol.html
 
