@@ -1,4 +1,5 @@
 import java.awt.Point;
+import java.util.HashMap;
 
 
 public class Values {
@@ -41,8 +42,8 @@ public class Values {
 	public static final int SIDE_WHITE = 1;
 	public static final int SIDE_BLACK = 2;
 	
-	public static int SIDE_COMPUTER;
-	public static int SIDE_USER;
+	public static Side SIDE_COMPUTER;
+	public static Side SIDE_USER;
 	
 	public static int GAME_STATE_START = 0;
 	public static int GAME_STATE_END = 1;
@@ -63,7 +64,14 @@ public class Values {
 	
 	public static final String defaultBoardFenString = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
 	
-	public static final double[] PIECE_SQUARE_VALUE_TYPE_MULTIPLIER = new double[]{0, 1, 1, 1, 1, 1, 0.5}; //multiply any values for knights by this[6].
+	public static final HashMap<Class<? extends Piece>, Double> PIECE_SQUARE_VALUE_TYPE_MULTIPLIER = new HashMap<Class<? extends Piece>, Double>(){{
+		put(Pawn.class, 1.0);
+		put(Rook.class, 1.0);
+		put(Bishop.class, 1.0);
+		put(King.class, 1.0);
+		put(Queen.class, 1.0);
+		put(Knight.class, 0.7);
+	}};
 	
 	public static final int[][] PIECE_SQUARE_KING_END = new int[][]{ //applies for the white side; for black, flip the board over the X axis.
 		{-20, -10, -10, -10, -10, -10, -10, -20}, 
@@ -161,7 +169,23 @@ public class Values {
 		{-8, -8, -8, -8, -8, -8, -8, -8}
 		};
 	
+	public static final HashMap<Class<? extends Piece>, Integer> pieceValues = new HashMap<Class<? extends Piece>, Integer>(){{
+		pieceValues.put(Queen.class, POINT_VALUE_QUEEN);
+		pieceValues.put(King.class, POINT_VALUE_KING);
+		pieceValues.put(Rook.class, POINT_VALUE_ROOK);
+		pieceValues.put(Bishop.class, POINT_VALUE_BISHOP);
+		pieceValues.put(Pawn.class, POINT_VALUE_PAWN);
+		pieceValues.put(Knight.class, POINT_VALUE_KNIGHT);
+	}};
 	
+	public static final HashMap<Class<? extends Piece>, int[][][]> pieceSquareTables = new HashMap<Class<? extends Piece>, int[][][]>(){{
+		pieceSquareTables.put(Queen.class, new int[][][]{PIECE_SQUARE_QUEEN_START, PIECE_SQUARE_QUEEN_END});
+		pieceSquareTables.put(Rook.class, new int[][][]{PIECE_SQUARE_ROOK_START, PIECE_SQUARE_ROOK_END});
+		pieceSquareTables.put(Bishop.class, new int[][][]{PIECE_SQUARE_BISHOP_START, PIECE_SQUARE_BISHOP_END});
+		pieceSquareTables.put(Pawn.class, new int[][][]{PIECE_SQUARE_PAWN_START, PIECE_SQUARE_PAWN_END});
+		pieceSquareTables.put(King.class, new int[][][]{PIECE_SQUARE_KING_START, PIECE_SQUARE_KING_END});
+		pieceSquareTables.put(Knight.class, new int[][][]{PIECE_SQUARE_KNIGHT_START, PIECE_SQUARE_KNIGHT_END});
+	}};
 	
 	public static final int[][] PIECE_SQUARE_QUEEN_END = PIECE_SQUARE_QUEEN_START;
 	
@@ -174,23 +198,23 @@ public class Values {
 		return new Point(Math.abs(input.x), Math.abs(input.x));
 	}
 	
-	static int[][] getPieceSquareTable(int gameState, int type){ //given a side and a type, return the corresponding piece-square table. Flip if black, etc.
-		return PIECE_SQUARE_TABLE[gameState][type];
+	static int[][] getPieceSquareTable(int gameState, Class<? extends Piece> type){ //given a side and a type, return the corresponding piece-square table. Flip if black, etc.
+		return pieceSquareTables.get(type)[gameState];
 	}
 	
 	public static int getPieceSquareValue(Piece input, int gameState){
-		int type = input.getType();
-		int side = input.getSide();
+		Class<? extends Piece> type = input.getClass();
+		Side side = input.getSide();
 		int XCoord = input.getFile();
 		int YCoord = 7-input.getRow(); //this is just how the array is stored. 
 		
-		if(side == Values.SIDE_BLACK){ //invert for black side
+		if(side == Side.BLACK){ //invert for black side
 			YCoord = 7-YCoord;
 		}
 		
 		//System.out.println(YCoord + " " + XCoord);
 		
-		return (int) ((double) getPieceSquareTable(gameState, type)[YCoord][XCoord] * PIECE_SQUARE_VALUE_TYPE_MULTIPLIER[type]);
+		return (int) ((double) getPieceSquareTable(gameState, type)[YCoord][XCoord] * PIECE_SQUARE_VALUE_TYPE_MULTIPLIER.get(type));
 	}
 	
 	private static int pieceSquareTableTotal(int[][] input){

@@ -1,7 +1,8 @@
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.Random;
 
-public abstract class Piece {
+public abstract class Piece implements PieceGroup{
 	boolean hasBeenPromoted;
 	int file;
 	int row;
@@ -11,12 +12,23 @@ public abstract class Piece {
 	int singleInt;
 	Position myPosition;
 	
+	public static final ArrayList<Class<? extends Piece>> pieceTypes = new ArrayList<Class<? extends Piece>>(){{
+		pieceTypes.add(Pawn.class);
+		pieceTypes.add(Bishop.class);
+		pieceTypes.add(King.class);
+		pieceTypes.add(Queen.class);
+		pieceTypes.add(Rook.class);
+		pieceTypes.add(Knight.class);
+	}};
+	
 	public Piece(Position p, Side side){
 		
 		this.side = side;
 		this.myPosition = new Position(p);
 		hasBeenPromoted = false;
 	}
+	
+	public abstract Piece copy();
 	
 	public abstract ArrayList<Position> getPossibleMoves(Board b);
 	
@@ -26,7 +38,7 @@ public abstract class Piece {
 
 	@Override
 	public String toString(){
-		return (getTypeName(this.getType()) + " on position " + this.getPosition() + " [Side: " +this.getSide() + "]");
+		return (this.getClass().getName() + " on position " + this.getPosition() + " [Side: " +this.getSide() + "]");
 	}
 	
 	public static String getTypeName(int type){
@@ -46,9 +58,8 @@ public abstract class Piece {
 	}
 	
 	public char getTypeLetter(){
-		String name = getTypeName(this.getType());
-		if(!name.equals("Knight")){
-			return name.charAt(0);
+		if(!getClass().equals(Knight.class)){
+			return getClass().getName().charAt(0);
 		} else return 'N'; 
 	}
 	
@@ -56,40 +67,65 @@ public abstract class Piece {
 		return new Point(a.getFile()-b.getFile(), a.getRow()-b.getRow());
 	}
 	
-	public static int getTypeInt(char input){ //get the first letter of a type from it's number. Always returns capital!
+	public static Class<? extends Piece> getPieceClass(char input){ //get the first letter of a type from it's number. Always returns capital!
 		input = Character.toUpperCase(input);
 		if(input == 'P'){
-			return Values.PAWN;
+			return Pawn.class;
 		} else if(input == 'B'){
-			return Values.BISHOP;
+			return Bishop.class;
 		} else if(input == 'K'){
-			return Values.KING;
+			return King.class;
 		} else if(input == 'Q'){
-			return Values.QUEEN;
+			return Queen.class;
 		} else if(input == 'R'){
-			return Values.ROOK;
+			return Rook.class;
 		} else if(input == 'N'){
-			return Values.KNIGHT;
+			return Knight.class;
 		} else {
 			assert(false);
-			return -1;
+			return null;
 		}
 	}
 	
-	public int evaluateValue(){
+	public int evaluateValue(Board b){
+		int pieceValue = Values.pieceValues.get(this.getClass());
+		int sideMultiplier = getSide().multiplier;
+		int pieceSquareTableValue = Values.getPieceSquareValue(this, b.getGameState());
 		
-		//TODO
+		return sideMultiplier*(pieceSquareTableValue+pieceValue);
 	}
 	
 	public static Piece getPieceFromLetter(char input, Position p){ //return a piece from an appropriately capitalized letter, such as those found in a fen string. White = capital, Black = lower case.
-		int type = -1; //no side encoded.
 		Side s;
 		
 		if(Character.isUpperCase(input)) s = Side.WHITE;
 		else s = Side.BLACK;
 		
-		type = getTypeInt(Character.toUpperCase(input));
-		return new Piece(p, s);
+		Class<? extends Piece> type = getPieceClass(Character.toUpperCase(input));
+		
+		try {
+			return type.newInstance().factory(p, s);
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+	
+	public static Piece getRandomPiece(Position p, Side s){
+		Random r = new Random();
+		int i = r.nextInt(Piece.pieceTypes.size());
+		try {
+			return pieceTypes.get(i).newInstance().factory(p, s);
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		}
+		
+		return null;
 	}
 	
 	//setters and getters
@@ -115,10 +151,6 @@ public abstract class Piece {
 
 	public Side getSide() {
 		return side;
-	}
-
-	public int getType() {
-		return type;
 	}
 
 	public Position getPosition() {

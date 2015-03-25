@@ -16,4 +16,14 @@ public class Queen extends SlidingPiece{
 	public Queen(Position p, Side side){
 		super(p, side, directions);
 	}
+	
+	@Override
+	public Piece copy() {
+		return new Queen(getPosition(), getSide());
+	}
+	
+	@Override
+	public Piece factory(Position p, Side s) {
+		return new Queen(p, s);
+	}
 }

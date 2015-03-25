@@ -19,7 +19,7 @@ public class Game {
 		Board b = new Board();
 		//b.setToFenString(input);
 
-		setSides(Values.SIDE_BLACK);
+		setSides(Side.BLACK);
 
 		if(input.contains("play"))
 			b.setToDefaultBoard();
@@ -49,11 +49,11 @@ public class Game {
 		return new Board(theBoard);
 	}
 
-	public Game(int computerSide){
+	public Game(Side computerSide){
 		this(computerSide, null);
 	}
 
-	public Game(int computerSide, Board board){
+	public Game(Side computerSide, Board board){
 		setSides(computerSide);
 		this.theBoard = board;
 
@@ -103,7 +103,7 @@ public class Game {
 			else if(input.contains("moverrdering")){
 				Values.MOVE_ORDERING = Boolean.valueOf(input.split(" ")[1]);
 			} else if(input.contains("nps")){
-				System.out.println("NPS: " + new Game(Values.SIDE_BLACK).calculateNPSMinimax(6));
+				System.out.println("NPS: " + new Game(Side.BLACK).calculateNPSMinimax(6));
 			}
 			else if(input.contains("help")){
 				System.out.println("Valid commands: lockdepth, maxtime, mintime, startingdepth, moveordering, setDepth");
@@ -151,15 +151,15 @@ public class Game {
 		return lastDepth;
 	}
 
-	public void setSides(int computerside){
-		if(computerside == Values.SIDE_WHITE){//computer is white
-			Values.SIDE_COMPUTER = Values.SIDE_WHITE;
-			Values.SIDE_USER = Values.SIDE_BLACK;
+	public void setSides(Side computerside){
+		if(computerside == Side.WHITE){//computer is white
+			Values.SIDE_COMPUTER = Side.WHITE;
+			Values.SIDE_USER = Side.BLACK;
 			System.out.println("Computer is side WHITE!");
 		}	
 		else{
-			Values.SIDE_COMPUTER = Values.SIDE_BLACK;
-			Values.SIDE_USER = Values.SIDE_WHITE;
+			Values.SIDE_COMPUTER = Side.BLACK;
+			Values.SIDE_USER = Side.WHITE;
 			System.out.println("Computer is side BLACK!");
 		}
 	}
@@ -193,17 +193,17 @@ public class Game {
 		}
 	}
 
-	public Move minimax(int side, int depthToSearch, Board inputBoard, boolean shouldPrint){ //given a board state, determine a best move. Basically a min/max node, except that it keeps trach of the corresponding moves > scores hashmap.
+	public Move minimax(Side side, int depthToSearch, Board inputBoard, boolean shouldPrint){ //given a board state, determine a best move. Basically a min/max node, except that it keeps trach of the corresponding moves > scores hashmap.
 		Move currentBestMove = null;
 		Move bestMove;
 		int bestMoveScore = 0;
 		long startTime = System.currentTimeMillis();
 		int counter = 0;
 
-		if(side == Values.SIDE_BLACK){ //minimizer
+		if(side == Side.BLACK){ //minimizer
 			int currentLowest = Integer.MAX_VALUE;
 
-			ArrayList<Move> possibleNextMoves = inputBoard.getAllPossibleMoves(Values.SIDE_BLACK); //else, get a list of possible next moves. Black is always trying to minimize. The maximizer uses Values.SIDE_WHITE here.
+			ArrayList<Move> possibleNextMoves = inputBoard.getAllPossibleMoves(Side.BLACK); //else, get a list of possible next moves. Black is always trying to minimize. The maximizer uses Side.WHITE here.
 			int topLevelBranches = possibleNextMoves.size();
 
 			for(Move currentMove : possibleNextMoves){ //loop through all moves
@@ -220,10 +220,10 @@ public class Game {
 			bestMove = currentBestMove;
 			bestMoveScore = currentLowest;
 
-		} else if(side == Values.SIDE_WHITE){ //maximizer
+		} else if(side == Side.WHITE){ //maximizer
 			int currentHighest = Integer.MIN_VALUE;
 
-			ArrayList<Move> possibleNextMoves = inputBoard.getAllPossibleMoves(Values.SIDE_WHITE); //else, get a list of possible next moves. White is always trying to maximize. The minimizer uses Values.SIDE_BLACK here.
+			ArrayList<Move> possibleNextMoves = inputBoard.getAllPossibleMoves(Side.WHITE); //else, get a list of possible next moves. White is always trying to maximize. The minimizer uses Side.BLACK here.
 			int topLevelBranches = possibleNextMoves.size();
 
 			for(Move currentMove : possibleNextMoves){ //loop through all moves
@@ -267,7 +267,7 @@ public class Game {
 			return inputBoard.evaluate();
 		}
 
-		ArrayList<Move> possibleNextMoves = inputBoard.getAllPossibleMoves(Values.SIDE_BLACK); //else, get a list of possible next moves. Black is always trying to minimize. The maximizer uses Values.SIDE_WHITE here.
+		ArrayList<Move> possibleNextMoves = inputBoard.getAllPossibleMoves(Side.BLACK); //else, get a list of possible next moves. Black is always trying to minimize. The maximizer uses Side.WHITE here.
 
 		//move ordering.
 		if(Values.MOVE_ORDERING && remainingDepth > Values.DEPTH_NOT_TO_ORDER){
@@ -296,7 +296,7 @@ public class Game {
 		return beta;
 	}
 
-	private int perft(Board _input, int side, int depth){
+	private int perft(Board _input, Side side, int depth){
 		Board input = new Board(_input);
 		int total = 0;
 		if(depth == 0){
@@ -327,7 +327,7 @@ public class Game {
 			return inputBoard.evaluate();
 		}
 
-		ArrayList<Move> possibleNextMoves = inputBoard.getAllPossibleMoves(Values.SIDE_WHITE); //else, get a list of possible next moves. White is always trying to maximize. The minimizer uses Values.SIDE_BLACK here.
+		ArrayList<Move> possibleNextMoves = inputBoard.getAllPossibleMoves(Side.WHITE); //else, get a list of possible next moves. White is always trying to maximize. The minimizer uses Side.BLACK here.
 
 		//move ordering.
 		if(Values.MOVE_ORDERING && remainingDepth >= Values.DEPTH_NOT_TO_ORDER){

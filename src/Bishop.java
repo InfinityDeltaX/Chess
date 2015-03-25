@@ -12,4 +12,14 @@ public class Bishop extends SlidingPiece{
 	public Bishop(Position p, Side side){
 		super(p, side, directions);
 	}
+	
+	@Override
+	public Piece copy() {
+		return new Bishop(getPosition(), getSide());
+	}
+	
+	@Override
+	public Piece factory(Position p, Side s) {
+		return new Bishop(p, s);
+	}
 }

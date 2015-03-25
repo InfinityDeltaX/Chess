@@ -11,7 +11,7 @@ public class Move{
 
 	
 	public Move(Piece p, Position toMoveTo) {
-		piece = new Piece(p);
+		piece = p.copy();
 		this.toMoveTo = new Position(toMoveTo);
 		this.originalPosition = new Position(p.getPosition());
 	}
@@ -39,16 +39,16 @@ public class Move{
 	@Override
 	public String toString() {
 		if(piece!=null)
-			return ("Move " + piece.getSideNames() + " " + Piece.getTypeName(piece.type) + " at position " + originalPosition + " to " + toMoveTo);
+			return ("Move " + piece.side + " " + piece.getClass().getName() + " at position " + originalPosition + " to " + toMoveTo);
 		else return "Piece is null....";
 	}
 
 	public Piece getPiece() {
-		return new Piece(piece);
+		return piece.copy();
 	}
 
 	public void setPiece(Piece piece) {
-		this.piece = new Piece(piece);
+		this.piece = piece.copy();
 	}
 
 	public Position getToMoveTo() {

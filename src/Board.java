@@ -13,10 +13,10 @@ public class Board {
 	private HashSet<Piece> boardPosition;
 
 	public Board(Board input){
-		this.boardPosition = new HashSet<Piece>(input.)
+		this.boardPosition = new HashSet<Piece>(input.getBoardPosition());
 	}
 	public Board(){
-		boardPosition = new int[8][8]; //x, y coordinates. a8 == 0, 0; h1 == 7, 7; a1 == 7, 0; h8 == 0, 7
+		boardPosition = new HashSet<Piece>(); //x, y coordinates. a8 == 0, 0; h1 == 7, 7; a1 == 7, 0; h8 == 0, 7
 	}
 	public Board(String startingPosFEN, ArrayList<Move> movesMade){
 		this();
@@ -29,7 +29,7 @@ public class Board {
 		this();
 		this.setToFenString(FenString);
 	}
-	
+
 	public Set<Piece> getBoardPosition(){
 		return new HashSet<Piece>(boardPosition);
 	}
@@ -45,6 +45,10 @@ public class Board {
 
 	public void setToClearBoard(){
 		boardPosition = new HashSet<Piece>();
+	}
+
+	public boolean isPositionEmpty(Position input){
+		return getPieceAtPosition(input) == null;
 	}
 
 	public void setToFenString(String input){
@@ -72,51 +76,17 @@ public class Board {
 	}
 
 	public void setToDefaultBoard(){
-		boardPosition = new int[][]{
-				{Values.ROOK_WHITE, Values.PAWN_WHITE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.PAWN_BLACK, Values.ROOK_BLACK},
-				{Values.KNIGHT_WHITE, Values.PAWN_WHITE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.PAWN_BLACK, Values.KNIGHT_BLACK},
-				{Values.BISHOP_WHITE, Values.PAWN_WHITE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.PAWN_BLACK, Values.BISHOP_BLACK},
-				{Values.QUEEN_WHITE, Values.PAWN_WHITE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.PAWN_BLACK, Values.QUEEN_BLACK},
-				{Values.KING_WHITE, Values.PAWN_WHITE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.PAWN_BLACK, Values.KING_BLACK},
-				{Values.BISHOP_WHITE, Values.PAWN_WHITE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.PAWN_BLACK, Values.BISHOP_BLACK},
-				{Values.KNIGHT_WHITE, Values.PAWN_WHITE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.PAWN_BLACK, Values.KNIGHT_BLACK},
-				{Values.ROOK_WHITE, Values.PAWN_WHITE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.EMPTY_SQUARE, Values.PAWN_BLACK, Values.ROOK_BLACK}};
+		setToFenString(Values.defaultBoardFenString);
 	}
 
-	public Piece getPieceAtPosition(Position p){
-		if(p.doesExistOnBoard()){
-			return Piece.getCorrespondingPiece(p, boardPosition[p.getFile()][p.getRow()]);
-		} else return null;
+	public Piece getPieceAtPosition(Position input){
+		return (boardPosition.stream().filter(piece -> piece.getPosition().equals(input)).findFirst()).get();
 	}
-
-	/*
-	Piece[][] getBoardArrayPiece(){
-
-		Piece[][] output = new Piece[8][8];
-
-		for(int i = 0; i < boardPosition.length; i++){
-			for(int j = 0; j < boardPosition[0].length; j++){ //these two loops iterate over the whole int array
-				//convert int to piece
-				Piece current = Piece.getCorrespondingPiece(new Position(i, j), boardPosition[i][j]);
-				output[i][j] = current;
-			}
-		}
-		return output;
-	}
-	*/
 
 	public HashSet<Piece> getArrayListofMyRealPieces(Side side){ //does not return empty spaces. Returns an ArrayList of pieces from the player specified in 'side'.
 		HashSet<Piece> output = new HashSet<Piece>();
-		
-		boardPosition.stream().filter(derp -> derp.getSide().equals(side)).forEach(output::add);
-		return output;
-	}
 
-	private int[][] deepCopyArray(int[][] input){ //Designed with 8 instead of .length because speed really matters here.
-		int[][] output = new int[8][8];
-		for (int i = 0; i < 8; i++) {
-			output[i] = Arrays.copyOf(input[i], 8);
-		}
+		boardPosition.stream().filter(derp -> derp.getSide().equals(side)).forEach(output::add);
 		return output;
 	}
 
@@ -128,19 +98,23 @@ public class Board {
 		return System.currentTimeMillis() - start;
 	}
 
-	public ArrayList<Move> getAllPossibleMoves(int side){
+	public ArrayList<Move> getAllPossibleMoves(Side side){
 		ArrayList<Move> output = new ArrayList<Move>();
-		ArrayList<Piece> myPieces = getArrayListofMyRealPieces(side);
+		HashSet<Piece> myPieces = getArrayListofMyRealPieces(side);
+		myPieces.stream().forEach(piece -> piece.getPossibleMoves(this).stream().map(pos -> new Move(piece, pos)).forEach(m -> output.add(m)));
+
+		/*
 		for(Piece currentPiece : myPieces){ //iterate through each of our pieces.
 			for(Position currentEndingPosition : getPossibleMoves(currentPiece)){ //iterate through each place it can go
 				output.add(new Move(currentPiece, currentEndingPosition)); // TODO
 
 			}
 		}
+		 */
 		return output;
 	}
 
-	public ArrayList<Board> getAllPossibleNextBoards(int side){
+	public ArrayList<Board> getAllPossibleNextBoards(Side side){
 		//iterate through getAllPossibleMoves and make the move.
 		ArrayList<Board> output = new ArrayList<Board>();
 
@@ -180,67 +154,55 @@ public class Board {
 		while(output.getArrayListofMyRealPieces(Side.WHITE).size() + output.getArrayListofMyRealPieces(Side.BLACK).size() < numberOfPieces){
 			int xCoord = r.nextInt(7);
 			int yCoord = r.nextInt(7);
-			int type = r.nextInt(6)+1;
-			int side = r.nextInt(2)+1; //1 or 2
+			Side side = r.nextInt(2) > 0 ? Side.WHITE : Side.BLACK; //1 or 2
 			//System.out.printf("Generated new piece; x=%d, y=%d, side=%d, type=%d \n", xCoord, yCoord, side, type);
-			Piece p = new Piece(new Position(xCoord, yCoord), side, type);
+			
+			Piece p = Piece.getRandomPiece(new Position(xCoord, yCoord), side);
 			output.setPieceAtPosition(p.getPosition(), p);
 		}
 		return output;
 	}
 
-	public int evaluate(){ //White side is trying to maximize, Black to minimize. 
-		int count = 0;
-		int gameState = getGameState();
-
-		Piece[][] allPieces = getBoardArrayPiece();
-		for(int i = 0; i < 8; i++){
-			for(int j = 0; j < 8; j++){
-				int value = Values.POINT_VALUE_TABLE[allPieces[i][j].getType()]; //get 100, 900, etc.
-				value += Values.getPieceSquareValue(allPieces[i][j], gameState); //get Piece-square tables. 
-				if(allPieces[i][j].getSide() == Side.BLACK) value = value*-1; //*-1 if it's black.
-
-				count += value;
-			}
-		}
-
-		return count;
-	}
-	
-	public int evaluateOneLiner(){
-		return boardPosition.stream().mapToInt(Piece::evaluateValue).sum();
+	public int evaluate(){
+		return boardPosition.stream().mapToInt(p -> p.evaluateValue(this)).sum();
 	}
 
 	public int kingStatus(){ //returns zero if there are two kings, or -1 if white king gone, 1 if black king gone.
 		boolean whiteKing = false; //do they exist
 		boolean blackKing = false;
-		int bKingVal = Piece.getCorrespondingInt(new Piece(new Position(0,0), Side.BLACK, Values.KING));
-		int wKingVal = Piece.getCorrespondingInt(new Piece(new Position(0,0), Side.WHITE, Values.KING));
-		for (int i = 0; i < 8; i++) {
-			for(int j = 0; j < 8; j++){
-				if(boardPosition[i][j] == wKingVal) whiteKing = true;
-				if(boardPosition[i][j] == bKingVal) blackKing = true;
+		for(Piece p : boardPosition){
+			if (p.getClass().equals(King.class)){
+				if(p.getSide() == Side.WHITE){
+					whiteKing = true;
+				}
+				if(p.getSide() == Side.BLACK){
+					blackKing = true;
+				}
 			}
 		}
 		return Values.booleanCompare(blackKing, whiteKing);
-	}
-	
-	public int getGameState(){
-		int totalPieces = 0;
-		Piece[][] allPieces = getBoardArrayPiece();
 
-		for(int i = 0; i < 8; i++){
-			for(int j = 0; j < 8; j++){
-				totalPieces += (allPieces[i][j].getType() == Side.BLACK || allPieces[i][j].getType() == Side.WHITE) ? 1 : 0;
+		/*
+		 * 		boardPosition.stream().forEach(p -> {
+			if(p.getClass().equals(King.class)){
+				if(p.getSide() == Side.WHITE)
+					whiteKing = true;
+				if(p.getSide() == Side.BLACK)
+					blackKing = true;
+
 			}
-		}
-		return (totalPieces > Values.END_GAME_THRESHOLD ? Values.GAME_STATE_START : Values.GAME_STATE_END);
+		});
+		 */
+	}
+
+	public int getGameState(){
+		return (boardPosition.size() > Values.END_GAME_THRESHOLD ? Values.GAME_STATE_START : Values.GAME_STATE_END);
 	}
 
 	public void makeMove(Move m){
-		
+
 		//check if the move is an en passant
-		if(m.getPiece().getType() == Values.PAWN && this.getPieceAtPosition(m.getToMoveTo()).isEmpty() && (Values.getAbsolutePoint(Piece.getDifference(m.getToMoveTo(), m.getOriginalPosition())).equals(new Point(1, 1)))){
+		if(m.getPiece().getClass().equals(Pawn.class) && this.isPositionEmpty(m.getToMoveTo()) && (Values.getAbsolutePoint(Piece.getDifference(m.getToMoveTo(), m.getOriginalPosition())).equals(new Point(1, 1)))){
 			//System.out.println("En Passant detected!");
 			if(Piece.getDifference(m.getToMoveTo(), m.getOriginalPosition()).equals(new Point(1, 1))){
 				setPositionToEmpty(m.getToMoveTo().getPositionRelative(0, -1));
@@ -255,15 +217,15 @@ public class Board {
 				setPositionToEmpty(m.getToMoveTo().getPositionRelative(0, 1));
 			}
 		}
-		
+
 		//check if the move is a promotion
-		else if(m.getPiece().getType() == Values.PAWN && ((m.getPiece().getSide() == Side.WHITE && m.getToMoveTo().getRow() == 7) || (m.getPiece().getSide() == Side.BLACK && m.getToMoveTo().getRow() == 0))){
+		else if(m.getPiece().getClass().equals(Pawn.class) && ((m.getPiece().getSide() == Side.WHITE && m.getToMoveTo().getRow() == 7) || (m.getPiece().getSide() == Side.BLACK && m.getToMoveTo().getRow() == 0))){
 			//System.out.println("Promotion detected.");
-			m.setPiece(new Piece(m.getOriginalPosition(), m.getPiece().getSide(), Values.QUEEN));
+			m.setPiece(new Queen(m.getOriginalPosition(), m.getPiece().getSide()));
 		}
-		
+
 		//check if the move is a castle.
-		else if(m.getPiece().getType() == Values.KING){
+		else if(m.getPiece().getClass().equals(Pawn.class)){
 			//System.out.println("Castling detected!");
 			//System.out.println(Piece.getDifference(m.getOriginalPosition(), m.getToMoveTo()));
 			if(m.getPiece().getSide() == Side.WHITE && Piece.getDifference(m.getOriginalPosition(), m.getToMoveTo()).equals(new Point(-2, 0))){
@@ -272,171 +234,10 @@ public class Board {
 				this.makeMove(new Move(this.getPieceAtPosition(new Position("a8")), new Position("c8")));
 			}
 		}
-		
+
 		//setPieceAtPosition(m.originalPosition, Values.EMPTY_SQUARE);
 		setPositionToEmpty(m.getOriginalPosition());
 		setPieceAtPosition(m.getToMoveTo(), m.getPiece());
-	}
-
-	public ArrayList<Position> getPossibleMoves(Piece p) { //wrapper function for getPossible___Moves. Given a piece, will return it's possible moves.
-
-		if(p.getType() == Values.PAWN){
-			return getPossiblePawnMoves(p.getPosition());
-		} 
-		else if(p.getType() == Values.BISHOP){
-			return getPossibleBishopMoves(p.getPosition());
-		}
-		else if(p.getType() == Values.ROOK){
-			return getPossibleRookMoves(p.getPosition());
-		}
-		else if(p.getType() == Values.KING){
-			return getPossibleKingMoves(p.getPosition());
-		}
-		else if(p.getType() == Values.QUEEN){
-			return getPossibleQueenMoves(p.getPosition());
-		}
-		else if(p.getType() == Values.KNIGHT){
-			return getPossibleKnightMoves(p.getPosition());
-		} else {
-			assert(false); //we should never get here....
-			ArrayList<Position> output = new ArrayList<Position>();
-			return output;
-
-		}
-	}
-
-	private ArrayList<Position> getPossibleQueenMoves(Position p){
-
-		assert(getPieceAtPosition(p).type == Values.QUEEN); //make sure that it's a queen!
-		assert(p.doesExistOnBoard());
-		if(!p.doesExistOnBoard()){
-			return null;
-		}
-		//the eight ways to attack [4 diagonals, 4 straights]. start at top and go clock-wise.
-		ArrayList<Position> output = new ArrayList<Position>();
-
-		output.addAll(getMovesAlongDirectionalAxisUntilInterrupted(new Position(p), 0, 1));
-		output.addAll(getMovesAlongDirectionalAxisUntilInterrupted(new Position(p), 1, 1));
-		output.addAll(getMovesAlongDirectionalAxisUntilInterrupted(new Position(p), 1, 0));
-		output.addAll(getMovesAlongDirectionalAxisUntilInterrupted(new Position(p), 1, -1));
-		output.addAll(getMovesAlongDirectionalAxisUntilInterrupted(new Position(p), 0, -1));
-		output.addAll(getMovesAlongDirectionalAxisUntilInterrupted(new Position(p), -1, -1));
-		output.addAll(getMovesAlongDirectionalAxisUntilInterrupted(new Position(p), -1, 0));
-		output.addAll(getMovesAlongDirectionalAxisUntilInterrupted(new Position(p), -1, 1));
-
-		return output;
-	}
-
-	private ArrayList<Position> getPossibleBishopMoves(Position p){
-
-		assert(getPieceAtPosition(p).type == Values.BISHOP); //make sure that it's a queen!
-		assert(p.doesExistOnBoard());
-		if(!p.doesExistOnBoard()){
-			return null;
-		}
-		//the four ways to attack [4 diagonals]. start at top and go clock-wise.
-		ArrayList<Position> output = new ArrayList<Position>();
-
-		output.addAll(getMovesAlongDirectionalAxisUntilInterrupted(new Position(p), 1, 1));
-		output.addAll(getMovesAlongDirectionalAxisUntilInterrupted(new Position(p), 1, -1));
-		output.addAll(getMovesAlongDirectionalAxisUntilInterrupted(new Position(p), -1, -1));
-		output.addAll(getMovesAlongDirectionalAxisUntilInterrupted(new Position(p), -1, 1));
-
-		return output;
-	}
-
-	private ArrayList<Position> getPossibleRookMoves(Position p){
-
-		assert(getPieceAtPosition(p).type == Values.ROOK); //make sure that it's a queen!
-		assert(p.doesExistOnBoard());
-		if(!p.doesExistOnBoard()){ //an alternative for assert. Assert is better because if we ever call this on the wrong piece, something bad happened.
-			return null;
-		}
-		//the four ways to attack [4 straights]. start at top and go clock-wise.
-		ArrayList<Position> output = new ArrayList<Position>();
-
-		output.addAll(getMovesAlongDirectionalAxisUntilInterrupted(new Position(p), 0, 1));
-		output.addAll(getMovesAlongDirectionalAxisUntilInterrupted(new Position(p), 1, 0));
-		output.addAll(getMovesAlongDirectionalAxisUntilInterrupted(new Position(p), 0, -1));
-		output.addAll(getMovesAlongDirectionalAxisUntilInterrupted(new Position(p), -1, 0));
-
-		return output;
-	}
-
-	private ArrayList<Position> getPossibleKnightMoves(Position p){
-
-		assert(getPieceAtPosition(p).type == Values.KNIGHT); //make sure that it's a queen!
-		assert(p.doesExistOnBoard());
-		if(!p.doesExistOnBoard()){
-			return null;
-		}
-		//the eight ways to attack [circle thingy]. start at top and go clock-wise.
-		ArrayList<Position> output = new ArrayList<Position>();
-		int side = getPieceAtPosition(p).side;
-
-		if(isValidPlaceToMove(p.getPositionRelative(1, 2), side)){output.add(p.getPositionRelative(1, 2));} //the coordinates are the destination position. TLDR: If it's a valid place to move, add it to the list of places to move.
-		if(isValidPlaceToMove(p.getPositionRelative(2, 1), side)){output.add(p.getPositionRelative(2, 1));}
-		if(isValidPlaceToMove(p.getPositionRelative(2, -1), side)){output.add(p.getPositionRelative(2, -1));}
-		if(isValidPlaceToMove(p.getPositionRelative(1, -2), side)){output.add(p.getPositionRelative(1, -2));}
-		if(isValidPlaceToMove(p.getPositionRelative(-1, -2), side)){output.add(p.getPositionRelative(-1, -2));}
-		if(isValidPlaceToMove(p.getPositionRelative(-2, -1), side)){output.add(p.getPositionRelative(-2, -1));}
-		if(isValidPlaceToMove(p.getPositionRelative(-2, 1), side)){output.add(p.getPositionRelative(-2, 1));}
-		if(isValidPlaceToMove(p.getPositionRelative(-1, 2), side)){output.add(p.getPositionRelative(-1, 2));}
-		return output;
-	}
-
-	private ArrayList<Position> getPossibleKingMoves(Position p){
-
-		assert(getPieceAtPosition(p).type == Values.KING); //make sure that it's a queen!
-		assert(p.doesExistOnBoard());
-		if(!p.doesExistOnBoard()){
-			return null;
-		}
-		//the eight ways to attack [circle]. start at top and go clock-wise.
-		ArrayList<Position> output = new ArrayList<Position>();
-		int side = getPieceAtPosition(p).side;
-
-		if(isValidPlaceToMove(p.getPositionRelative(0, 1), side)){output.add(p.getPositionRelative(0, 1));} //the coordinates are the destination position. TLDR: If it's a valid place to move, add it to the list of places to move.
-		if(isValidPlaceToMove(p.getPositionRelative(1, 1), side)){output.add(p.getPositionRelative(1, 1));}
-		if(isValidPlaceToMove(p.getPositionRelative(1, 0), side)){output.add(p.getPositionRelative(1, 0));}
-		if(isValidPlaceToMove(p.getPositionRelative(1, -1), side)){output.add(p.getPositionRelative(1, -1));}
-		if(isValidPlaceToMove(p.getPositionRelative(0, -1), side)){output.add(p.getPositionRelative(0, -1));}
-		if(isValidPlaceToMove(p.getPositionRelative(-1, -1), side)){output.add(p.getPositionRelative(-1, -1));}
-		if(isValidPlaceToMove(p.getPositionRelative(-1, 0), side)){output.add(p.getPositionRelative(-1, 0));}
-		if(isValidPlaceToMove(p.getPositionRelative(-1, 1), side)){output.add(p.getPositionRelative(-1, 1));}
-		return output;
-	}
-
-	private ArrayList<Position> getPossiblePawnMoves(Position p){
-
-		assert(getPieceAtPosition(p).type == Values.PAWN); //make sure that it's a queen!
-		assert(p.doesExistOnBoard());
-		if(!p.doesExistOnBoard()){
-			return null;
-		}
-		//the eight ways to attack [circle]. start at top and go clock-wise.
-		ArrayList<Position> output = new ArrayList<Position>();
-		int side = getPieceAtPosition(p).side;
-		//System.out.println(side);
-
-		boolean isFirstMove = false; //figure out if it is our first move; if it is, we can move forwards 2.
-		if((side == Side.BLACK && p.getRow() == Values.PAWN_ROW_BLACK) || (side == Side.WHITE && p.getRow() == Values.PAWN_ROW_WHITE))isFirstMove = true; //we're on the original pawn file for our color. [Where all the pawns start]
-
-		if(side == Side.WHITE){
-			if(p.getPositionRelative(0, 2).doesExistOnBoard() && (getPieceAtPosition(p.getPositionRelative(0, 1)).isEmpty() && getPieceAtPosition(p.getPositionRelative(0, 2)).isEmpty()) && isFirstMove){output.add(p.getPositionRelative(0, 2));} //there are two empty squares in front of us, and we're on the original file. We can move 2 forwards!
-			if(p.getPositionRelative(0, 1).doesExistOnBoard() && getPieceAtPosition(p.getPositionRelative(0, 1)).isEmpty()){output.add(p.getPositionRelative(0, 1));} //See if we can move forwards; there cannot be a piece there for this to work!
-			if(p.getPositionRelative(1, 1).doesExistOnBoard() && (getPieceAtPosition(p.getPositionRelative(1, 1)).getSide() == Values.getOpposingSide(side))){output.add(p.getPositionRelative(1, 1));} //see if we can move diagonally for a capture. They must have a piece there for this to work!
-			if(p.getPositionRelative(-1, 1).doesExistOnBoard() && (getPieceAtPosition(p.getPositionRelative(-1, 1)).getSide() == Values.getOpposingSide(side))){output.add(p.getPositionRelative(-1, 1));} //check diagonally the other way
-		}
-
-		if(side == Side.BLACK){
-			if(p.getPositionRelative(0, -2).doesExistOnBoard() && (getPieceAtPosition(p.getPositionRelative(0, -1)).isEmpty() && getPieceAtPosition(p.getPositionRelative(0, -2)).isEmpty()) && isFirstMove){output.add(p.getPositionRelative(0, -2));} //there are two empty squares in front of us, and we're on the original file. We can move 2 forwards!
-			if(p.getPositionRelative(0, -1).doesExistOnBoard() && getPieceAtPosition(p.getPositionRelative(0, -1)).isEmpty()){output.add(p.getPositionRelative(0, -1));} //See if we can move forwards; there cannot be a piece there for this to work!
-			if(p.getPositionRelative(1, -1).doesExistOnBoard() && (getPieceAtPosition(p.getPositionRelative(1, -1)).getSide() == Values.getOpposingSide(side))){output.add(p.getPositionRelative(1, -1));} //see if we can move diagonally for a capture. They must have a piece there for this to work!
-			if(p.getPositionRelative(-1, -1).doesExistOnBoard() && (getPieceAtPosition(p.getPositionRelative(-1, -1)).getSide() == Values.getOpposingSide(side))){output.add(p.getPositionRelative(-1, -1));} //check diagonally the other way
-		}
-
-		return output;
 	}
 
 	boolean isValidPlaceToMove(Position p, Side side){ //designed for knights and kings, this tests if one of the spots where they "can" move is A: unoccupied or B: has an opposing piece, but does NOT have a friendly piece. //side should the be the side of the moving piece. p is the destination position.
@@ -452,7 +253,7 @@ public class Board {
 
 		Side side = getPieceAtPosition(start).side;
 
-		Piece temp = new Piece(getPieceAtPosition(start));
+		Piece temp = getPieceAtPosition(start);
 		setPositionToEmpty(start);
 
 		/*
@@ -460,7 +261,7 @@ public class Board {
 		current.changePositionRelative(x, y); //without this, we look at the spot where we started, see our own piece in the spot where we are, end the loop, and return. This moves us 1 forwards immediately to avoid this.
 		output.add(new Position(current)); */
 
-		while(current.doesExistOnBoard() && getPieceAtPosition(current).isEmpty()){ //while still valid
+		while(current.doesExistOnBoard() && isPositionEmpty(current)){ //while still valid
 			current.changePositionRelative(r.getX(), r.getY());
 			output.add(new Position(current));
 		}
@@ -479,7 +280,7 @@ public class Board {
 		return output;
 	}
 
-	public String FENString(int activeSide){
+	public String FENString(Side activeSide){
 		char castling = '-';
 		char enPassant = '-';
 		int halfMoveClock = 0;
@@ -527,7 +328,7 @@ public class Board {
 
 	@Override
 	public String toString() {
-		
+
 		StringBuilder sb = new StringBuilder();
 		sb.append("===========\n");
 		for(int i = 7; i >= 0; i--){
@@ -542,5 +343,8 @@ public class Board {
 		}
 		sb.append("===========\n");
 		return sb.toString();
+	}
+	public void setBoardPosition(HashSet<Piece> boardPosition) {
+		this.boardPosition = boardPosition;
 	}
 }

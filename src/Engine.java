@@ -8,7 +8,7 @@ public class Engine {
 		Scanner in = new Scanner(System.in);
 		String first = in.nextLine();
 		if(first.equals("test")){
-			Game theGame = new Game(Values.SIDE_BLACK);
+			Game theGame = new Game(Side.BLACK);
 			
 			System.out.println(Values.ACCEPTABLE_TIME_MIN);
 			String input = in.nextLine();
@@ -16,13 +16,13 @@ public class Engine {
 			b.setToFenString(input);
 			//b.testSpeed(6, 5, 20, 10);
 			System.out.println(b.evaluate());
-			System.out.println(b.getAllPossibleMoves(Values.SIDE_BLACK).size());
-			//System.out.println(Move.orderMoves(b.getAllPossibleMoves(Values.SIDE_WHITE), b));
+			System.out.println(b.getAllPossibleMoves(Side.BLACK).size());
+			//System.out.println(Move.orderMoves(b.getAllPossibleMoves(Side.WHITE), b));
 			System.out.println("---");
-			System.out.println(b.getAllPossibleMoves(Values.SIDE_BLACK));
+			System.out.println(b.getAllPossibleMoves(Side.BLACK));
 			System.out.println(b.toString());
 			
-			for(Move m : b.getAllPossibleMoves(Values.SIDE_BLACK)){
+			for(Move m : b.getAllPossibleMoves(Side.BLACK)){
 				
 				System.out.println(m.getToMoveTo());
 			}
@@ -30,7 +30,7 @@ public class Engine {
 			b.makeMove(new Move(in.nextLine(), b));
 			System.out.println(b.toString());
 			
-			theGame.minimax(Values.SIDE_BLACK, 1, b, true);
+			theGame.minimax(Side.BLACK, 1, b, true);
 			
 			System.exit(0);
 			
@@ -52,10 +52,10 @@ public class Engine {
 			Game theGame = null;
 			System.out.println("Please enter the side you wish to be: ");
 			if(in.nextLine().toLowerCase().trim().equals("white")){
-				theGame = new Game(Values.SIDE_BLACK); //takes user side, not computer side.
+				theGame = new Game(Side.BLACK); //takes user side, not computer side.
 				theGame.setBoard(b);
 			} else {
-				theGame = new Game(Values.SIDE_WHITE);
+				theGame = new Game(Side.WHITE);
 				b.makeMove(theGame.getComputerMove(b)); //the user has to move first. Let them make a move, then start the game.
 				theGame.setBoard(b);
 			}

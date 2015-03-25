@@ -13,4 +13,15 @@ public class Rook extends SlidingPiece{
 		super(p, side, directions);
 	}
 
+
+	@Override
+	public Piece copy() {
+		return new Rook(getPosition(), getSide());
+	}
+
+	@Override
+	public Piece factory(Position p, Side s) {
+		return new Rook(p, s);
+	}
+
 }

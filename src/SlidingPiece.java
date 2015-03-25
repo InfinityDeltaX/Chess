@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 
 
-public class SlidingPiece extends Piece{
+public abstract class SlidingPiece extends Piece{
 
 	ArrayList<RelativePosition> slidingDirections;
 	

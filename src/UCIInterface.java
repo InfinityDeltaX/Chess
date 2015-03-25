@@ -10,8 +10,8 @@ public class UCIInterface implements Runnable{
 	public void run() {
 		Scanner in = new Scanner(System.in);
 		// TODO Auto-generated method stub
-		game = new Game(Values.SIDE_BLACK);
-		game.setSides(Values.SIDE_BLACK);
+		game = new Game(Side.BLACK);
+		game.setSides(Side.BLACK);
 		while(1==1){
 			String input = in.nextLine();
 			routeCommand(input);
@@ -98,10 +98,10 @@ public class UCIInterface implements Runnable{
 		}
 		game.setBoard(output);
 		if(split.length == 2){
-		game.setSides(Values.SIDE_WHITE);
+		game.setSides(Side.WHITE);
 		}
 		else if(split[2].contains("moves")){
-			game.setSides((split.length-2)%2 == 1 ? Values.SIDE_WHITE : Values.SIDE_BLACK);
+			game.setSides((split.length-2)%2 == 1 ? Side.WHITE : Side.BLACK);
 		} else {
 			System.out.println("ERROR!");
 		}

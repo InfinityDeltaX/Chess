@@ -16,4 +16,14 @@ public class King extends JumpingPiece{
 	public King(Position p, Side side){
 		super(p, side, jumpable);
 	}
+
+	@Override
+	public Piece copy() {
+		return new King(getPosition(), getSide());
+	}
+	
+	@Override
+	public Piece factory(Position p, Side s) {
+		return new King(p, s);
+	}
 }
