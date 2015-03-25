@@ -10,6 +10,8 @@ public abstract class SlidingPiece extends Piece{
 		this.slidingDirections = new ArrayList<RelativePosition>(slidingDirections);
 	}
 
+	protected SlidingPiece(){};
+	
 	@Override
 	public ArrayList<Position> getPossibleMoves(Board b) {
 		

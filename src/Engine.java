@@ -10,27 +10,12 @@ public class Engine {
 		if(first.equals("test")){
 			Game theGame = new Game(Side.BLACK);
 			
-			System.out.println(Values.ACCEPTABLE_TIME_MIN);
-			String input = in.nextLine();
 			Board b = new Board();
-			b.setToFenString(input);
-			//b.testSpeed(6, 5, 20, 10);
-			System.out.println(b.evaluate());
-			System.out.println(b.getAllPossibleMoves(Side.BLACK).size());
-			//System.out.println(Move.orderMoves(b.getAllPossibleMoves(Side.WHITE), b));
-			System.out.println("---");
-			System.out.println(b.getAllPossibleMoves(Side.BLACK));
-			System.out.println(b.toString());
+			b.setToDefaultBoard();
+			b.makeMove(new Move(b.getPieceAtPosition(new Position(0, 0)), new Position(4, 4)));
+			System.out.println(b);
 			
-			for(Move m : b.getAllPossibleMoves(Side.BLACK)){
-				
-				System.out.println(m.getToMoveTo());
-			}
-			
-			b.makeMove(new Move(in.nextLine(), b));
-			System.out.println(b.toString());
-			
-			theGame.minimax(Side.BLACK, 1, b, true);
+			//theGame.minimax(Side.BLACK, 1, b, true);
 			
 			System.exit(0);
 			

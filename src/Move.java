@@ -33,7 +33,7 @@ public class Move{
 	}
 
 	public static boolean isCapture(Move m, Board b){
-		return (m.getPiece().getSide() != Values.getOpposingSide(b.getPieceAtPosition(m.getToMoveTo()).getSide()));
+		return !b.isPositionEmpty(m.getToMoveTo()) && (m.getPiece().getSide() != Values.getOpposingSide(b.getPieceAtPosition(m.getToMoveTo()).getSide()));
 	}
 	
 	@Override
@@ -44,7 +44,8 @@ public class Move{
 	}
 
 	public Piece getPiece() {
-		return piece.copy();
+		
+		return piece==null ? null: piece.copy();
 	}
 
 	public void setPiece(Piece piece) {

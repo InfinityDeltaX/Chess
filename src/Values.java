@@ -54,7 +54,7 @@ public class Values {
 	public static boolean MOVE_ORDERING = true;
 	public static final int DEPTH_NOT_TO_ORDER = 1; //when only this many nodes remain, we won't bother with ordering, because it takes longer to sort than to guess. 
 	
-	public static int STARTING_DEPTH = 5;
+	public static int STARTING_DEPTH = 2;
 	public static boolean lockDepth = true;
 	
 	public static final int PAWN_ROW_BLACK = 6;
@@ -139,14 +139,6 @@ public class Values {
 		{0, 0, 0, 0, 0, 0, 0, 0}
 		};
 	
-	public static final int[][] PIECE_SQUARE_PAWN_END = PIECE_SQUARE_PAWN_START;
-	
-	public static final int[][] PIECE_SQUARE_KNIGHT_END = PIECE_SQUARE_KNIGHT_START;
-	
-	public static final int[][] PIECE_SQUARE_BISHOP_END = PIECE_SQUARE_BISHOP_START;
-	
-	public static final int[][] PIECE_SQUARE_ROOK_END = PIECE_SQUARE_ROOK_START;
-	
 	public static final int[][] PIECE_SQUARE_KING_START = new int[][]{
 		{-4, -4, -4, 0, -4, -4, -4, -4}, 
 		{-4, -4, -4, -4, -4, -4, -4, -4}, 
@@ -169,25 +161,35 @@ public class Values {
 		{-8, -8, -8, -8, -8, -8, -8, -8}
 		};
 	
-	public static final HashMap<Class<? extends Piece>, Integer> pieceValues = new HashMap<Class<? extends Piece>, Integer>(){{
+	public static final int[][] PIECE_SQUARE_PAWN_END = PIECE_SQUARE_PAWN_START;
+	
+	public static final int[][] PIECE_SQUARE_KNIGHT_END = PIECE_SQUARE_KNIGHT_START;
+	
+	public static final int[][] PIECE_SQUARE_BISHOP_END = PIECE_SQUARE_BISHOP_START;
+	
+	public static final int[][] PIECE_SQUARE_ROOK_END = PIECE_SQUARE_ROOK_START;
+	
+	public static final int[][] PIECE_SQUARE_QUEEN_END = PIECE_SQUARE_QUEEN_START;
+	
+	public static final HashMap<Class<? extends Piece>, Integer> pieceValues = new HashMap<Class<? extends Piece>, Integer>();
+	static{
 		pieceValues.put(Queen.class, POINT_VALUE_QUEEN);
 		pieceValues.put(King.class, POINT_VALUE_KING);
 		pieceValues.put(Rook.class, POINT_VALUE_ROOK);
 		pieceValues.put(Bishop.class, POINT_VALUE_BISHOP);
 		pieceValues.put(Pawn.class, POINT_VALUE_PAWN);
 		pieceValues.put(Knight.class, POINT_VALUE_KNIGHT);
-	}};
+	}
 	
-	public static final HashMap<Class<? extends Piece>, int[][][]> pieceSquareTables = new HashMap<Class<? extends Piece>, int[][][]>(){{
+	public static final HashMap<Class<? extends Piece>, int[][][]> pieceSquareTables = new HashMap<Class<? extends Piece>, int[][][]>();
+	static{
 		pieceSquareTables.put(Queen.class, new int[][][]{PIECE_SQUARE_QUEEN_START, PIECE_SQUARE_QUEEN_END});
 		pieceSquareTables.put(Rook.class, new int[][][]{PIECE_SQUARE_ROOK_START, PIECE_SQUARE_ROOK_END});
 		pieceSquareTables.put(Bishop.class, new int[][][]{PIECE_SQUARE_BISHOP_START, PIECE_SQUARE_BISHOP_END});
 		pieceSquareTables.put(Pawn.class, new int[][][]{PIECE_SQUARE_PAWN_START, PIECE_SQUARE_PAWN_END});
 		pieceSquareTables.put(King.class, new int[][][]{PIECE_SQUARE_KING_START, PIECE_SQUARE_KING_END});
 		pieceSquareTables.put(Knight.class, new int[][][]{PIECE_SQUARE_KNIGHT_START, PIECE_SQUARE_KNIGHT_END});
-	}};
-	
-	public static final int[][] PIECE_SQUARE_QUEEN_END = PIECE_SQUARE_QUEEN_START;
+	}
 	
 	public static final int[][][][] PIECE_SQUARE_TABLE = new int[][][][]{
 		{PIECE_SQUARE_EMPTY_SQUARE, PIECE_SQUARE_PAWN_START, PIECE_SQUARE_BISHOP_START, PIECE_SQUARE_KING_START, PIECE_SQUARE_QUEEN_START, PIECE_SQUARE_ROOK_START, PIECE_SQUARE_KNIGHT_START},

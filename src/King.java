@@ -2,7 +2,8 @@ import java.util.ArrayList;
 
 
 public class King extends JumpingPiece{
-	private static ArrayList<RelativePosition> jumpable = new ArrayList<RelativePosition>(){{
+	private static ArrayList<RelativePosition> jumpable = new ArrayList<RelativePosition>();
+	static{
 		jumpable.add(new RelativePosition(1, 1));
 		jumpable.add(new RelativePosition(1, 0));
 		jumpable.add(new RelativePosition(1, -1));
@@ -11,7 +12,7 @@ public class King extends JumpingPiece{
 		jumpable.add(new RelativePosition(-1, 1));
 		jumpable.add(new RelativePosition(-1, 0));
 		jumpable.add(new RelativePosition(1, -1));
-	}};
+	}
 	
 	public King(Position p, Side side){
 		super(p, side, jumpable);
@@ -21,6 +22,8 @@ public class King extends JumpingPiece{
 	public Piece copy() {
 		return new King(getPosition(), getSide());
 	}
+	
+	King(){}
 	
 	@Override
 	public Piece factory(Position p, Side s) {

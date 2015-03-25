@@ -2,7 +2,9 @@ import java.util.ArrayList;
 
 
 public class Queen extends SlidingPiece{
-	private static ArrayList<RelativePosition> directions = new ArrayList<RelativePosition>(){{
+	private static ArrayList<RelativePosition> directions = new ArrayList<RelativePosition>();
+	
+	static{
 		directions.add(new RelativePosition(1, 0));
 		directions.add(new RelativePosition(-1, 0));
 		directions.add(new RelativePosition(0, 1));
@@ -11,11 +13,13 @@ public class Queen extends SlidingPiece{
 		directions.add(new RelativePosition(-1, 1));
 		directions.add(new RelativePosition(-1, 1));
 		directions.add(new RelativePosition(1, -1));
-	}};
+	}
 	
 	public Queen(Position p, Side side){
 		super(p, side, directions);
 	}
+	
+	Queen(){}
 	
 	@Override
 	public Piece copy() {

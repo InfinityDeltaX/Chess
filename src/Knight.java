@@ -2,7 +2,8 @@ import java.util.ArrayList;
 
 
 public class Knight extends JumpingPiece{
-	private static ArrayList<RelativePosition> jumpable = new ArrayList<RelativePosition>(){{
+	private static ArrayList<RelativePosition> jumpable = new ArrayList<RelativePosition>();
+	static{
 		jumpable.add(new RelativePosition(1, 2));
 		jumpable.add(new RelativePosition(-1, 2));
 		jumpable.add(new RelativePosition(1, -2));
@@ -11,7 +12,9 @@ public class Knight extends JumpingPiece{
 		jumpable.add(new RelativePosition(2, -1));
 		jumpable.add(new RelativePosition(-2, 1));
 		jumpable.add(new RelativePosition(-2, -1));
-	}};
+	}
+	
+	Knight(){}
 	
 	public Knight(Position p, Side side){
 		super(p, side, jumpable);

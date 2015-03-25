@@ -12,14 +12,17 @@ public abstract class Piece implements PieceGroup{
 	int singleInt;
 	Position myPosition;
 	
-	public static final ArrayList<Class<? extends Piece>> pieceTypes = new ArrayList<Class<? extends Piece>>(){{
+	protected Piece(){};
+	
+	public static final ArrayList<Class<? extends Piece>> pieceTypes = new ArrayList<Class<? extends Piece>>();
+	static{
 		pieceTypes.add(Pawn.class);
 		pieceTypes.add(Bishop.class);
 		pieceTypes.add(King.class);
 		pieceTypes.add(Queen.class);
 		pieceTypes.add(Rook.class);
 		pieceTypes.add(Knight.class);
-	}};
+	};
 	
 	public Piece(Position p, Side side){
 		
@@ -92,7 +95,8 @@ public abstract class Piece implements PieceGroup{
 		int sideMultiplier = getSide().multiplier;
 		int pieceSquareTableValue = Values.getPieceSquareValue(this, b.getGameState());
 		
-		return sideMultiplier*(pieceSquareTableValue+pieceValue);
+		int output = sideMultiplier*(pieceSquareTableValue+pieceValue);
+		return output;
 	}
 	
 	public static Piece getPieceFromLetter(char input, Position p){ //return a piece from an appropriately capitalized letter, such as those found in a fen string. White = capital, Black = lower case.

@@ -2,12 +2,15 @@ import java.util.ArrayList;
 
 
 public class Bishop extends SlidingPiece{
-	private static ArrayList<RelativePosition> directions = new ArrayList<RelativePosition>(){{
+	private static ArrayList<RelativePosition> directions = new ArrayList<RelativePosition>();
+	static{
 		directions.add(new RelativePosition(1, 1));
 		directions.add(new RelativePosition(-1, 1));
 		directions.add(new RelativePosition(-1, 1));
 		directions.add(new RelativePosition(1, -1));
-	}};
+	}
+	
+	Bishop(){}
 	
 	public Bishop(Position p, Side side){
 		super(p, side, directions);

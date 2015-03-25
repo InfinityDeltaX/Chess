@@ -3,6 +3,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 
@@ -80,13 +81,19 @@ public class Board {
 	}
 
 	public Piece getPieceAtPosition(Position input){
-		return (boardPosition.stream().filter(piece -> piece.getPosition().equals(input)).findFirst()).get();
+		
+		Optional<Piece> op =  boardPosition.stream().filter(piece -> piece.getPosition().equals(input)).findAny();
+		if(op.isPresent()){
+			return op.get();
+		} else {
+			return null;
+		}
 	}
 
 	public HashSet<Piece> getArrayListofMyRealPieces(Side side){ //does not return empty spaces. Returns an ArrayList of pieces from the player specified in 'side'.
 		HashSet<Piece> output = new HashSet<Piece>();
 
-		boardPosition.stream().filter(derp -> derp.getSide().equals(side)).forEach(output::add);
+		boardPosition.stream().filter(derp -> derp.getSide() == side).forEach(output::add);
 		return output;
 	}
 
@@ -101,7 +108,9 @@ public class Board {
 	public ArrayList<Move> getAllPossibleMoves(Side side){
 		ArrayList<Move> output = new ArrayList<Move>();
 		HashSet<Piece> myPieces = getArrayListofMyRealPieces(side);
-		myPieces.stream().forEach(piece -> piece.getPossibleMoves(this).stream().map(pos -> new Move(piece, pos)).forEach(m -> output.add(m)));
+		myPieces.stream().forEach( //for each piece,
+				piece -> piece.getPossibleMoves(this).stream().map(pos -> new Move(piece, pos)).forEach(m -> output.add(m))
+				);
 
 		/*
 		for(Piece currentPiece : myPieces){ //iterate through each of our pieces.
@@ -241,7 +250,7 @@ public class Board {
 	}
 
 	boolean isValidPlaceToMove(Position p, Side side){ //designed for knights and kings, this tests if one of the spots where they "can" move is A: unoccupied or B: has an opposing piece, but does NOT have a friendly piece. //side should the be the side of the moving piece. p is the destination position.
-		return (p.doesExistOnBoard() && getPieceAtPosition(p).getSide() != side); //using getPositionRelative because it doesn't actually modify the object.
+		return (p.doesExistOnBoard() && !isPositionEmpty(p) && getPieceAtPosition(p).getSide() != side); //using getPositionRelative because it doesn't actually modify the object.
 		//This tests: is the new position on the board? and is the new position either enemy or unoccupied (not my own)?
 	}
 
@@ -280,7 +289,15 @@ public class Board {
 		return output;
 	}
 
+	public void dumpBoard(){
+		for(Piece p : boardPosition){
+			System.out.println(p);
+		}
+	}
+	
 	public String FENString(Side activeSide){
+		dumpBoard();
+		
 		char castling = '-';
 		char enPassant = '-';
 		int halfMoveClock = 0;
