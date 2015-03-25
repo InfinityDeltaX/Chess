@@ -4,24 +4,22 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
-import java.util.Optional;
+import java.util.Map;
 import java.util.Random;
-import java.util.Set;
+import java.util.HashMap;
 import java.util.TreeSet;
-import java.util.stream.Collectors;
 
 
 public class Board {
 
 	//private int[][] boardPosition;
-	private TreeSet<Piece> boardPosition;
+	private HashMap<Position, Piece> boardPosition;
 
 	public Board(Board input){
-		this.boardPosition = new TreeSet<Piece>(byPosition);
-		this.boardPosition.addAll(input.getBoardPosition());
+		this.boardPosition = new HashMap<Position, Piece>(input.getBoardPosition());
 	}
 	public Board(){
-		boardPosition = new TreeSet<Piece>(byPosition); //x, y coordinates. a8 == 0, 0; h1 == 7, 7; a1 == 7, 0; h8 == 0, 7
+		boardPosition = new HashMap<Position, Piece>(); //x, y coordinates. a8 == 0, 0; h1 == 7, 7; a1 == 7, 0; h8 == 0, 7
 	}
 	public Board(String startingPosFEN, ArrayList<Move> movesMade){
 		this();
@@ -35,21 +33,23 @@ public class Board {
 		this.setToFenString(FenString);
 	}
 
-	public Set<Piece> getBoardPosition(){
-		return new TreeSet<Piece>(boardPosition);
+	public Map<Position, Piece> getBoardPosition(){
+		//return new HashMap<Position, Piece>(boardPosition);
+		return Collections.unmodifiableMap(boardPosition);
 	}
 
 	public void setPieceAtPosition(Position positionToSet, Piece pieceToPlace){
 		assert(pieceToPlace.getPosition().equals(positionToSet));
-		boardPosition.add(pieceToPlace);
+		boardPosition.put(positionToSet, pieceToPlace);
 	}
 
 	public void setPositionToEmpty(Position positionToSet){
-		boardPosition.removeIf(p -> p.getPosition().equals(positionToSet));
+		//boardPosition.removeIf(p -> p.getPosition().equals(positionToSet));
+		boardPosition.remove(positionToSet);
 	}
 
 	public void setToClearBoard(){
-		boardPosition = new TreeSet<Piece>();
+		boardPosition = new HashMap<Position, Piece>();
 	}
 
 	public boolean isPositionEmpty(Position input){
@@ -85,29 +85,13 @@ public class Board {
 	}
 
 	public Piece getPieceAtPosition(Position input){
-		
-		//Collections.binarySearch(this.boardPosition, new Rook(input, Side.WHITE));
-		ArrayList<Piece> temp = new ArrayList<Piece>(boardPosition);
-		int i = Collections.binarySearch(temp, new Rook(input, Side.WHITE));
-		if(i < 0){
-			return null;
-		} else {
-		return temp.get(i);
-		}
-		/*
-		Optional<Piece> op =  boardPosition.stream().filter(piece -> piece.getPosition().equals(input)).findAny();
-		if(op.isPresent()){
-			return op.get();
-		} else {
-			return null;
-		}
-		*/
+		return boardPosition.get(input);
 	}
 
 	public HashSet<Piece> getArrayListofMyRealPieces(Side side){ //does not return empty spaces. Returns an ArrayList of pieces from the player specified in 'side'.
 		HashSet<Piece> output = new HashSet<Piece>();
 
-		boardPosition.stream().filter(derp -> derp.getSide() == side).forEach(output::add);
+		boardPosition.values().stream().filter(derp -> derp.getSide() == side).forEach(output::add);
 		return output;
 	}
 
@@ -187,13 +171,13 @@ public class Board {
 	}
 
 	public int evaluate(){
-		return boardPosition.stream().mapToInt(p -> p.evaluateValue(this)).sum();
+		return boardPosition.values().stream().mapToInt(p -> p.evaluateValue(this)).sum();
 	}
 
 	public int kingStatus(){ //returns zero if there are two kings, or -1 if white king gone, 1 if black king gone.
 		boolean whiteKing = false; //do they exist
 		boolean blackKing = false;
-		for(Piece p : boardPosition){
+		for(Piece p : boardPosition.values()){
 			if (p.getClass().equals(King.class)){
 				if(p.getSide() == Side.WHITE){
 					whiteKing = true;
@@ -307,7 +291,7 @@ public class Board {
 	}
 
 	public void dumpBoard(){
-		for(Piece p : boardPosition){
+		for(Piece p : boardPosition.values()){
 			System.out.println(p);
 		}
 	}
@@ -375,9 +359,6 @@ public class Board {
 		}
 		sb.append("===========\n");
 		return sb.toString();
-	}
-	public void setBoardPosition(TreeSet<Piece> boardPosition) {
-		this.boardPosition = boardPosition;
 	}
 	
 	Comparator<Piece> byPosition = new Comparator<Piece>(){
