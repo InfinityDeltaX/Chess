@@ -186,7 +186,7 @@ public class Board {
 		//check if the move is a promotion
 		else if(m.getPiece().getClass().equals(Pawn.class) && ((m.getPiece().getSide() == Side.WHITE && m.getToMoveTo().getRow() == 7) || (m.getPiece().getSide() == Side.BLACK && m.getToMoveTo().getRow() == 0))){
 			//System.out.println("Promotion detected.");
-			m.setPiece(new Queen(m.getOriginalPosition(), m.getPiece().getSide()));
+			m = new Move(new Queen(m.getOriginalPosition(), m.getPiece().getSide()), m.getToMoveTo());
 		}
 
 		//check if the move is a castle.
@@ -204,7 +204,7 @@ public class Board {
 		setPositionToEmpty(m.getOriginalPosition());
 		Piece toSet = m.getPiece();
 		toSet.setPosition(m.getToMoveTo());
-		m.setPiece(toSet);
+		m = new Move(toSet, m.getToMoveTo());
 		setPieceAtPosition(m.getToMoveTo(), m.getPiece());
 	}
 
@@ -217,7 +217,7 @@ public class Board {
 
 		ArrayList<Position> output = new ArrayList<Position>();
 
-		Position start = new Position(current);
+		Position start = current;
 
 		Side side = getPieceAtPosition(start).side;
 
@@ -230,8 +230,8 @@ public class Board {
 		output.add(new Position(current)); */
 
 		while(current.doesExistOnBoard() && isPositionEmpty(current)){ //while still valid
-			current.changePositionRelative(r.getX(), r.getY());
-			output.add(new Position(current));
+			current = current.getPositionRelative(r.getX(), r.getY());
+			output.add(current);
 		}
 
 		if(!current.doesExistOnBoard()){ //we're off the board

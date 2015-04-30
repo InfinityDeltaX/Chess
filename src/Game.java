@@ -192,7 +192,7 @@ public class Game {
 		}
 	}
 
-	public Move minimax(Side side, int depthToSearch, Board inputBoard, boolean shouldPrint){ //given a board state, determine a best move. Basically a min/max node, except that it keeps trach of the corresponding moves > scores hashmap.
+	public Move minimax(Side side, int depthToSearch, Board inputBoard, boolean shouldPrint){ //given a board state, determine a best move. Basically a min/max node, except that it keeps track of the corresponding moves > scores hashmap.
 		Move currentBestMove = null;
 		Move bestMove;
 		int bestMoveScore = 0;
@@ -210,6 +210,7 @@ public class Game {
 				moveApplied.makeMove(currentMove);
 				int currentScore = maxNode(moveApplied, depthToSearch-1, Integer.MIN_VALUE, Integer.MAX_VALUE); //run max() on each board... Changed this line from max to min. Can't tell if that was a really dumb bug, or what.
 				counter++;
+				System.out.println(currentMove + " : " + currentScore);
 				if(shouldPrint) System.out.printf("%d percent done. \r", (int) ((double) counter/topLevelBranches*100));
 				if(currentScore < currentLowest){
 					currentLowest = currentScore; //return the minimum of the previous function calls.
@@ -230,6 +231,7 @@ public class Game {
 				moveApplied.makeMove(currentMove);
 				int currentScore = minNode(moveApplied, depthToSearch-1, Integer.MIN_VALUE, Integer.MAX_VALUE); //run max() on each board
 				counter++;
+				System.out.println(currentMove + " : " + currentScore);
 				if(shouldPrint) System.out.printf("%d percent done. \r", (int) ((double) counter/topLevelBranches*100));
 				if(currentScore > currentHighest){
 					currentHighest = currentScore; //return the minimum of the previous function calls.
@@ -253,12 +255,7 @@ public class Game {
 		Values.nodeCounter++;
 		//System.out.println("Running min...");
 
-		if(inputBoard.kingStatus() != 0){ //one side is missing a king. Check for bugs!
-			//System.out.println("King missing!");
-			return inputBoard.evaluate();
-		}
-
-		if(remainingDepth == 0){ //if we have no layers left to search, return the current board eval.
+		if(inputBoard.kingStatus() != 0 || remainingDepth == 0){
 			return inputBoard.evaluate();
 		}
 
@@ -274,11 +271,15 @@ public class Game {
 			if(alpha >= beta){
 				break;
 			}
-
-			Board moveApplied = new Board(inputBoard);//generate a board with the move applied
-			moveApplied.makeMove(currentMove);
-			int currentScore = maxNode(moveApplied, remainingDepth-1, alpha, beta); //run max() on each board
-			//System.out.println("current score is " + currentScore);
+			
+			Piece capped = inputBoard.getPieceAtPosition(currentMove.getToMoveTo());
+			if(capped != null) capped = capped.copy();
+			inputBoard.makeMove(currentMove);
+			int currentScore = maxNode(inputBoard, remainingDepth-1, alpha, beta); //run max() on each board
+			inputBoard.makeMove(currentMove.getInverseMove());
+			if(capped != null) inputBoard.setPieceAtPosition(currentMove.getToMoveTo(), capped.copy());
+			
+			System.out.println(currentMove + " : " + currentScore);
 			if(currentScore < beta){
 				beta = currentScore;
 			}
@@ -288,30 +289,11 @@ public class Game {
 		return beta;
 	}
 
-	private int perft(Board _input, Side side, int depth){
-		Board input = new Board(_input);
-		int total = 0;
-		if(depth == 0){
-			return 1;
-		}
-		else {
-			for(Board b : input.getAllPossibleNextBoards(side)){
-				total+= perft(b, Values.getOpposingSide(side), depth-1);
-			}
-		}
-		return total;
-	}
-
 	private int maxNode(Board inputBoard, int remainingDepth, int alpha, int beta){
 		//System.out.println("Running max...");
 		Values.nodeCounter++;
 
-		if(remainingDepth == 0){ //if we have no layers left to search, return the current board eval.
-			return inputBoard.evaluate();
-		}
-
-		if(inputBoard.kingStatus() != 0){ //one side is missing a king. Check for bugs!
-			//System.out.println("King missing!");
+		if(inputBoard.kingStatus() != 0 || remainingDepth == 0){
 			return inputBoard.evaluate();
 		}
 
@@ -328,12 +310,15 @@ public class Game {
 				break;
 			}
 
-			Board moveApplied = new Board(inputBoard);//generate a board with the move applied
-			moveApplied.makeMove(currentMove);
-			int currentScore = minNode(moveApplied, remainingDepth-1, alpha, beta); //run max() on each board
-			//System.out.println("current score is " + currentScore);
-			//if(currentScore > currentHighest){
-			//currentHighest = currentScore; //return the minimum of the previous function calls.
+			//Board moveApplied = new Board(inputBoard);//generate a board with the move applied
+			Piece capped = inputBoard.getPieceAtPosition(currentMove.getToMoveTo());
+			if(capped != null) capped = capped.copy();
+			inputBoard.makeMove(currentMove);
+			int currentScore = minNode(inputBoard, remainingDepth-1, alpha, beta); //run max() on each board
+			inputBoard.makeMove(currentMove.getInverseMove());
+			if(capped != null) inputBoard.setPieceAtPosition(currentMove.getToMoveTo(), capped.copy());
+			
+			System.out.println(currentMove + " : " + currentScore);
 			if(currentScore > alpha){
 				alpha = currentScore;
 			}
@@ -341,6 +326,20 @@ public class Game {
 		//printTabs(remainingDepth);
 		//System.out.println("Best move found in this branch [Maximizer]: " + currentBestMove.getNotation()  + "; Score: " + currentHighest);
 		return alpha;
+	}
+	
+	private int perft(Board _input, Side side, int depth){
+		Board input = new Board(_input);
+		int total = 0;
+		if(depth == 0){
+			return 1;
+		}
+		else {
+			for(Board b : input.getAllPossibleNextBoards(side)){
+				total+= perft(b, Values.getOpposingSide(side), depth-1);
+			}
+		}
+		return total;
 	}
 
 }

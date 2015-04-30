@@ -25,7 +25,7 @@ public abstract class Piece implements PieceGroup, Comparable<Piece>{
 	public Piece(Position p, Side side){
 		
 		this.side = side;
-		this.myPosition = new Position(p);
+		this.myPosition = p;
 		hasBeenPromoted = false;
 	}
 	
@@ -142,7 +142,7 @@ public abstract class Piece implements PieceGroup, Comparable<Piece>{
 	}
 
 	public void setFile(int file) {
-		this.myPosition.setFile(file);
+		myPosition = new Position(file, myPosition.getRow());
 		//this.file = file;
 	}
 
@@ -150,18 +150,20 @@ public abstract class Piece implements PieceGroup, Comparable<Piece>{
 		return myPosition.getRow();
 		//return row;
 	}
-
+	
+	
 	public void setRow(int row) {
 		//this.row = row;
-		myPosition.setRow(row);
+		myPosition = new Position(myPosition.getFile(), row);
 	}
+	
 
 	public Side getSide() {
 		return side;
 	}
 
 	public Position getPosition() {
-		return new Position(myPosition);
+		return myPosition;
 	}
 
 	public void setPosition(Position myPosition) {

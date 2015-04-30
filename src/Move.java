@@ -5,15 +5,15 @@ import java.util.Comparator;
 
 public class Move{
 
-	private Piece piece;
-	private Position toMoveTo;
-	private Position originalPosition;
+	private final Piece piece;
+	private final Position toMoveTo;
+	private final Position originalPosition;
 
 	
 	public Move(Piece p, Position toMoveTo) {
 		piece = p.copy();
-		this.toMoveTo = new Position(toMoveTo);
-		this.originalPosition = new Position(p.getPosition());
+		this.toMoveTo = toMoveTo;
+		this.originalPosition = p.getPosition();
 	}
 	
 	public Move(String notation, Board b){
@@ -48,24 +48,30 @@ public class Move{
 		return piece==null ? null: piece.copy();
 	}
 
-	public void setPiece(Piece piece) {
-		this.piece = piece.copy();
-	}
+	//public void setPiece(Piece piece) {
+	//	this.piece = piece.copy();
+	//}
 
 	public Position getToMoveTo() {
-		return new Position(toMoveTo);
+		return toMoveTo;
 	}
 
-	public void setToMoveTo(Position toMoveTo) {
-		this.toMoveTo = toMoveTo;
-	}
+	//public void setToMoveTo(Position toMoveTo) {
+	//	this.toMoveTo = toMoveTo;
+	//}
 
 	public Position getOriginalPosition() {
-		return new Position(originalPosition);
+		return originalPosition;
 	}
 
-	public void setOriginalPosition(Position originalPosition) {
-		this.originalPosition = originalPosition;
+	//public void setOriginalPosition(Position originalPosition) {
+	//	this.originalPosition = originalPosition;
+	//}
+	
+	public Move getInverseMove(){
+		Piece p = getPiece().copy();
+		p.setPosition(getToMoveTo());
+		return new Move(p, getOriginalPosition());
 	}
 	
 	public static ArrayList<Move> orderMoves(ArrayList<Move> input, final Board board){

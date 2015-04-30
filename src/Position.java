@@ -3,8 +3,8 @@ import java.util.Comparator;
 
 public class Position implements Comparable<Position>{
 
-	private int row;
-	private int file;
+	private final int row;
+	private final int file;
 	
 	public Position(int file, int row){
 		this.row = row;
@@ -20,14 +20,16 @@ public class Position implements Comparable<Position>{
 		this.file = input.charAt(0)-'a';
 	}
 	
-	public Position(Position p){
-		this(p.getFile(), p.getRow());
-	}
+	//public Position(Position p){
+	//	this(p.getFile(), p.getRow());
+	//}
 	
+	/*
 	public void changePositionRelative(int x, int y){
 		this.row += y;
 		this.file += x;
 	}
+	*/
 	
 	public String getMathCoords(){ //0-7
 		return "[" + this.file + ", " + this.row + "]";
@@ -55,12 +57,14 @@ public class Position implements Comparable<Position>{
 	public int getFile(){
 		return this.file;
 	}
+	/*
 	public void setRow(int row){
 		this.row = row;
 	}
 	public void setFile(int file){
 		this.file = file;
 	}
+	*/
 
 	@Override
 	public int hashCode() {

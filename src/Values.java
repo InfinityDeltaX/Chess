@@ -54,7 +54,7 @@ public class Values {
 	public static boolean MOVE_ORDERING = true;
 	public static final int DEPTH_NOT_TO_ORDER = 1; //when only this many nodes remain, we won't bother with ordering, because it takes longer to sort than to guess. 
 	
-	public static int STARTING_DEPTH = 6;
+	public static int STARTING_DEPTH = 1;
 	public static boolean lockDepth = true;
 	
 	public static final int PAWN_ROW_BLACK = 6;
@@ -133,7 +133,7 @@ public class Values {
 		{8, 8, 8, 8, 8, 8, 8, 8}, 
 		{5, 5, 5, 5, 5, 5, 5, 5}, 
 		{0, 0, 0, 7, 7, 0, 0, 0}, 
-		{-3, -3, 10, 10, -3, -3, -3, -3}, 
+		{-3, -3, -3, 10, 10, -3, -3, -3}, 
 		{-6, -6, -6, -6, -6, -6, -6, -6}, 
 		{-9, -9, -9, -9, -9, -9, -9, -9}, 
 		{0, 0, 0, 0, 0, 0, 0, 0}
