@@ -85,7 +85,7 @@ public class UCIInterface implements Runnable{
 
 		boolean isStartingPosition = split[1].equals("startpos");
 
-		if(isStartingPosition){
+		if(isStartingPosition){ 
 			output = new Board(Values.defaultBoardFenString);
 		} else {
 			output = new Board(split[1]);
