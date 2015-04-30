@@ -15,6 +15,8 @@ public class Engine {
 			b.makeMove(new Move(b.getPieceAtPosition(new Position(0, 0)), new Position(4, 4)));
 			System.out.println(b);
 			
+			Board.speedTest();
+			
 			//theGame.minimax(Side.BLACK, 1, b, true);
 			
 			System.exit(0);
@@ -30,7 +32,7 @@ public class Engine {
 			if(possibleFEN.toLowerCase().trim().equals("new")){
 				b.setToDefaultBoard();
 			} else {
-				b.setToFenString(possibleFEN);
+				b = FenString.getBoard(possibleFEN);
 			}
 			
 			//choose sides

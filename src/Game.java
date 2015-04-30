@@ -24,19 +24,17 @@ public class Game {
 		if(input.contains("play"))
 			b.setToDefaultBoard();
 		else {
-			b.setToFenString(input);
+			b = FenString.getBoard(input);
 			b.makeMove(getComputerMove(b));
 		}
 
-
-
-		while(1==1){
+		while(true){
 			eachSideMoves(b);
 		}
 	}
 
 	public void play(){
-		while(1==1){
+		while(true){
 			eachSideMoves(theBoard);
 		}
 	}
@@ -115,17 +113,18 @@ public class Game {
 
 		} catch(Exception e){System.out.println("Error while setting paramter!"); changeSucessful = false;}
 		System.out.println(changeSucessful ? "Done. Returning to game..." : "Could not find the correct parameter!");
+		in.close();
 	}
 
 	public Move getUserMove(Board input){
 		Scanner in = new Scanner(System.in);
 		System.out.print("Current Board State: ");
-		System.out.println(input.FENString(Values.SIDE_USER));
+		System.out.println(input.getFenString());
 		System.out.println(input);
 		System.out.print("Please input your move: ");
 		String userMove = in.nextLine();
 		if(userMove.contains("exit")){
-			in.close();
+			
 			System.exit(0);
 			return null;
 		}
@@ -251,12 +250,8 @@ public class Game {
 	}
 
 	private int minNode(Board inputBoard, int remainingDepth, int alpha, int beta){ //given a board state, minimal value.
-		
 		Values.nodeCounter++;
 		//System.out.println("Running min...");
-
-		Move currentBestMove = null;
-		int currentLowest = Integer.MAX_VALUE;
 
 		if(inputBoard.kingStatus() != 0){ //one side is missing a king. Check for bugs!
 			//System.out.println("King missing!");
@@ -284,11 +279,8 @@ public class Game {
 			moveApplied.makeMove(currentMove);
 			int currentScore = maxNode(moveApplied, remainingDepth-1, alpha, beta); //run max() on each board
 			//System.out.println("current score is " + currentScore);
-			//if(currentScore < currentLowest){
-			//currentLowest = currentScore; //return the minimum of the previous function calls.
 			if(currentScore < beta){
 				beta = currentScore;
-				currentBestMove = currentMove;
 			}
 		}
 		//printTabs(remainingDepth);
@@ -311,12 +303,8 @@ public class Game {
 	}
 
 	private int maxNode(Board inputBoard, int remainingDepth, int alpha, int beta){
-
 		//System.out.println("Running max...");
 		Values.nodeCounter++;
-
-		Move currentBestMove = null;
-		int currentHighest = Integer.MIN_VALUE;
 
 		if(remainingDepth == 0){ //if we have no layers left to search, return the current board eval.
 			return inputBoard.evaluate();
@@ -348,7 +336,6 @@ public class Game {
 			//currentHighest = currentScore; //return the minimum of the previous function calls.
 			if(currentScore > alpha){
 				alpha = currentScore;
-				currentBestMove = currentMove;
 			}
 		}
 		//printTabs(remainingDepth);

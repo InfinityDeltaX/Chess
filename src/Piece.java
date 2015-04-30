@@ -88,7 +88,7 @@ public abstract class Piece implements PieceGroup, Comparable<Piece>{
 		}
 	}
 	
-	public int evaluateValue(Board b){
+	public int evaluateValue(Board b){ //take gamestate to avoid recalculating it every time.
 		int pieceValue = Values.pieceValues.get(this.getClass());
 		int sideMultiplier = getSide().multiplier;
 		int pieceSquareTableValue = Values.getPieceSquareValue(this, b.getGameState());
