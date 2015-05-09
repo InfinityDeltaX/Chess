@@ -12,7 +12,7 @@ public class UCIInterface implements Runnable{
 		// TODO Auto-generated method stub
 		game = new Game(Side.BLACK);
 		game.setSides(Side.BLACK);
-		while(1==1){
+		while(true){
 			String input = in.nextLine();
 			routeCommand(input);
 			System.out.println("Recieved command!");

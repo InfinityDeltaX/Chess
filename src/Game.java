@@ -272,12 +272,12 @@ public class Game {
 				break;
 			}
 			
-			Piece capped = inputBoard.getPieceAtPosition(currentMove.getToMoveTo());
+			Piece capped = inputBoard.getPieceAtPosition(currentMove.getDestination());
 			if(capped != null) capped = capped.copy();
 			inputBoard.makeMove(currentMove);
 			int currentScore = maxNode(inputBoard, remainingDepth-1, alpha, beta); //run max() on each board
 			inputBoard.makeMove(currentMove.getInverseMove());
-			if(capped != null) inputBoard.setPieceAtPosition(currentMove.getToMoveTo(), capped.copy());
+			if(capped != null) inputBoard.setPieceAtPosition(currentMove.getDestination(), capped.copy());
 			
 			System.out.println(currentMove + " : " + currentScore);
 			if(currentScore < beta){
@@ -311,12 +311,12 @@ public class Game {
 			}
 
 			//Board moveApplied = new Board(inputBoard);//generate a board with the move applied
-			Piece capped = inputBoard.getPieceAtPosition(currentMove.getToMoveTo());
+			Piece capped = inputBoard.getPieceAtPosition(currentMove.getDestination());
 			if(capped != null) capped = capped.copy();
 			inputBoard.makeMove(currentMove);
 			int currentScore = minNode(inputBoard, remainingDepth-1, alpha, beta); //run max() on each board
 			inputBoard.makeMove(currentMove.getInverseMove());
-			if(capped != null) inputBoard.setPieceAtPosition(currentMove.getToMoveTo(), capped.copy());
+			if(capped != null) inputBoard.setPieceAtPosition(currentMove.getDestination(), capped.copy());
 			
 			System.out.println(currentMove + " : " + currentScore);
 			if(currentScore > alpha){
@@ -336,7 +336,7 @@ public class Game {
 		}
 		else {
 			for(Board b : input.getAllPossibleNextBoards(side)){
-				total+= perft(b, Values.getOpposingSide(side), depth-1);
+				total+= perft(b, Side.getOpposingSide(side), depth-1);
 			}
 		}
 		return total;

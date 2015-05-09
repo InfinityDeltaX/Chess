@@ -1,13 +1,11 @@
 import java.awt.Point;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Random;
-import java.util.HashMap;
-import java.util.TreeSet;
 
 
 public class Board {
@@ -136,7 +134,7 @@ public class Board {
 		boolean whiteKing = false; //do they exist
 		boolean blackKing = false;
 		for(Piece p : boardPosition.values()){
-			if (p.getClass().equals(King.class)){
+			if (p.getType() == PieceType.KING){
 				if(p.getSide() == Side.WHITE){
 					whiteKing = true;
 				}
@@ -167,45 +165,45 @@ public class Board {
 	public void makeMove(Move m){
 
 		//check if the move is an en passant
-		if(m.getPiece().getClass().equals(Pawn.class) && this.isPositionEmpty(m.getToMoveTo()) && (Values.getAbsolutePoint(Piece.getDifference(m.getToMoveTo(), m.getOriginalPosition())).equals(new Point(1, 1)))){
+		if(m.getPiece().getType() == PieceType.PAWN && this.isPositionEmpty(m.getDestination()) && (Values.getAbsolutePoint(Piece.getDifference(m.getDestination(), m.getOrigin())).equals(new Point(1, 1)))){
 			//System.out.println("En Passant detected!");
-			if(Piece.getDifference(m.getToMoveTo(), m.getOriginalPosition()).equals(new Point(1, 1))){
-				setPositionToEmpty(m.getToMoveTo().getPositionRelative(0, -1));
+			if(Piece.getDifference(m.getDestination(), m.getOrigin()).equals(new Point(1, 1))){
+				setPositionToEmpty(m.getDestination().getPositionRelative(0, -1));
 			}
-			if(Piece.getDifference(m.getToMoveTo(), m.getOriginalPosition()).equals(new Point(-1, 1))){
-				setPositionToEmpty(m.getToMoveTo().getPositionRelative(0, -1));
+			if(Piece.getDifference(m.getDestination(), m.getOrigin()).equals(new Point(-1, 1))){
+				setPositionToEmpty(m.getDestination().getPositionRelative(0, -1));
 			}
-			if(Piece.getDifference(m.getToMoveTo(), m.getOriginalPosition()).equals(new Point(1, -1))){
-				setPositionToEmpty(m.getToMoveTo().getPositionRelative(0, 1));
+			if(Piece.getDifference(m.getDestination(), m.getOrigin()).equals(new Point(1, -1))){
+				setPositionToEmpty(m.getDestination().getPositionRelative(0, 1));
 			}
-			if(Piece.getDifference(m.getToMoveTo(), m.getOriginalPosition()).equals(new Point(1, -1))){
-				setPositionToEmpty(m.getToMoveTo().getPositionRelative(0, 1));
+			if(Piece.getDifference(m.getDestination(), m.getOrigin()).equals(new Point(1, -1))){
+				setPositionToEmpty(m.getDestination().getPositionRelative(0, 1));
 			}
 		}
 
 		//check if the move is a promotion
-		else if(m.getPiece().getClass().equals(Pawn.class) && ((m.getPiece().getSide() == Side.WHITE && m.getToMoveTo().getRow() == 7) || (m.getPiece().getSide() == Side.BLACK && m.getToMoveTo().getRow() == 0))){
+		else if(m.getPiece().getType() == PieceType.PAWN && ((m.getPiece().getSide() == Side.WHITE && m.getDestination().getRow() == 7) || (m.getPiece().getSide() == Side.BLACK && m.getDestination().getRow() == 0))){
 			//System.out.println("Promotion detected.");
-			m = new Move(new Queen(m.getOriginalPosition(), m.getPiece().getSide()), m.getToMoveTo());
+			m = new Move(new Piece(PieceType.QUEEN, m.getOrigin(), m.getPiece().getSide()), m.getDestination());
 		}
 
 		//check if the move is a castle.
-		else if(m.getPiece().getClass().equals(Pawn.class)){
+		else if(m.getPiece().getType() == PieceType.PAWN){
 			//System.out.println("Castling detected!");
 			//System.out.println(Piece.getDifference(m.getOriginalPosition(), m.getToMoveTo()));
-			if(m.getPiece().getSide() == Side.WHITE && Piece.getDifference(m.getOriginalPosition(), m.getToMoveTo()).equals(new Point(-2, 0))){
+			if(m.getPiece().getSide() == Side.WHITE && Piece.getDifference(m.getOrigin(), m.getDestination()).equals(new Point(-2, 0))){
 				this.makeMove(new Move(this.getPieceAtPosition(new Position("h1")), new Position("f1")));
-			} else if(m.getPiece().getSide() == Side.BLACK && Piece.getDifference(m.getOriginalPosition(), m.getToMoveTo()).equals(new Point(2, 0))){
+			} else if(m.getPiece().getSide() == Side.BLACK && Piece.getDifference(m.getOrigin(), m.getDestination()).equals(new Point(2, 0))){
 				this.makeMove(new Move(this.getPieceAtPosition(new Position("a8")), new Position("c8")));
 			}
 		}
 
 		//setPieceAtPosition(m.originalPosition, Values.EMPTY_SQUARE);
-		setPositionToEmpty(m.getOriginalPosition());
+		setPositionToEmpty(m.getOrigin());
 		Piece toSet = m.getPiece();
-		toSet.setPosition(m.getToMoveTo());
-		m = new Move(toSet, m.getToMoveTo());
-		setPieceAtPosition(m.getToMoveTo(), m.getPiece());
+		toSet.setPosition(m.getDestination());
+		m = new Move(toSet, m.getDestination());
+		setPieceAtPosition(m.getDestination(), m.getPiece());
 	}
 
 	boolean isValidPlaceToMove(Position p, Side side){ //designed for knights and kings, this tests if one of the spots where they "can" move is A: unoccupied or B: has an opposing piece, but does NOT have a friendly piece. //side should the be the side of the moving piece. p is the destination position.
