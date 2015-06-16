@@ -24,7 +24,8 @@ public class Position implements Comparable<Position>{
 		return "[" + this.file + ", " + this.row + "]";
 	}
 	
-	@Override public String toString(){
+	@Override 
+	public String toString(){
 		char file;
 		file = (char) ((getFile() +(int) 'a'));
 		return(""+file+(row+1));

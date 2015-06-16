@@ -10,7 +10,6 @@ import java.util.Random;
 
 public class Board {
 
-	//private int[][] boardPosition;
 	private Map<Position, Piece> boardPosition;
 
 	public Board(Board input){
@@ -144,18 +143,6 @@ public class Board {
 			}
 		}
 		return Values.booleanCompare(blackKing, whiteKing);
-
-		/*
-		 * 		boardPosition.stream().forEach(p -> {
-			if(p.getClass().equals(King.class)){
-				if(p.getSide() == Side.WHITE)
-					whiteKing = true;
-				if(p.getSide() == Side.BLACK)
-					blackKing = true;
-
-			}
-		});
-		 */
 	}
 
 	public int getGameState(){
@@ -214,18 +201,12 @@ public class Board {
 	public ArrayList<Position> getMovesAlongDirectionalAxisUntilInterrupted(Position current, RelativePosition r){ //x = 0, y = 1 will move the unit up until it hits an opposing piece, it's own piece, or the edge of the board. All of these positions will be returned.
 
 		ArrayList<Position> output = new ArrayList<Position>();
-
 		Position start = current;
-
 		Side side = getPieceAtPosition(start).side;
-
 		Piece temp = getPieceAtPosition(start);
 		setPositionToEmpty(start);
 
-		/*
 		//we don't add the starting position, because moving to your original location is not valid.
-		current.changePositionRelative(x, y); //without this, we look at the spot where we started, see our own piece in the spot where we are, end the loop, and return. This moves us 1 forwards immediately to avoid this.
-		output.add(new Position(current)); */
 
 		while(current.doesExistOnBoard() && isPositionEmpty(current)){ //while still valid
 			current = current.getPositionRelative(r.getX(), r.getY());
@@ -238,11 +219,9 @@ public class Board {
 		} else if(getPieceAtPosition(current).side == side){ //the piece that we ran into is our own
 			//go back so we aren't on top of our piece.
 			output.remove(output.size()-1); //get rid of the last one
-		} else { //we're on top of an opposing piece, and that is O.K.
-
-		}
+		} else {} //we're on top of an opposing piece, and that is O.K.
+		
 		setPieceAtPosition(start, temp); //replace ourselves. 
-		//System.out.println(output);
 		return output;
 	}
 

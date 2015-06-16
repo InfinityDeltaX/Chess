@@ -41,7 +41,7 @@ public class Move {
 	}
 
 	public Piece getPiece() {
-		return getPiece();
+		return piece;
 	}
 
 	public Position getDestination() {

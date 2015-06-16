@@ -42,9 +42,9 @@ public class Engine {
 				theGame = new Game(Side.BLACK); //takes user side, not computer side.
 				theGame.setBoard(b);
 			} else {
-				theGame = new Game(Side.WHITE);
+				theGame = new Game(Side.WHITE, b);
 				b.makeMove(theGame.getComputerMove(b)); //the user has to move first. Let them make a move, then start the game.
-				theGame.setBoard(b);
+				//theGame.setBoard(b);
 			}
 			
 			theGame.play(); //starts with a user move.

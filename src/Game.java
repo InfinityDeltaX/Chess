@@ -7,7 +7,6 @@ import java.util.Scanner;
 
 public class Game {
 
-
 	int lastDepth = Values.STARTING_DEPTH; //keep track of how far we searched, and how it took us, last time.
 	long lastSearch = Values.ACCEPTABLE_TIME_MIN; //how long did that depth take us?
 	Board theBoard;
@@ -34,9 +33,7 @@ public class Game {
 	}
 
 	public void play(){
-		while(true){
-			eachSideMoves(theBoard);
-		}
+		while(true) {eachSideMoves(theBoard);}
 	}
 
 	public void setBoard(Board b){
@@ -57,24 +54,17 @@ public class Game {
 
 	}
 
-	public void setup(){
-
-	}
-
 	private void eachSideMoves(Board b){ //get a move from the user, then from the computer. 
-		//get user's move
 		b.makeMove(getUserMove(b));
 		b.makeMove(getComputerMove(b));
-
 	}
-
-
 
 	public Move getComputerMove(Board b){
 		if(!Values.lockDepth)
 			getDepth();
 		System.out.println("Calculating to " + lastDepth + "...");
-		Move bestMove = minimax(Values.SIDE_COMPUTER, lastDepth, b, true);
+		//Move bestMove = minimax(Values.SIDE_COMPUTER, lastDepth, b, true);
+		Move bestMove = negaMax(theBoard, lastDepth, Values.SIDE_COMPUTER, true, Integer.MIN_VALUE, Integer.MAX_VALUE).move;
 		System.out.println("Made move: " + bestMove.getNotation());
 		return bestMove;
 	}
@@ -98,17 +88,18 @@ public class Game {
 			else if(input.contains("startingdepth")){
 				Values.STARTING_DEPTH = Integer.parseInt(input.split(" ")[1]);
 			}
-			else if(input.contains("moverrdering")){
+			else if(input.contains("moverordering")){
 				Values.MOVE_ORDERING = Boolean.valueOf(input.split(" ")[1]);
-			} else if(input.contains("nps")){
+			}
+			else if(input.contains("nps")){
 				System.out.println("NPS: " + new Game(Side.BLACK).calculateNPSMinimax(6));
 			}
 			else if(input.contains("help")){
 				System.out.println("Valid commands: lockdepth, maxtime, mintime, startingdepth, moveordering, setDepth");
-			} else if(input.contains("setdepth")){
+			} 
+			else if(input.contains("setdepth")){
 				lastDepth = Integer.parseInt(input.split(" ")[1]);
 			}
-			
 			else{changeSucessful = false;}
 
 		} catch(Exception e){System.out.println("Error while setting paramter!"); changeSucessful = false;}
@@ -118,25 +109,16 @@ public class Game {
 
 	public Move getUserMove(Board input){
 		Scanner in = new Scanner(System.in);
-		System.out.print("Current Board State: ");
-		System.out.println(input.getFenString());
-		System.out.println(input);
-		System.out.print("Please input your move: ");
+		System.out.print("Current Board State: \n" + input.getFenString() + "\n" + input + "\n Please input your move:");
 		String userMove = in.nextLine();
 		if(userMove.contains("exit")){
-			
 			System.exit(0);
 			return null;
-		}
-		else if(userMove.contains("admin")){
+		} else if(userMove.contains("admin")){
 			adminConsole();
 			return getUserMove(input);
-		}
-
-		else return (new Move(userMove, input));
+		} else return (new Move(userMove, input));
 	}
-
-
 
 	private int getDepth(){
 		if(lastSearch < Values.ACCEPTABLE_TIME_MIN){
@@ -161,17 +143,6 @@ public class Game {
 			Values.SIDE_USER = Side.WHITE;
 			System.out.println("Computer is side BLACK!");
 		}
-	}
-
-	private int calculateNPS(int depthToTest){ //uses perft...
-		Board b = new Board();
-		b.setToDefaultBoard();
-		long startTime = System.currentTimeMillis();
-		int nodesSearched = perft(b, Values.SIDE_COMPUTER, depthToTest); //change to minimax soon.
-		long endTime = System.currentTimeMillis();
-		System.out.println("Time taken (ms): " + (endTime - startTime));
-		System.out.println("Nodes searched: " + nodesSearched);
-		return (int) (nodesSearched/(endTime-startTime)*1000);
 	}
 	
 	private int calculateNPSMinimax(int depthToTest){
@@ -272,12 +243,9 @@ public class Game {
 				break;
 			}
 			
-			Piece capped = inputBoard.getPieceAtPosition(currentMove.getDestination());
-			if(capped != null) capped = capped.copy();
-			inputBoard.makeMove(currentMove);
-			int currentScore = maxNode(inputBoard, remainingDepth-1, alpha, beta); //run max() on each board
-			inputBoard.makeMove(currentMove.getInverseMove());
-			if(capped != null) inputBoard.setPieceAtPosition(currentMove.getDestination(), capped.copy());
+			Board moveApplied = new Board(inputBoard);//generate a board with the move applied
+			moveApplied.makeMove(currentMove);
+			int currentScore = maxNode(moveApplied, remainingDepth-1, alpha, beta); //run max() on each board
 			
 			System.out.println(currentMove + " : " + currentScore);
 			if(currentScore < beta){
@@ -311,12 +279,9 @@ public class Game {
 			}
 
 			//Board moveApplied = new Board(inputBoard);//generate a board with the move applied
-			Piece capped = inputBoard.getPieceAtPosition(currentMove.getDestination());
-			if(capped != null) capped = capped.copy();
-			inputBoard.makeMove(currentMove);
-			int currentScore = minNode(inputBoard, remainingDepth-1, alpha, beta); //run max() on each board
-			inputBoard.makeMove(currentMove.getInverseMove());
-			if(capped != null) inputBoard.setPieceAtPosition(currentMove.getDestination(), capped.copy());
+			Board moveApplied = new Board(inputBoard);//generate a board with the move applied
+			moveApplied.makeMove(currentMove);
+			int currentScore = minNode(moveApplied, remainingDepth-1, alpha, beta); //run max() on each board
 			
 			System.out.println(currentMove + " : " + currentScore);
 			if(currentScore > alpha){
@@ -328,18 +293,53 @@ public class Game {
 		return alpha;
 	}
 	
-	private int perft(Board _input, Side side, int depth){
-		Board input = new Board(_input);
-		int total = 0;
-		if(depth == 0){
-			return 1;
-		}
-		else {
-			for(Board b : input.getAllPossibleNextBoards(side)){
-				total+= perft(b, Side.getOpposingSide(side), depth-1);
+	private MoveChoice negaMax(Board inputBoard, int remainingDepth, Side toMove, boolean first, int alpha, int beta){
+		if(inputBoard.kingStatus() != 0 || remainingDepth == 0) return new MoveChoice(new Move(new Piece(null, null, null), (Position)null), toMove.multiplier*inputBoard.evaluate());
+		ArrayList<Move> possibleNextMoves = inputBoard.getAllPossibleMoves(toMove);
+		
+		if(Values.MOVE_ORDERING && remainingDepth >= Values.DEPTH_NOT_TO_ORDER) Move.orderMoves(possibleNextMoves, inputBoard); //do move ordering.
+		
+		Move currentBestMove = null;
+		int counter = 0;
+		int currentBestScore = Integer.MIN_VALUE;
+		
+		for(Move currentMove : possibleNextMoves){
+			//currentBest = currentMove;
+			Board changed = new Board(inputBoard);
+			changed.makeMove(currentMove);
+			
+			int currentScore = -1*negaMax(changed, remainingDepth-1, Side.getOpposingSide(toMove), false, -1*beta, -1*alpha).score;
+			System.out.println("[" + remainingDepth + "] " + currentMove + " : " + currentScore);
+			
+			alpha = Math.max(alpha, currentScore);
+			
+			if(currentScore > currentBestScore){
+				currentBestScore = currentScore;
+				currentBestMove = currentMove;
 			}
+			
+			
+			//System.out.println(currentMove + " " + currentScore);
+			if(alpha >= beta){
+				//System.out.println("break on " + currentMove);
+				break;
+			}
+			
+			counter++;
+			if(first) System.out.printf("%d percent done. \r", (int) ((double) counter/possibleNextMoves.size()*100));
 		}
-		return total;
+		if(first) System.out.println("Score: " + currentBestScore);
+		//System.out.println("end " + currentBestMove + " " + currentBestScore);
+		return new MoveChoice(currentBestMove, currentBestScore);
 	}
+}
 
+class MoveChoice{
+	final Move move;
+	final int score;
+	
+	MoveChoice(Move m, int score){
+		this.move = m;
+		this.score = score;
+	}
 }
