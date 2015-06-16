@@ -162,154 +162,25 @@ public class Game {
 			System.out.print("  ");
 		}
 	}
-
-	public Move minimax(Side side, int depthToSearch, Board inputBoard, boolean shouldPrint){ //given a board state, determine a best move. Basically a min/max node, except that it keeps track of the corresponding moves > scores hashmap.
-		Move currentBestMove = null;
-		Move bestMove;
-		int bestMoveScore = 0;
-		long startTime = System.currentTimeMillis();
-		int counter = 0;
-
-		if(side == Side.BLACK){ //minimizer
-			int currentLowest = Integer.MAX_VALUE;
-
-			ArrayList<Move> possibleNextMoves = inputBoard.getAllPossibleMoves(Side.BLACK); //else, get a list of possible next moves. Black is always trying to minimize. The maximizer uses Side.WHITE here.
-			int topLevelBranches = possibleNextMoves.size();
-
-			for(Move currentMove : possibleNextMoves){ //loop through all moves
-				Board moveApplied = new Board(inputBoard);//generate a board with the move applied
-				moveApplied.makeMove(currentMove);
-				int currentScore = maxNode(moveApplied, depthToSearch-1, Integer.MIN_VALUE, Integer.MAX_VALUE); //run max() on each board... Changed this line from max to min. Can't tell if that was a really dumb bug, or what.
-				counter++;
-				System.out.println(currentMove + " : " + currentScore);
-				if(shouldPrint) System.out.printf("%d percent done. \r", (int) ((double) counter/topLevelBranches*100));
-				if(currentScore < currentLowest){
-					currentLowest = currentScore; //return the minimum of the previous function calls.
-					currentBestMove = currentMove;
-				}
-			}
-			bestMove = currentBestMove;
-			bestMoveScore = currentLowest;
-
-		} else if(side == Side.WHITE){ //maximizer
-			int currentHighest = Integer.MIN_VALUE;
-
-			ArrayList<Move> possibleNextMoves = inputBoard.getAllPossibleMoves(Side.WHITE); //else, get a list of possible next moves. White is always trying to maximize. The minimizer uses Side.BLACK here.
-			int topLevelBranches = possibleNextMoves.size();
-
-			for(Move currentMove : possibleNextMoves){ //loop through all moves
-				Board moveApplied = new Board(inputBoard);//generate a board with the move applied
-				moveApplied.makeMove(currentMove);
-				int currentScore = minNode(moveApplied, depthToSearch-1, Integer.MIN_VALUE, Integer.MAX_VALUE); //run max() on each board
-				counter++;
-				System.out.println(currentMove + " : " + currentScore);
-				if(shouldPrint) System.out.printf("%d percent done. \r", (int) ((double) counter/topLevelBranches*100));
-				if(currentScore > currentHighest){
-					currentHighest = currentScore; //return the minimum of the previous function calls.
-					currentBestMove = currentMove;
-				}
-			}
-			bestMove = currentBestMove;
-			bestMoveScore = currentHighest;
-		} else {
-			assert(false); //neither white nor black?
-			bestMove = null;
-		}
-
-		if(shouldPrint) System.out.println("Done in " + (System.currentTimeMillis()-startTime) + " milliseconds!");
-		if(shouldPrint) System.out.println("Minimax result: " + bestMove + " with score: " + bestMoveScore);
-		lastSearch = ((System.currentTimeMillis()-startTime));
-		return bestMove;
-	}
-
-	private int minNode(Board inputBoard, int remainingDepth, int alpha, int beta){ //given a board state, minimal value.
-		Values.nodeCounter++;
-		//System.out.println("Running min...");
-
-		if(inputBoard.kingStatus() != 0 || remainingDepth == 0){
-			return inputBoard.evaluate();
-		}
-
-		ArrayList<Move> possibleNextMoves = inputBoard.getAllPossibleMoves(Side.BLACK); //else, get a list of possible next moves. Black is always trying to minimize. The maximizer uses Side.WHITE here.
-
-		//move ordering.
-		if(Values.MOVE_ORDERING && remainingDepth > Values.DEPTH_NOT_TO_ORDER){
-			Move.orderMoves(possibleNextMoves, inputBoard);
-		}
-
-		for(Move currentMove : possibleNextMoves){ //loop through all moves
-
-			if(alpha >= beta){
-				break;
-			}
-			
-			Board moveApplied = new Board(inputBoard);//generate a board with the move applied
-			moveApplied.makeMove(currentMove);
-			int currentScore = maxNode(moveApplied, remainingDepth-1, alpha, beta); //run max() on each board
-			
-			System.out.println(currentMove + " : " + currentScore);
-			if(currentScore < beta){
-				beta = currentScore;
-			}
-		}
-		//printTabs(remainingDepth);
-		//System.out.println("Best move found in this branch [Minimizer]: " + currentBestMove.getNotation() + "; Score: " + currentLowest);
-		return beta;
-	}
-
-	private int maxNode(Board inputBoard, int remainingDepth, int alpha, int beta){
-		//System.out.println("Running max...");
-		Values.nodeCounter++;
-
-		if(inputBoard.kingStatus() != 0 || remainingDepth == 0){
-			return inputBoard.evaluate();
-		}
-
-		ArrayList<Move> possibleNextMoves = inputBoard.getAllPossibleMoves(Side.WHITE); //else, get a list of possible next moves. White is always trying to maximize. The minimizer uses Side.BLACK here.
-
-		//move ordering.
-		if(Values.MOVE_ORDERING && remainingDepth >= Values.DEPTH_NOT_TO_ORDER){
-			Move.orderMoves(possibleNextMoves, inputBoard);
-		}
-
-		for(Move currentMove : possibleNextMoves){ //loop through all moves
-
-			if(alpha >= beta){
-				break;
-			}
-
-			//Board moveApplied = new Board(inputBoard);//generate a board with the move applied
-			Board moveApplied = new Board(inputBoard);//generate a board with the move applied
-			moveApplied.makeMove(currentMove);
-			int currentScore = minNode(moveApplied, remainingDepth-1, alpha, beta); //run max() on each board
-			
-			System.out.println(currentMove + " : " + currentScore);
-			if(currentScore > alpha){
-				alpha = currentScore;
-			}
-		}
-		//printTabs(remainingDepth);
-		//System.out.println("Best move found in this branch [Maximizer]: " + currentBestMove.getNotation()  + "; Score: " + currentHighest);
-		return alpha;
-	}
 	
 	private MoveChoice negaMax(Board inputBoard, int remainingDepth, Side toMove, boolean first, int alpha, int beta){
+		Values.nodeCounter++;
+		long startTime = System.currentTimeMillis();
 		if(inputBoard.kingStatus() != 0 || remainingDepth == 0) return new MoveChoice(new Move(new Piece(null, null, null), (Position)null), toMove.multiplier*inputBoard.evaluate());
 		ArrayList<Move> possibleNextMoves = inputBoard.getAllPossibleMoves(toMove);
 		
 		if(Values.MOVE_ORDERING && remainingDepth >= Values.DEPTH_NOT_TO_ORDER) Move.orderMoves(possibleNextMoves, inputBoard); //do move ordering.
 		
-		Move currentBestMove = null;
 		int counter = 0;
+		Move currentBestMove = null;
 		int currentBestScore = Integer.MIN_VALUE;
 		
 		for(Move currentMove : possibleNextMoves){
-			//currentBest = currentMove;
 			Board changed = new Board(inputBoard);
 			changed.makeMove(currentMove);
 			
 			int currentScore = -1*negaMax(changed, remainingDepth-1, Side.getOpposingSide(toMove), false, -1*beta, -1*alpha).score;
-			System.out.println("[" + remainingDepth + "] " + currentMove + " : " + currentScore);
+			//System.out.println("[" + remainingDepth + "] " + currentMove + " : " + currentScore);
 			
 			alpha = Math.max(alpha, currentScore);
 			
@@ -318,18 +189,16 @@ public class Game {
 				currentBestMove = currentMove;
 			}
 			
-			
-			//System.out.println(currentMove + " " + currentScore);
-			if(alpha >= beta){
-				//System.out.println("break on " + currentMove);
-				break;
-			}
+			if(alpha >= beta) break;
 			
 			counter++;
 			if(first) System.out.printf("%d percent done. \r", (int) ((double) counter/possibleNextMoves.size()*100));
 		}
 		if(first) System.out.println("Score: " + currentBestScore);
-		//System.out.println("end " + currentBestMove + " " + currentBestScore);
+		
+		if(first) System.out.println("Done in " + (System.currentTimeMillis()-startTime) + " milliseconds!");
+		if(first) System.out.println("Minimax result: " + currentBestMove + " with score: " + currentBestScore);
+		lastSearch = ((System.currentTimeMillis()-startTime));
 		return new MoveChoice(currentBestMove, currentBestScore);
 	}
 }
