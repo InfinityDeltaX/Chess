@@ -1,7 +1,4 @@
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Random;
 import java.util.Scanner;
 
 
@@ -51,7 +48,6 @@ public class Game {
 	public Game(Side computerSide, Board board){
 		setSides(computerSide);
 		this.theBoard = board;
-
 	}
 
 	private void eachSideMoves(Board b){ //get a move from the user, then from the computer. 
@@ -60,10 +56,8 @@ public class Game {
 	}
 
 	public Move getComputerMove(Board b){
-		if(!Values.lockDepth)
-			getDepth();
+		if(!Values.lockDepth) getDepth();
 		System.out.println("Calculating to " + lastDepth + "...");
-		//Move bestMove = minimax(Values.SIDE_COMPUTER, lastDepth, b, true);
 		Move bestMove = negaMax(theBoard, lastDepth, Values.SIDE_COMPUTER, true, Integer.MIN_VALUE, Integer.MAX_VALUE).move;
 		System.out.println("Made move: " + bestMove.getNotation());
 		return bestMove;
@@ -161,6 +155,10 @@ public class Game {
 		for(int j = 0; j < i; j++){
 			System.out.print("  ");
 		}
+	}
+	
+	public MoveChoice negaMax(Board inputBoard, int remainingDepth, Side toMove){
+		return negaMax(inputBoard, remainingDepth, toMove, true, Integer.MIN_VALUE, Integer.MAX_VALUE);
 	}
 	
 	private MoveChoice negaMax(Board inputBoard, int remainingDepth, Side toMove, boolean first, int alpha, int beta){

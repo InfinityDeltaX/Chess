@@ -24,6 +24,7 @@ public class Board {
 			this.makeMove(current);
 		}
 	}
+	
 	public Board(String fenString){
 		this(FenString.getBoard(fenString));
 	}
@@ -86,10 +87,10 @@ public class Board {
 		
 		for(int i = 0; i < 5; i++){
 			b = Board.generateRandomBoard(20);
-			game.minimax(Side.WHITE, 5, b, false);
+			game.negaMax(b, 5, Side.WHITE);
 		}
 		
-		System.out.println("Minimax score: " + (System.currentTimeMillis() - start)/5.0);
+		System.out.println("NegaMax score: " + (System.currentTimeMillis() - start)/5.0);
 		
 		return System.currentTimeMillis() - start;
 	}

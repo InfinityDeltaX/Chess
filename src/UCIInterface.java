@@ -9,7 +9,6 @@ public class UCIInterface implements Runnable{
 	@Override
 	public void run() {
 		Scanner in = new Scanner(System.in);
-		// TODO Auto-generated method stub
 		game = new Game(Side.BLACK);
 		game.setSides(Side.BLACK);
 		while(true){
@@ -18,7 +17,6 @@ public class UCIInterface implements Runnable{
 			System.out.println("Recieved command!");
 		}
 	}
-
 
 	public static void routeCommand(String input){
 		String[] split = input.split(" ");
@@ -49,30 +47,15 @@ public class UCIInterface implements Runnable{
 		tellGUI("uciok");
 	}
 
-	private static void quitCommand(String[] input){
-		tellGUI("Quitting");
-		System.exit(0);
-	}
+	private static void quitCommand(String[] input){ tellGUI("Quitting"); System.exit(0); }
 
-	private static void debugCommand(String[] split){
-		System.err.println("Debugging not supported at this time.");
-	}
+	private static void debugCommand(String[] split){ System.err.println("Debugging not supported at this time."); }
 
-	private static void isReadyCommand(){
-		tellGUI("readyok");
-	}
+	private static void isReadyCommand(){ tellGUI("readyok"); }
 
-	private static void goCommand(String[] split){
-		System.out.println("bestmove " + game.getComputerMove(game.theBoard).getNotation());
-	}
-
-	private static void stopCommand(){
-		tellGUI("Stopping not supported at this time.");
-	}
-
-	public static void sendCommand(){
-
-	}
+	private static void goCommand(String[] split){ System.out.println("bestmove " + game.getComputerMove(game.theBoard).getNotation()); }
+	
+	private static void stopCommand(){ tellGUI("Stopping not supported at this time.");}
 
 	private static void tellGUI(String toSend){
 		System.out.println(toSend);

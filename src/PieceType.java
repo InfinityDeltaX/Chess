@@ -24,5 +24,4 @@ public enum PieceType {
 	public RelativePosition[] getMoves() {
 		return moves;
 	}
-
 }

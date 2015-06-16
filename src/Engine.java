@@ -1,28 +1,12 @@
 import java.util.Scanner;
 
-
 public class Engine {
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 		Scanner in = new Scanner(System.in);
 		String first = in.nextLine();
-		if(first.equals("test")){
-			Game theGame = new Game(Side.BLACK);
-			
-			Board b = new Board();
-			b.setToDefaultBoard();
-			b.makeMove(new Move(b.getPieceAtPosition(new Position(0, 0)), new Position(4, 4)));
-			System.out.println(b);
-			
+		if(first.equals("speedtest")){
 			Board.speedTest();
-			
-			//theGame.minimax(Side.BLACK, 1, b, true);
-			
-			System.exit(0);
-			
-			theGame.main(null);
-			
 		} else if(first.equals("text")){
 			System.out.println("Now in text-based interface mode.");
 			Board b = new Board();
@@ -44,17 +28,14 @@ public class Engine {
 			} else {
 				theGame = new Game(Side.WHITE, b);
 				b.makeMove(theGame.getComputerMove(b)); //the user has to move first. Let them make a move, then start the game.
-				//theGame.setBoard(b);
 			}
 			
 			theGame.play(); //starts with a user move.
-			//theGame.main(null);
 			
 			while(true){
 				System.out.println("Current board state:");
 				System.out.println(b);
 				System.out.println("Please enter a move. ");
-				//theGame.theBoard.makeMove();
 			}
 		} else {
 		UCIInterface theInterface = new UCIInterface();

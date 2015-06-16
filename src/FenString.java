@@ -1,6 +1,5 @@
 import java.util.Arrays;
 
-
 public class FenString {
 	public static Board getBoard(String input){
 		Board output = new Board();

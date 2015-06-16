@@ -1,6 +1,3 @@
-import java.util.Comparator;
-
-
 public class Position implements Comparable<Position>{
 
 	private final int row;
@@ -9,10 +6,6 @@ public class Position implements Comparable<Position>{
 	public Position(int file, int row){
 		this.row = row;
 		this.file = file;
-	}
-	
-	public Position(int file, int row, boolean hasOpposingPiece){
-		this(file, row);
 	}
 	
 	public Position(String input){ //for example, e4 or h8.
@@ -26,8 +19,7 @@ public class Position implements Comparable<Position>{
 	
 	@Override 
 	public String toString(){
-		char file;
-		file = (char) ((getFile() +(int) 'a'));
+		char file = (char) ((getFile() +(int) 'a'));
 		return(""+file+(row+1));
 	}
 
@@ -36,9 +28,7 @@ public class Position implements Comparable<Position>{
 	}
 	
 	public boolean doesExistOnBoard(){
-		if((this.getFile() < 8 && this.getFile() >= 0) && (this.getRow() < 8 && this.getRow() >= 0)){
-			return true;
-		} else return false;
+		return ((this.getFile() < 8 && this.getFile() >= 0) && (this.getRow() < 8 && this.getRow() >= 0));
 	}
 
 	public int getRow(){
@@ -59,18 +49,7 @@ public class Position implements Comparable<Position>{
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Position other = (Position) obj;
-		if (file != other.file)
-			return false;
-		if (row != other.row)
-			return false;
-		return true;
+		return ((this==obj) || (obj!=null && getClass() == obj.getClass() && file==((Position) obj).file && row==((Position) obj).file));
 	}
 
 	@Override

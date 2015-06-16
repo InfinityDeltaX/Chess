@@ -19,7 +19,6 @@ public class Move {
 		origin = new Position(notation.substring(0, 2));
 		destination = new Position(notation.substring(2));
 		piece = b.getPieceAtPosition(origin);
-
 	}
 
 	public Move(Move input) {

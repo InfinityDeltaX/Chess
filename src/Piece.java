@@ -1,5 +1,4 @@
 import java.awt.Point;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
@@ -12,7 +11,6 @@ public class Piece implements Comparable<Piece> {
 	PieceType type;
 
 	public Piece(PieceType t, Position p, Side side) {
-
 		this.type = t;
 		this.side = side;
 		this.myPosition = p;
@@ -162,5 +160,4 @@ public class Piece implements Comparable<Piece> {
 	public void setType(PieceType type) {
 		this.type = type;
 	}
-
 }
