@@ -10,7 +10,7 @@ import java.util.Random;
 
 public class Board {
 
-	private Map<Position, Piece> boardPosition;
+	Map<Position, Piece> boardPosition;
 
 	public Board(Board input){
 		this.boardPosition = new HashMap<Position, Piece>(input.getBoardPosition());

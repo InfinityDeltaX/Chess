@@ -49,7 +49,7 @@ public class Position implements Comparable<Position>{
 
 	@Override
 	public boolean equals(Object obj) {
-		return ((this==obj) || (obj!=null && getClass() == obj.getClass() && file==((Position) obj).file && row==((Position) obj).file));
+		return ((this==obj) || (obj!=null && getClass() == obj.getClass() && file==((Position) obj).file && row==((Position) obj).row));
 	}
 
 	@Override
