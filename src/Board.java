@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 
 public class Board {
@@ -67,9 +68,7 @@ public class Board {
 	}
 
 	public HashSet<Piece> getArrayListofMyRealPieces(Side side){ //does not return empty spaces. Returns an ArrayList of pieces from the player specified in 'side'.
-		HashSet<Piece> output = new HashSet<Piece>();
-
-		boardPosition.values().stream().filter(derp -> derp.getSide() == side).forEach(output::add);
+		HashSet<Piece> output = (HashSet<Piece>) boardPosition.values().stream().filter(derp -> derp.getSide() == side).collect(Collectors.toSet());
 		return output;
 	}
 

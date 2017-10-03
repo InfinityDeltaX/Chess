@@ -3,6 +3,7 @@ import java.util.Arrays;
 public class FenString {
 	public static Board getBoard(String input){
 		Board output = new Board();
+		input = input.split(" ")[0];
 		String[] split = input.split("/"); //divides each row.
 		split = Arrays.copyOfRange(split, 0, 8);
 
@@ -35,7 +36,7 @@ public class FenString {
 		for(int i = 7; i >= 0; i--){
 			for(int j = 0; j < 8; j++){
 				Position current = new Position(j, i);
-				if(input.getPieceAtPosition(current) == null)sb.append(' ');
+				if(input.getPieceAtPosition(current) == null) sb.append(' ');
 				else if(input.getPieceAtPosition(current).getSide() == Side.WHITE){
 					sb.append(input.getPieceAtPosition(current).getTypeLetter());
 				} else sb.append(Character.toLowerCase(input.getPieceAtPosition(current).getTypeLetter()));

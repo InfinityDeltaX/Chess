@@ -23,7 +23,7 @@ public class Piece implements Comparable<Piece> {
 
 	@Override
 	public String toString() {
-		return (this.type.name() + " on position " + this.getPosition() + " [Side: " + this.getSide() + "]");
+		return ((this.type == null ? "null" : this.type.name()) + " on position " + this.getPosition() + " [Side: " + this.getSide() + "]");
 	}
 
 	public char getTypeLetter() {
@@ -66,8 +66,11 @@ public class Piece implements Comparable<Piece> {
 			return getPossibleJumpingMoves(b, this, this.type.getMoves());
 		} else if(this.type == PieceType.PAWN){
 			return getPossiblePawnMoves(b, this);
-		} else
+		} else {
+			System.out.println("nope");
+			System.out.println(this);
 			return null;
+		}
 	}
 
 

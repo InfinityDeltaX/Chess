@@ -164,7 +164,7 @@ public class Game {
 	private MoveChoice negaMax(Board inputBoard, int remainingDepth, Side toMove, boolean first, int alpha, int beta){
 		Values.nodeCounter++;
 		long startTime = System.currentTimeMillis();
-		if(inputBoard.kingStatus() != 0 || remainingDepth == 0) return new MoveChoice(new Move(new Piece(null, null, null), (Position)null), toMove.multiplier*inputBoard.evaluate());
+		if(inputBoard.kingStatus() != 0 || remainingDepth == 0) return new MoveChoice(new Move(new Piece(null, null, null), (Position)null), /*toMove.multiplier**/inputBoard.evaluate());
 		ArrayList<Move> possibleNextMoves = inputBoard.getAllPossibleMoves(toMove);
 		
 		if(Values.MOVE_ORDERING && remainingDepth >= Values.DEPTH_NOT_TO_ORDER) Move.orderMoves(possibleNextMoves, inputBoard); //do move ordering.
