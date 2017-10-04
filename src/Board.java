@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -86,7 +87,7 @@ public class Board {
 		
 		for(int i = 0; i < 5; i++){
 			b = Board.generateRandomBoard(20);
-			game.negaMax(b, 5, Side.WHITE);
+			game.miniMax(b, 5, Side.WHITE);
 		}
 		
 		System.out.println("NegaMax score: " + (System.currentTimeMillis() - start)/5.0);
@@ -97,9 +98,11 @@ public class Board {
 	public ArrayList<Move> getAllPossibleMoves(Side side){
 		ArrayList<Move> output = new ArrayList<Move>();
 		HashSet<Piece> myPieces = getArrayListofMyRealPieces(side);
+
 		myPieces.stream().forEach( //for each piece,
 				piece -> piece.getPossibleMoves(this).stream()
-				.map(pos -> new Move(piece, pos)).forEach(m -> output.add(m))); //get it's possible next locs, map them to moves, add them to output.
+				.map(pos -> new Move(piece, pos)).forEach(m -> {output.add(m);}));
+		
 		return output;
 	}
 
@@ -194,7 +197,7 @@ public class Board {
 	}
 
 	boolean isValidPlaceToMove(Position p, Side side){ //designed for knights and kings, this tests if one of the spots where they "can" move is A: unoccupied or B: has an opposing piece, but does NOT have a friendly piece. //side should the be the side of the moving piece. p is the destination position.
-		return (p.doesExistOnBoard() && !isPositionEmpty(p) && getPieceAtPosition(p).getSide() != side); //using getPositionRelative because it doesn't actually modify the object.
+		return (p.doesExistOnBoard() && !(!isPositionEmpty(p) && getPieceAtPosition(p).getSide() == side)); //using getPositionRelative because it doesn't actually modify the object.
 		//This tests: is the new position on the board? and is the new position either enemy or unoccupied (not my own)?
 	}
 

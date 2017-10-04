@@ -67,8 +67,6 @@ public class Piece implements Comparable<Piece> {
 		} else if(this.type == PieceType.PAWN){
 			return getPossiblePawnMoves(b, this);
 		} else {
-			System.out.println("nope");
-			System.out.println(this);
 			return null;
 		}
 	}

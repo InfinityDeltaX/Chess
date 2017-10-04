@@ -45,6 +45,6 @@ public class Engine {
 		}
 		
 		theGame.play(); //starts with a user move.
-		
+		System.out.println("The game is over.");
 		}
 }
